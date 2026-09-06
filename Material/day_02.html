@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 2: Python Fundamentals for Agentic AI</title>
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI</h2>
+                <p>Learn by Examples</p>
+            </div>
+            <ul class="toc">
+                <li><a href="day_01.html">Day 01: The AI Landscape</a></li>
+                <li class="active"><a href="day_02.html">Day 02: Python Fundamentals</a></li>
+                <li><a href="day_03.html">Day 03: What is an LLM actually doing?</a></li>
+                <li><a href="day_04.html">Day 04: The OpenAI API</a></li>
+                <li><a href="day_05.html">Day 05: Prompt Engineering</a></li>
+                <li><a href="day_06.html">Day 06: Zero-Shot & Few-Shot</a></li>
+                <li><a href="day_07.html">Day 07: Chain of Thought</a></li>
+                <li><a href="day_08.html">Day 08: System Prompts & Roles</a></li>
+                <li><a href="day_09.html">Day 09: Intro to LangChain</a></li>
+                <li><a href="day_10.html">Day 10: Prompts & Output Parsers</a></li>
+                <li><a href="day_11.html">Day 11: Memory & Chat History</a></li>
+                <li><a href="day_12.html">Day 12: Embeddings & Vector DBs</a></li>
+                <li><a href="day_13.html">Day 13: Retrieval Augmented Gen (RAG)</a></li>
+                <li><a href="day_14.html">Day 14: RAG Implementation</a></li>
+                <li><a href="day_15.html">Day 15: Introduction to Agents</a></li>
+                <li><a href="day_16.html">Day 16: Tools & Function Calling</a></li>
+                <li><a href="day_17.html">Day 17: Building a Simple Agent</a></li>
+                <li><a href="day_18.html">Day 18: ReAct Architecture</a></li>
+                <li><a href="day_19.html">Day 19: Evaluating Agents</a></li>
+                <li><a href="day_20.html">Day 20: Intro to Automation (n8n)</a></li>
+                <li><a href="day_21.html">Day 21: Connecting AI to APIs</a></li>
+                <li><a href="day_22.html">Day 22: Advanced Web Scraping</a></li>
+                <li><a href="day_23.html">Day 23: Multi-Agent Systems</a></li>
+                <li><a href="day_24.html">Day 24: Final Project</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-nav">
+                <div class="nav-left">
+                    <button class="hamburger-btn" id="sidebar-toggle" aria-label="Toggle Sidebar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="nav-right">
+                    <span class="completeness-badge">0% Complete</span>
+                    <button class="icon-btn theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 2.0</span>
+                <h1>Python Fundamentals for Agentic AI</h1>
+
+                <p><strong>The Problem:</strong> Building an AI Agent requires connecting an LLM to the outside world. Your code must sanitize user inputs, loop through multi-step reasoning, ingest unstructured PDFs, and save state to databases. If you don't understand core Python fundamentals like classes, sets, loops, and regex, you cannot build a functional agent.</p>
+                <p><strong>The Solution:</strong> In this session, we will bypass standard Python theory. We will look at exactly <strong>11 Practical Python Programs</strong> designed specifically for Agentic workflows—covering everything from OOP Classes to Database CRUD ops.</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>1. Variables, Data Types & String Manipulation</h2>
+                
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <img src="assets/python_variables_diagram_1788556494180.png" alt="Python Variables Diagram" style="max-width: 100%; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 2.0-1: Python Variables and Basic Data Types in Memory</div>
+
+                <p>Variables hold state. When accepting input from a user to feed into an LLM, you must often sanitize Strings.</p>
+
+                <pre><code class="language-python">
+# Program 2.0-1: Variables & String Manipulation
+agent_name = "DataBot-X"         # String (str)
+confidence = 0.95                # Float (float)
+is_active = True                 # Boolean (bool)
+
+raw_user_input = "   Please Parse this PDF!   \n"
+
+# String Manipulation: Clean the input before sending to the LLM
+sanitized_input = raw_user_input.strip().lower()
+print(f"Agent {agent_name} received clean input: '{sanitized_input}'")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-1: Sanitizing User Prompts</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Control Flow: If/Else & Loops</h2>
+                <p>Agentic AI requires logic. <strong>If/Else</strong> statements route intent. <strong>While</strong> loops allow the agent to keep "thinking" until it finds an answer.</p>
+
+                <pre><code class="language-python">
+# Program 2.0-2: Control Flow (Agentic Reasoning Loop)
+user_intent = "calculate_tax"
+agent_status = "thinking"
+steps_taken = 0
+
+# If/Else logic routes the agent
+if user_intent == "calculate_tax":
+    tool_to_use = "calculator"
+elif user_intent == "search_news":
+    tool_to_use = "web_browser"
+else:
+    tool_to_use = "none"
+
+# A 'while' loop acts as the Agent's reasoning cycle
+while agent_status == "thinking" and steps_taken < 3:
+    print(f"Step {steps_taken}: Agent is using {tool_to_use}...")
+    steps_taken += 1
+    if steps_taken == 2:
+        agent_status = "completed" # The agent found the answer!
+
+print("Agent finished task.")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-2: Building an Agentic Reasoning Loop</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Collections: Lists, Tuples, and Sets</h2>
+                <p>Python provides multiple ways to group data. <strong>Lists</strong> are mutable (can change), <strong>Tuples</strong> are immutable (cannot change), and <strong>Sets</strong> store unique items (no duplicates).</p>
+
+                <pre><code class="language-python">
+# Program 2.0-3: Managing Memory and Deduplication
+# 1. LIST: Ordered and mutable. Perfect for Chat History.
+chat_history = [{"role": "user", "content": "Hello!"}]
+chat_history.append({"role": "assistant", "content": "Hi!"})
+
+# 2. TUPLE: Ordered and Immutable. Perfect for fixed configurations.
+server_coordinates = (40.7128, -74.0060) # Latitude, Longitude (Cannot be altered)
+
+# 3. SET: Unordered, Unique items only. Perfect for deduplication.
+extracted_keywords = {"AI", "Python", "AI", "Agents", "Python"}
+print(f"Unique Keywords: {extracted_keywords}") # Notice duplicates are removed automatically!
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-3: Lists, Tuples, and Sets</div>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <img src="assets/python_dictionary_diagram_1788556503653.png" alt="Python Dictionary Diagram" style="max-width: 100%; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 2.0-2: Structure of a Python Dictionary</div>
+
+                <pre><code class="language-python">
+# Program 2.0-4: Dictionaries (Key-Value lookups)
+agent_config = {
+    "name": "Research-Agent",
+    "model": "gpt-4-turbo",
+    "temperature": 0.7
+}
+print(f"Agent is using model: {agent_config['model']}") # O(1) Instant Lookup
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-4: Structuring Agent Configuration Profiles</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Functions, Modules, and Classes (OOP)</h2>
+                <p>To write clean code, we group logic into <strong>Functions</strong>. We pull in pre-written code from <strong>Modules</strong>. Finally, we use <strong>Classes (Object-Oriented Programming)</strong> to bundle data (state) and functions (behavior) together into a single "Object".</p>
+
+                <pre><code class="language-python">
+# Program 2.0-5: Functions and Modules
+import math # Importing a built-in Python Module
+
+def agent_calculator_tool(number):
+    """A tool function the agent can call."""
+    return math.sqrt(number)
+
+print(f"Tool Output: {agent_calculator_tool(144)}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-5: Building Tools and Importing Modules</div>
+
+                <pre><code class="language-python">
+# Program 2.0-6: Object-Oriented Programming (Classes)
+class Agent:
+    def __init__(self, name, model):
+        self.name = name       # State (Attribute)
+        self.model = model     # State (Attribute)
+        self.memory = []       # State (Attribute)
+    
+    def add_memory(self, message):
+        """Behavior (Method) belonging to the Agent object."""
+        self.memory.append(message)
+        return f"{self.name} remembered the message."
+
+# Creating an 'instance' (object) of the Agent class
+my_agent = Agent(name="SalesBot", model="Claude-3.5")
+print(my_agent.add_memory("Client prefers emails in the morning."))
+print(f"Memory size: {len(my_agent.memory)}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-6: Encapsulating State in an Agent Class</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Regular Expressions (Regex) & API Communication</h2>
+                <p>When an LLM outputs raw text, it often embeds "tool calls" inside strings like `[Action: SearchWeb]`. To programmatically extract that command, we use <strong>Regular Expressions (regex)</strong>, a powerful pattern-matching language.</p>
+
+                <pre><code class="language-python">
+# Program 2.0-7: Parsing Tool Commands from LLM Text (Regex)
+import re
+
+llm_output = "I need to check the weather. [Action: GetWeather(Tokyo)] I will wait for the result."
+
+# Regex pattern: Match '[Action: ' then capture everything until ']'
+pattern = r"\[Action: (.*?)\]"
+match = re.search(pattern, llm_output)
+
+if match:
+    extracted_tool_command = match.group(1)
+    print(f"Agent triggered Tool: {extracted_tool_command}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-7: Regular Expressions (Regex)</div>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <img src="assets/json_vs_dict_diagram_1788556529881.png" alt="JSON vs Dictionary Diagram" style="max-width: 100%; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                </div>
+
+                <pre><code class="language-python">
+# Program 2.0-8: APIs (JSON Parsing & HTTP Requests)
+import json
+import requests
+
+api_url = "https://jsonplaceholder.typicode.com/todos/1"
+response = requests.get(api_url) # HTTP GET
+
+if response.status_code == 200:
+    # .json() automatically converts the raw JSON string into a Python Dictionary
+    data = response.json() 
+    print(f"Agent fetched task: {data['title']}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-8: JSON Parsing and HTTP requests</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Data Ingestion & Long Term Memory (Databases)</h2>
+
+                <pre><code class="language-python">
+# Program 2.0-9: Saving Agent Memory to local JSON files (File I/O)
+import json
+
+memory = [{"role": "user", "content": "Remember my name is Alice."}]
+
+# Write to disk
+with open("agent_memory.json", "w") as file:
+    json.dump(memory, file)
+
+# Read from disk
+with open("agent_memory.json", "r") as file:
+    loaded = json.load(file)
+    print(f"Restored: {loaded[0]['content']}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-9: File I/O</div>
+
+                <pre><code class="language-python">
+# Program 2.0-10: Ingesting document data for RAG
+import PyPDF2 # Reading PDFs
+import csv    # Reading Spreadsheets
+
+# Agents use these libraries to extract raw text, which is then sent 
+# to the LLM as context to answer user questions!
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-10: PDF & CSV Parsers</div>
+
+                <p>For persistent memory across millions of users, Agents use SQL Databases and perform <strong>CRUD (Create, Read, Update, Delete)</strong> operations.</p>
+
+                <pre><code class="language-python">
+# Program 2.0-11: Managing Long-Term Memory (Database CRUD Ops)
+import sqlite3
+
+# 1. Connect and CREATE a table
+conn = sqlite3.connect('agent_memory.db')
+cursor = conn.cursor()
+cursor.execute('''CREATE TABLE IF NOT EXISTS users (name TEXT, preference TEXT)''')
+
+# 2. CREATE (Insert): Save user preference
+cursor.execute("INSERT INTO users (name, preference) VALUES ('Alice', 'Dark Mode')")
+conn.commit()
+
+# 3. READ: Agent fetches the preference
+cursor.execute("SELECT preference FROM users WHERE name='Alice'")
+result = cursor.fetchone()
+print(f"Agent retrieved DB preference: {result[0]}")
+conn.close()
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-11: Database CRUD Ops</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+                
+                <div class="mcq-container">
+                    <div class="mcq-question">1. What is the primary difference between a List and a Set in Python?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Lists use curly braces; Sets use square brackets.</li>
+                        <li class="mcq-option" data-correct="false">Sets can only store integers.</li>
+                        <li class="mcq-option" data-correct="true">Lists are ordered and allow duplicates; Sets are unordered and automatically remove duplicates.</li>
+                        <li class="mcq-option" data-correct="false">Lists are immutable; Sets are mutable.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. When building an Agent reasoning cycle, which control flow statement is best for allowing the agent to repeatedly think until a condition is met?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">if/else statement</li>
+                        <li class="mcq-option" data-correct="false">switch statement</li>
+                        <li class="mcq-option" data-correct="true">while loop</li>
+                        <li class="mcq-option" data-correct="false">try/except block</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. In Object-Oriented Programming, what is a Class?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">A blueprint for creating objects that encapsulate both state (variables) and behavior (functions).</li>
+                        <li class="mcq-option" data-correct="false">A specialized loop for parsing strings.</li>
+                        <li class="mcq-option" data-correct="false">A built-in Python library for HTTP requests.</li>
+                        <li class="mcq-option" data-correct="false">A mathematical tool for calculating gradients.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. Why do we use Regular Expressions (Regex) in Agentic AI?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To connect to the internet.</li>
+                        <li class="mcq-option" data-correct="true">To search for and extract specific patterns (like tool commands) from an LLM's unstructured text output.</li>
+                        <li class="mcq-option" data-correct="false">To train neural networks faster.</li>
+                        <li class="mcq-option" data-correct="false">To read PDF files.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. Which of the following collections is IMMUTABLE (cannot be changed after creation)?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">List</li>
+                        <li class="mcq-option" data-correct="false">Dictionary</li>
+                        <li class="mcq-option" data-correct="false">Set</li>
+                        <li class="mcq-option" data-correct="true">Tuple</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. If an Agent needs to load its previous memory state from the hard drive, which command parses a `.json` file back into a Dictionary?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">json.load(file)</li>
+                        <li class="mcq-option" data-correct="false">json.dump(memory, file)</li>
+                        <li class="mcq-option" data-correct="false">requests.get()</li>
+                        <li class="mcq-option" data-correct="false">file.read()</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. What is the fundamental difference between a JSON payload and a Python Dictionary?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">JSON is a raw string of text used for transport; a Dictionary is a parsed, active object in memory.</li>
+                        <li class="mcq-option" data-correct="false">JSON uses square brackets, while Dictionaries use curly braces.</li>
+                        <li class="mcq-option" data-correct="false">Python cannot read JSON without external plugins.</li>
+                        <li class="mcq-option" data-correct="false">They are identical in every way.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. When building a Retrieval Augmented Generation (RAG) system, why do we use libraries like `PyPDF2`?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To connect to the OpenAI API.</li>
+                        <li class="mcq-option" data-correct="false">To draw flat-design diagrams.</li>
+                        <li class="mcq-option" data-correct="true">To extract raw text from binary document files so the LLM can read the context.</li>
+                        <li class="mcq-option" data-correct="false">To format text into bold and italics.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. What does the "C" in CRUD operations stand for when an Agent interacts with a Database?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Calculate</li>
+                        <li class="mcq-option" data-correct="false">Compute</li>
+                        <li class="mcq-option" data-correct="false">Configure</li>
+                        <li class="mcq-option" data-correct="true">Create</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. Why would a developer choose to connect an Agent to a `sqlite3` database instead of just saving memory to a JSON file?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because JSON files cannot store strings.</li>
+                        <li class="mcq-option" data-correct="false">Because sqlite3 is built directly by OpenAI.</li>
+                        <li class="mcq-option" data-correct="true">Because SQL databases provide robust, long-term memory management capable of handling massive amounts of structured data efficiently.</li>
+                        <li class="mcq-option" data-correct="false">Because databases automatically connect to the internet.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>To solidify your Python foundation, try coding these 5 assignments using the concepts covered today.</p>
+                
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Agent State Config</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create a Python Dictionary named <code>agent_profile</code>. It must contain the keys: 'name' (string), 'version' (float), 'is_online' (boolean), and 'tools' (a list containing 'search' and 'calculator'). Print the dictionary.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: ReAct Reasoning Loop</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a <code>while</code> loop that simulates an Agent thinking. Start with <code>steps = 0</code>. Loop while steps < 3. Inside the loop, print "Agent is thinking..." and increment steps by 1. Once the loop ends, print "Action complete."</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Regex Tool Extractor</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> You receive this raw string from an LLM: <code>"I will check the weather. [Tool: Weather(Chicago)]"</code>. Use the <code>re</code> module to extract the word 'Chicago'. (Hint: you can use a pattern like <code>r"Weather\((.*?)\)"</code>).</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Agent Class Design</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a Python Class named <code>MemoryAgent</code>. Its <code>__init__</code> method should take a 'name' and create an empty list called 'memory'. Create a method called <code>remember(text)</code> that appends the text to the memory list.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: JSON Parsing Challenge</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Use <code>json.loads()</code> to parse this exact string: <code>'{"user": "Alex", "address": {"city": "Seattle", "zip": "98101"}}'</code>. After parsing it into a dictionary, write the code to extract and print only the zip code.</p>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_01.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 01: The AI Landscape</span>
+                </a>
+                <a href="day_03.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 03: Under the Hood of LLMs</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts for interactivity (Theme toggle is in head, Prism is included via CDN, Ace Editor logic would be initialized by course's main script.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
