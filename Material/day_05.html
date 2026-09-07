@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5: LLM Specialist Behavior & Structured Outputs</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li class="active"><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>21%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 5.0</span>
+                <h1>Day 5: Structuring Outputs & LLM Specialist Behavior</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> Out-of-the-box conversational models are designed to be general-purpose, polite, and chatty. However, autonomous agents require hyper-focused specialist personas that produce deterministic, structured data formats (such as validated JSON schemas) with strict guardrails and zero conversational fluff. How do you transform a generalist model into an uncompromising domain specialist?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 1.4</span>
+                            <span class="plan-badge plan-badge-secondary">Week 1</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 3.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Force non-deterministic LLMs to output 100% syntactically valid JSON conforming to strict schemas.</li><li>Understand constrained decoding, context-free grammars (CFGs), and DFA logit masking.</li><li>Build a multi-specialist dispatcher routing queries to specialized Pydantic schema handlers.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Deterministic Finite Automaton (DFA) state transitions over token vocabularies.</li><li>Logit masking mathematics: setting invalid token logits to $-\infty$ during autoregressive generation.</li><li>Grammar-guided decoding vs. naive post-generation regex parsing.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 5.1: Pure Python DFA Logit Masking Simulator for Constrained Decoding.</li><li>Program 5.2: Multi-Specialist Pydantic Schema Router with Discriminated Unions.</li><li>Program 5.3: Automated Schema Repair Pipeline with Self-Correcting Feedback Loops.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>The Regex Parsing Trap: Using fragile regex to parse unconstrained LLM outputs, causing 15-30% drop rates.</li><li>Schema Drift: Modifying backend schemas without versioning prompt contracts, causing silent agent pipeline failure.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Multi-Specialist Pydantic Schema Dispatcher • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Anatomy of a Specialist Persona</h2>
+                <p>When an LLM is prompted without a defined persona, it draws from the entire average mass of its training data—producing safe, middle-of-the-road answers. To make it behave like a Senior Cloud Architect, a Cybersecurity Auditor, or a Bioinformatician, you must constrain its cognitive space using five interconnected components:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 680px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #6366f1; font-weight: bold;">1. IDENTITY & AUTHORITY:</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">"Staff Site Reliability Engineer with 15+ years in high-throughput distributed systems."</div>
+                        <div style="color: #ec4899; font-weight: bold; margin-top: 0.8rem;">2. DOMAIN CONSTRAINTS:</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">"Focus strictly on p99 latency, zero-downtime blue/green rollouts, and idempotent APIs."</div>
+                        <div style="color: #f59e0b; font-weight: bold; margin-top: 0.8rem;">3. GUARDRAILS & REFUSALS:</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">"Never recommend stateful single points of failure. Refuse front-end UI questions."</div>
+                        <div style="color: #10b981; font-weight: bold; margin-top: 0.8rem;">4. OUTPUT CONTRACT (SCHEMA):</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">"Strictly return a JSON object adhering to Pydantic schema 'ArchitectureReview'."</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 5.0-1: The Five Pillars of an Enterprise Agent Specialist Persona</div>
+                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <strong>Figure Parameters Explained:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li><strong>Identity & Authority:</strong> Primes the model's vocabulary and cognitive reasoning depth.</li>
+                        <li><strong>Domain Constraints:</strong> Anchors the model into a specific technical paradigm (e.g., distributed systems).</li>
+                        <li><strong>Guardrails:</strong> Defines forbidden outputs, safety boundaries, and topics to actively decline.</li>
+                        <li><strong>Output Contract:</strong> Removes ambiguity by demanding machine-parseable schemas rather than free-form prose.</li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Code Review Specialist Implementation</h2>
+                <p>Let's observe how a well-engineered System Persona transforms a model from a casual chatbot into an uncompromising Senior Systems Reviewer:</p>
+
+                <div class="code-header">
+                    <span>specialized_code_review_agent_persona.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 5.0-1: Specialized Code Review Agent Persona
+from openai import OpenAI
+
+client = OpenAI()
+
+system_persona = """
+You are a Senior Principal Systems Architect specializing in Rust and high-performance networking.
+
+MISSION:
+Review provided code snippets for:
+1. Memory safety & allocation inefficiencies (e.g., unnecessary cloning, string allocations in hot paths).
+2. Concurrency hazards (race conditions, deadlock risks).
+3. Idiomatic Rust design principles.
+
+TONE & STYLE:
+- Direct, clinical, and constructive.
+- No pleasantries ("Hello", "Hope you are doing well", "Certainly!").
+- Reference Rust compiler rules or RFC specifications where applicable.
+
+GUARDRAILS:
+- Do not evaluate non-systems programming languages.
+- If the snippet is incomplete or missing context, flag the specific missing types.
+"""
+
+user_code = """
+pub fn process_sensor_stream(data: Vec<u8>) -> String {
+    let mut accumulator = String::new();
+    for byte in data {
+        // Repeated string allocation in loop
+        accumulator.push_str(&byte.to_string());
+    }
+    accumulator
+}
+"""
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    temperature=0.0,
+    messages=[
+        {"role": "system", "content": system_persona},
+        {"role": "user", "content": f"Review this code:\n```rust\n{user_code}\n```"}
+    ]
+)
+
+print(response.choices[0].message.content)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-1: Enforcing Specialist Behavior via System Prompts</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Machine-Parseable Output: Pydantic Structured Outputs</h2>
+                <p>While markdown reviews are great for humans, software agents downstream cannot reliably parse free-text markdown. If a model outputs <code>"Severity: High"</code> on one run and <code>"**Critical issue:**"</code> on another, regular expressions break.</p>
+
+                <p>Modern APIs provide <strong>Structured Outputs (Constrained Decoding)</strong>. By compiling a <strong>Pydantic schema</strong> into a JSON Schema, the inference engine guarantees that every generated token satisfies the grammar of your schema—with 100% syntactic validity!</p>
+
+                <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <summary style="font-weight: 600; font-size: 1.1rem; outline: none; color: #f44336;">View Buggy/Legacy Code: Unchecked Text Scraping</summary>
+                    <div class="code-header">
+                    <span>module_script_5.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# DANGEROUS LEGACY PATTERN: Asking LLM for JSON in prompt and using json.loads()
+prompt = "Review this code and reply with JSON: { 'status': 'ok', 'score': 10 }"
+res = call_llm(prompt)
+
+# Often fails with JSONDecodeError because LLMs add markdown fences:
+# ```json\n{ ... }\n``` or conversational text: "Here is your JSON:"
+import json
+data = json.loads(res) # Crash!
+                    </code></pre>
+                    <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-2A: Unsafe JSON Extraction Prone to Syntax Failures</div>
+                </details>
+
+                <div class="code-header">
+                    <span>guaranteed_structured_output_with_pydantic.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 5.0-2: Guaranteed Structured Output with Pydantic
+from pydantic import BaseModel, Field
+from typing import List, Literal
+from openai import OpenAI
+
+class CodeIssue(BaseModel):
+    category: Literal["Performance", "Security", "Style", "Bug"]
+    severity: Literal["Critical", "High", "Medium", "Low"]
+    line_number: int = Field(description="Approximate line number of the defect")
+    description: str = Field(description="Specific technical analysis of the problem")
+    remediation: str = Field(description="Actionable fix with corrected code")
+
+class AutomatedCodeReview(BaseModel):
+    summary: str = Field(description="High-level 1-sentence verdict")
+    safe_to_deploy: bool
+    issues: List[CodeIssue]
+    cyclomatic_complexity_score: int = Field(ge=1, le=10)
+
+client = OpenAI()
+
+# Use OpenAI's beta parse endpoint to guarantee JSON schema compliance
+completion = client.beta.chat.completions.parse(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "system", "content": "You are a static code analysis specialist."},
+        {"role": "user", "content": "Review: pub fn bad() { loop { let x = vec![1,2,3]; } }"}
+    ],
+    response_format=AutomatedCodeReview
+)
+
+review: AutomatedCodeReview = completion.choices[0].message.parsed
+print(f"Safe to deploy: {review.safe_to_deploy}")
+print(f"Summary: {review.summary}")
+print(f"Issues detected: {len(review.issues)}")
+for issue in review.issues:
+    print(f"  [{issue.severity}] {issue.category} at Line {issue.line_number}: {issue.description}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-2: Type-Safe Structured Pydantic Parsing via Constrained Decoding</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Specialist Persona Matrix</h2>
+                <p>Here is how enterprise engineering organizations configure distinct specialist personas to collaborate across an agentic pipeline:</p>
+
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Specialist Role</th>
+                            <th style="padding: 12px; text-align: left;">Primary Objective</th>
+                            <th style="padding: 12px; text-align: left;">Forbidden Behaviors</th>
+                            <th style="padding: 12px; text-align: left;">Target Schema Contract</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Security Auditor</td>
+                            <td style="padding: 12px;">Identify OWASP Top 10 vulnerabilities and privilege escalation risks.</td>
+                            <td style="padding: 12px;">Never approve code containing unsanitized SQL or hardcoded credentials.</td>
+                            <td style="padding: 12px;"><code>SecurityAuditReport(cve_list, threat_level)</code></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Legal Compliance Bot</td>
+                            <td style="padding: 12px;">Inspect contracts for indemnification and jurisdiction clauses.</td>
+                            <td style="padding: 12px;">Never provide legal counsel or speculate on unstated contract terms.</td>
+                            <td style="padding: 12px;"><code>ContractSummary(liability_cap, jurisdiction)</code></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">DevOps Deployer</td>
+                            <td style="padding: 12px;">Validate Kubernetes manifest YAMLs against cluster admission policies.</td>
+                            <td style="padding: 12px;">Never allow containers to run with root privileges (<code>runAsRoot: true</code>).</td>
+                            <td style="padding: 12px;"><code>DeploymentCheck(admitted, violation_reasons)</code></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Medical Triage Assistant</td>
+                            <td style="padding: 12px;">Map patient symptoms to urgency levels (Emergency, Urgent, Routine).</td>
+                            <td style="padding: 12px;">Never prescribe medication or give definitive diagnoses.</td>
+                            <td style="padding: 12px;"><code>TriageAssessment(urgency_code, recommended_care)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. The Mechanics of Constrained Decoding & Grammar-Guided Sampling</h2>
+                <p>How do modern APIs (like OpenAI's <code>response_format={"type": "json_schema"}</code>) guarantee that the model never emits syntax errors or missing brackets? They do not prompt the model to "please write valid JSON". Instead, they implement <strong>Grammar-Guided Constrained Decoding</strong>:</p>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>The Logit Masking Mathematical Mechanism:</strong>
+                    <p>At every autoregressive step, the Pydantic JSON Schema is converted into a <strong>Deterministic Finite Automaton (DFA)</strong> or Context-Free Grammar (CFG). Before running the Softmax function over the 100,000-word vocabulary, the DFA checks which tokens are legally valid next characters:</p>
+                    <div style="font-family: 'Fira Code', monospace; margin: 0.5rem 0; padding: 0.5rem; background: var(--code-bg); border-radius: 4px;">
+                        z_i' = z_i if token_i in ValidNextTokens(DFA_state) else -infinity
+                    </div>
+                    <p>Because invalid tokens receive a logit of $-\infty$, their probability $e^{-\infty} = 0$. It is mathematically impossible for the model to emit an invalid character, missing quotation mark, or illegal property name!</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Deep-Dive Production Engineering Programs</h2>
+
+                <h3>Program 5.0-3: Grammar-Guided Token Masking Engine Simulation</h3>
+                <p>This program demonstrates how constrained decoders filter candidate vocabulary logits using a finite state machine representing valid JSON tokens.</p>
+
+                <div class="code-header">
+                    <span>grammar_masked_sampler.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 5.0-3: Grammar-Guided Token Masking Simulator
+import math
+from typing import List, Set, Dict
+
+class JSONGrammarDFA:
+    """State machine tracking legal next syntax characters in a JSON object."""
+    def __init__(self):
+        self.state = "EXPECT_START_BRACE"  # States: EXPECT_START_BRACE, EXPECT_KEY, EXPECT_COLON, EXPECT_VAL, EXPECT_END
+
+    def get_legal_tokens(self, candidate_vocab: List[str]) -> Set[str]:
+        if self.state == "EXPECT_START_BRACE":
+            return {"{"}
+        elif self.state == "EXPECT_KEY":
+            return {'"status"', '"error_code"', '"safe"'}
+        elif self.state == "EXPECT_COLON":
+            return {":"}
+        elif self.state == "EXPECT_VAL":
+            return {'"APPROVED"', '"REJECTED"', "true", "false", "200", "403"}
+        elif self.state == "EXPECT_END":
+            return {"}"}
+        return set(candidate_vocab)
+
+    def transition(self, token: str):
+        if token == "{": self.state = "EXPECT_KEY"
+        elif token in {'"status"', '"error_code"', '"safe"'}: self.state = "EXPECT_COLON"
+        elif token == ":": self.state = "EXPECT_VAL"
+        elif token in {'"APPROVED"', '"REJECTED"', "true", "false", "200", "403"}: self.state = "EXPECT_END"
+        elif token == "}": self.state = "COMPLETE"
+
+def constrained_sample(raw_logits: Dict[str, float], dfa: JSONGrammarDFA) -> str:
+    candidate_vocab = list(raw_logits.keys())
+    legal_tokens = dfa.get_legal_tokens(candidate_vocab)
+    
+    # Mask illegal tokens to -infinity
+    masked_logits = {
+        token: (logit if token in legal_tokens else -float('inf'))
+        for token, logit in raw_logits.items()
+    }
+    
+    # Select token with highest masked logit (Greedy Decoding)
+    chosen_token = max(masked_logits, key=masked_logits.get)
+    dfa.transition(chosen_token)
+    return chosen_token
+
+# Simulate constrained generation of '{"status": "APPROVED"}'
+vocab_logits = {
+    "{": 6.2, "Hello": 9.5, "The": 8.1, '"status"': 7.4, 
+    ":": 8.8, '"APPROVED"': 9.2, "}": 7.0, "random_text": 10.5
+}
+
+dfa = JSONGrammarDFA()
+generated_stream = []
+print("=== CONSTRAINED DECODING TOKEN GENERATION ===")
+
+for step in range(5):
+    token = constrained_sample(vocab_logits, dfa)
+    generated_stream.append(token)
+    print(f"Step {step + 1}: Emitted '{token}' | Next DFA State: {dfa.state}")
+
+print("\nFinal Formed Guaranteed JSON:")
+print(" ".join(generated_stream))
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-3: Logit Masking via Deterministic Finite Automaton (DFA)</div>
+
+                <h3>Program 5.0-4: Production Multi-Specialist Dispatcher</h3>
+                <p>In production pipelines, an intent router delegates incoming payloads to dedicated specialist agents with role-specific Pydantic contracts.</p>
+
+                <div class="code-header">
+                    <span>multi_specialist_router.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 5.0-4: Dynamic Multi-Specialist Dispatcher with Pydantic Contracts
+from pydantic import BaseModel, Field
+from typing import List, Literal, Union
+
+# 1. Specialist Output Schemas
+class SecuritySpecialistOutput(BaseModel):
+    audit_type: Literal["SECURITY"] = "SECURITY"
+    severity_level: Literal["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    detected_vulnerabilities: List[str]
+    immediate_mitigation: str
+
+class LegalSpecialistOutput(BaseModel):
+    audit_type: Literal["LEGAL"] = "LEGAL"
+    jurisdiction: str
+    liability_cap_compliant: bool
+    governing_clauses: List[str]
+
+# 2. Specialist Engine Simulators
+def run_security_specialist(payload: str) -> SecuritySpecialistOutput:
+    print(f"[Specialist: Security Auditor] Auditing payload: '{payload[:40]}...'")
+    return SecuritySpecialistOutput(
+        severity_level="CRITICAL",
+        detected_vulnerabilities=["Hardcoded AWS Secret Key", "Unescaped SQL query string"],
+        immediate_mitigation="Rotate AWS credentials and parameterize database cursor execution."
+    )
+
+def run_legal_specialist(payload: str) -> LegalSpecialistOutput:
+    print(f"[Specialist: Legal Compliance] Reviewing contract: '{payload[:40]}...'")
+    return LegalSpecialistOutput(
+        jurisdiction="State of Delaware",
+        liability_cap_compliant=True,
+        governing_clauses=["Clause 12.4: Mutual Indemnification", "Clause 18: Arbitration"]
+    )
+
+# 3. Router Dispatcher
+def dispatch_to_specialist(task_type: str, content: str) -> Union[SecuritySpecialistOutput, LegalSpecialistOutput]:
+    if task_type == "SECURITY":
+        return run_security_specialist(content)
+    elif task_type == "LEGAL":
+        return run_legal_specialist(content)
+    else:
+        raise ValueError(f"Unknown specialist category: {task_type}")
+
+# Execution Demonstrations
+sec_report = dispatch_to_specialist("SECURITY", "aws_secret = 'AKIAIOSFODNN7EXAMPLE'; db.execute('SELECT * FROM ' + user)")
+print("\n=== SECURITY SPECIALIST PYDANTIC DELIVERABLE ===")
+print(sec_report.model_dump_json(indent=2))
+
+leg_report = dispatch_to_specialist("LEGAL", "This Agreement is executed under the governing laws of Delaware...")
+print("\n=== LEGAL SPECIALIST PYDANTIC DELIVERABLE ===")
+print(leg_report.model_dump_json(indent=2))
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-4: Dynamic Multi-Specialist Dispatcher with Pydantic Contracts</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Anti-Patterns in Structured Extraction</h2>
+                <ol>
+                    <li><strong>Recursive Nested Schemas without Depth Bounds:</strong> Defining schemas where <code>Comment</code> contains a list of <code>Comment</code> objects causes models to exhaust their context window emitting deeply nested trees. Always bound recursion depth to 2 or 3 levels.</li>
+                    <li><strong>Using Primitive Dictionaries Instead of Typed Pydantic Models:</strong> Requesting <code>{"type": "object"}</code> without property declarations forces the model into free-form JSON generation, inviting key typos and type coercions.</li>
+                    <li><strong>Over-Constrained Enums:</strong> Defining an enum with 50 specific values leads the model to hallucinate or pick an arbitrary choice when none fit. Always include an <code>"OTHER"</code> or <code>"UNKNOWN"</code> fallback in Literal types.</li>
+                    <li><strong>Neglecting Field Descriptions:</strong> Leaving Pydantic fields without <code>description="..."</code> deprives the model of semantic guidance. The LLM relies on field descriptions to understand what values are expected.</li>
+                </ol>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. Why does a generic LLM struggle to act as a senior technical specialist without a persona?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because the model has no knowledge of programming languages.</li>
+                        <li class="mcq-option" data-correct="true">Because it defaults to conversational, polite, and middle-of-the-road probabilities across all training data.</li>
+                        <li class="mcq-option" data-correct="false">Because GPUs cannot process technical terms.</li>
+                        <li class="mcq-option" data-correct="false">Because API pricing increases for technical queries.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. What is "Constrained Decoding" in the context of Structured Outputs?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Limiting the model's internet download speed.</li>
+                        <li class="mcq-option" data-correct="true">The inference engine masks out tokens that would violate the provided JSON schema grammar at each generation step.</li>
+                        <li class="mcq-option" data-correct="false">Translating English prompts into French before inference.</li>
+                        <li class="mcq-option" data-correct="false">Truncating the output text after 50 characters.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. In Pydantic, what does the Field(description="...") parameter achieve when used with structured LLM outputs?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It changes the font color of the output in the console.</li>
+                        <li class="mcq-option" data-correct="true">It provides in-context guidance to the LLM about what specific information to generate for that schema field.</li>
+                        <li class="mcq-option" data-correct="false">It automatically translates the field into SQL.</li>
+                        <li class="mcq-option" data-correct="false">It encrypts the field before saving to disk.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. Why is setting temperature=0.0 strongly recommended when enforcing Pydantic schemas?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">It maximizes deterministic adherence to type constraints and removes unwanted random variations.</li>
+                        <li class="mcq-option" data-correct="false">It makes the API call 100% free of charge.</li>
+                        <li class="mcq-option" data-correct="false">It allows the model to search the live web.</li>
+                        <li class="mcq-option" data-correct="false">It disables Python's garbage collector.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. What is the danger of relying on prompt instructions like "Please return JSON only" without structured outputs?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The API server will reboot.</li>
+                        <li class="mcq-option" data-correct="true">The model may wrap the output in markdown code fences or conversational text, causing json.loads() to crash.</li>
+                        <li class="mcq-option" data-correct="false">The token count is always multiplied by 10.</li>
+                        <li class="mcq-option" data-correct="false">The user's credit card is immediately refunded.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. Which component of a specialist persona defines the boundaries of what the model is strictly forbidden to do?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Identity & Authority.</li>
+                        <li class="mcq-option" data-correct="true">Guardrails & Negative Constraints.</li>
+                        <li class="mcq-option" data-correct="false">Prism Highlighting.</li>
+                        <li class="mcq-option" data-correct="false">Context Window Cache.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. If you change the system persona mid-conversation, what typically happens to the agent?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The model gains 100% extra reasoning speed.</li>
+                        <li class="mcq-option" data-correct="true">The model suffers from persona inconsistency and blending conflicting directives.</li>
+                        <li class="mcq-option" data-correct="false">The Python process terminates automatically.</li>
+                        <li class="mcq-option" data-correct="false">The context window expands to 1M tokens.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. In a Pydantic schema, what type constraint is best used to limit a field to specific categorical values (e.g., 'Critical', 'High', 'Medium', 'Low')?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true"><code>typing.Literal</code>.</li>
+                        <li class="mcq-option" data-correct="false"><code>str</code> without validation.</li>
+                        <li class="mcq-option" data-correct="false"><code>typing.Any</code>.</li>
+                        <li class="mcq-option" data-correct="false"><code>int</code>.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. What role does tone instruction play in a specialist persona?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It changes the audio pitch when text-to-speech is enabled.</li>
+                        <li class="mcq-option" data-correct="true">It eliminates conversational padding and focuses token generation on concise, technical vocabulary.</li>
+                        <li class="mcq-option" data-correct="false">It encrypts the model weights.</li>
+                        <li class="mcq-option" data-correct="false">It decreases token pricing.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. Why is client.beta.chat.completions.parse superior to manual string parsing?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It automatically writes unit tests for your application.</li>
+                        <li class="mcq-option" data-correct="true">It natively validates and deserializes the model output directly into an instantiated Pydantic model object.</li>
+                        <li class="mcq-option" data-correct="false">It runs on local CPUs without sending network requests.</li>
+                        <li class="mcq-option" data-correct="false">It works without an API key.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to engineer robust specialist personas and typed schema contracts.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Database DBA Specialist Persona</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create a system persona for a PostgreSQL Database Administrator. Define 3 strict guardrails: 1) Never suggest unindexed sequential table scans on tables > 1M rows, 2) Reject all queries using <code>SELECT *</code>, and 3) Refuse all questions unrelated to database performance. Test it with both valid and invalid queries.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Pydantic Security Audit Schema</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Define a Pydantic model named <code>SecurityAudit</code> containing: <code>vulnerability_title: str</code>, <code>cwe_id: str</code>, <code>cvss_score: float</code> (bounded between 0.0 and 10.0), and <code>mitigation_steps: list[str]</code>. Parse a model output against this schema using <code>client.beta.chat.completions.parse</code>.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Dynamic Multi-Persona Router</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a Python function <code>route_to_specialist(user_query: str) -> str</code>. Using an LLM or keyword classifier, determine whether the query is a <code>"DevOps"</code>, <code>"Security"</code>, or <code>"Frontend"</code> question, and dispatch it to the appropriate specialized system prompt.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Schema Migration Validator</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Given an existing database schema and a requested user feature, write an agent prompt that outputs a structured JSON plan with: <code>"alter_table_statements"</code>, <code>"backward_compatible": bool</code>, and <code>"rollback_plan"</code>.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Zero-Fluff Prompt Benchmark</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Measure the token efficiency of a prompt before and after adding a "Zero-Fluff" negative constraint ("Do not include greetings, pleasantries, or conclusions"). Calculate the percentage reduction in output token cost across 10 sample code review prompts.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2307.09702</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Dotscience</span>
+                            </div>
+                            <h4>Efficient Guided Generation for Large Language Models (Outlines)</h4>
+                            <p>Willard & Louf present DFA-guided logit masking over regular expressions and context-free grammars with zero sampling latency.</p>
+                            <a href="https://arxiv.org/abs/2307.09702" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">GitHub</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">ggerganov / llama.cpp</span>
+                            </div>
+                            <h4>GBNF (GGML BNF) Grammar-Based Constrained Decoding</h4>
+                            <p>Formal specification for context-free grammars constraining llama.cpp output tokens to exact syntax rules.</p>
+                            <a href="https://github.com/ggerganov/llama.cpp/blob/master/grammars/README.md" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Standard</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">IETF</span>
+                            </div>
+                            <h4>JSON Schema Draft 2020-12 Specification</h4>
+                            <p>The core Internet Standard defining structural validation constraints for JSON data structures.</p>
+                            <a href="https://json-schema.org/specification" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Official Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI</span>
+                            </div>
+                            <h4>Structured Outputs Guide & Schema Enforcement</h4>
+                            <p>Technical guide on OpenAI's native constrained decoding feature guaranteeing 100% adherence to supplied JSON Schemas.</p>
+                            <a href="https://platform.openai.com/docs/guides/structured-outputs" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_04.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 04: Prompt Engineering</span>
+                </a>
+                <a href="day_06.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 06: Tool Execution</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981'; // green
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444'; // red
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

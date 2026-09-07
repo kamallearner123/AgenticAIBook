@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 21: UI & Productionization: FastAPI, Streaming SSE & Interactive Frontends</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li class="active"><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>88%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 21.0</span>
+                <h1>Day 21: UI & Productionization: FastAPI, Streaming SSE & Interactive Frontends</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Production Problem Statement:</strong> A terminal CLI script that prints ANSI colored logs is suitable for local debugging, but non-technical business stakeholders, customer support reps, and external client systems cannot interact via <code>python main.py</code> in a terminal. Commercial agents demand <strong>real-time token streaming (Server-Sent Events)</strong> to mitigate 15-second latency timeouts, interactive collapsible thought accordions that build trust by exposing intermediate tool steps, and resilient asynchronous REST gateways with OpenAPI schemas and authentication. How do we take an abstract agent graph and engineer a scalable, production-grade software product?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 3.4</span>
+                            <span class="plan-badge plan-badge-secondary">Week 3</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Master Server-Sent Events (SSE) wire protocols for streaming tokens, reasoning thoughts, and tool events.</li><li>Build an asynchronous FastAPI streaming server delivering real-time event updates to user frontends.</li><li>Implement a Streamlit Agent Studio with collapsible thought accordions and Human-in-the-Loop approval widgets.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>W3C Server-Sent Events (SSE) wire protocol: `event:`, `data:`, `id:`, `retry:` frame formatting.</li><li>Latency physics in Agent UX: Why streaming thoughts drops perceived user latency by over 70%.</li><li>Backpressure management and client disconnect detection in asynchronous HTTP/2 connections.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 21.1: Production FastAPI Asynchronous SSE Streaming Server (`StreamingResponse`).</li><li>Program 21.2: Streamlit Agent Studio UI with Live Thought Accordions and HITL Buttons.</li><li>Program 21.3: Asynchronous Python SSE Client with Reconnection and Keep-Alive Handling.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Buffering Proxy Stall: An intermediate Nginx reverse proxy buffers SSE chunks, destroying real-time streaming.</li><li>Zombie Background Tasks: Failing to catch client disconnects, causing the agent to burn tokens after the user closed the browser.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> FastAPI SSE Streaming Server & Streamlit Agent Studio • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. Formal Mechanics of Real-Time Agent Streaming: SSE Protocol & Latency Dynamics</h2>
+                <p>When an agent executes multi-step tool calls, total round-trip time is the sum of prompt processing, vector retrieval, and autoregressive generation:</p>
+
+                <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
+                    $$T_{\text{total}} = T_{\text{TTFT}} + \sum_{k=1}^K T_{\text{tool}, k} + (N_{\text{tokens}} - 1) \cdot \text{TPOT}$$
+                </div>
+
+                <p>If $T_{\text{total}} = 12.8\text{ seconds}$, a traditional HTTP POST endpoint leaves the client browser hanging with a blank spinner, triggering gateway timeouts (HTTP 504) and user frustration. Under <strong>Server-Sent Events (SSE)</strong>, the server establishes a persistent unidirectional connection with chunked transfer encoding (<code>Transfer-Encoding: chunked</code>) conforming to the W3C EventSource standard:</p>
+
+                <div style="padding: 1rem; background: var(--code-bg); border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 0.85rem; margin: 1rem 0; border: 1px solid var(--border-color);">
+event: thought<br>
+data: {"step": "vector_search", "query": "quarterly revenue 2025"}<br><br>
+event: token<br>
+data: {"token": "The"}<br><br>
+event: token<br>
+data: {"token": " quarterly"}<br><br>
+event: end<br>
+data: {"status": "SUCCESS", "total_tokens": 142}
+                </div>
+
+                <p>By streaming intermediate tool events and tokens as they are generated, the user-perceived latency drops from $T_{\text{total}}$ to <strong>Time-To-First-Token ($T_{\text{TTFT}} \approx 450\text{ms}$)</strong>, an order of magnitude improvement in user experience.</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Architecture Blueprint: The 4-Tier Enterprise Agent Stack</h2>
+                <p>The diagram below illustrates the decoupled architecture of an enterprise agent product:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color); font-size: 0.85rem; line-height: 1.45;">
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span> <span style="color: #3b82f6; font-weight: bold;">ENTERPRISE AGENT PRODUCT ARCHITECTURE</span>                                            <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>  PRESENTATION TIER: Streamlit (Internal Ops) / React-Next.js (Public SaaS)        <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - Message Thread Rendering                - Collapsible Tool Accordions          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - Interactive Human Approval Buttons      - Real-time SSE Token Consumer         <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------+-----------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>                                         | HTTP POST / EventSource (SSE)           <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                         v                                         <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  API GATEWAY TIER: Asynchronous FastAPI Service                                   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - JWT / API Key Authentication            - Redis Token-Bucket Rate Limiter      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - Pydantic v2 Request/Response Models     - StreamingResponse Generator          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------+-----------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>                                         | Asynchronous Task Dispatch              <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                         v                                         <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  ORCHESTRATION TIER: Compiled LangGraph State Machine                             <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - Persistent Checkpointer (Postgres/SQLite)                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - Astream Event Bus (`app.astream_events(version="v2")`)                         <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - Security Guardrails & Interrupt Gates                                          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------+-----------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>                                         | OpenTelemetry Traces                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                         v                                         <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  OBSERVABILITY TIER: Prometheus + Grafana / LangSmith / OpenInference             <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - Token Cost Tracker ($/user)             - Step Execution Latency Histograms    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 21.0-1: 4-Tier Production Agent Architecture</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Complete Python Implementation 1: Production FastAPI Backend with SSE Token Streaming</h2>
+                <p>This script sets up a production-ready FastAPI service featuring Pydantic v2 schemas, API key validation, and an asynchronous Server-Sent Events (SSE) streaming endpoint powered by LangGraph's <code>astream_events</code> protocol.</p>
+
+                <div class="code-header">
+                    <span>program_21_1_fastapi_sse_server.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 21.1: Production FastAPI Agent Gateway with SSE Token Streaming
+Implements Pydantic v2 validation, API key auth, and asynchronous chunk streaming.
+"""
+
+import asyncio
+import json
+from typing import AsyncGenerator
+from fastapi import FastAPI, Header, HTTPException, Depends
+from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+app = FastAPI(
+    title="Enterprise Agent Streaming API",
+    version="1.0.0",
+    description="High-performance async API gateway for autonomous agent execution."
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+API_KEY_SECRET = "corp-prod-secret-9941"
+
+def authenticate_client(x_api_key: str = Header(...)) -> str:
+    if x_api_key != API_KEY_SECRET:
+        raise HTTPException(status_code=401, detail="Unauthorized: Invalid API Key")
+    return x_api_key
+
+class AgentExecutionRequest(BaseModel):
+    query: str = Field(..., example="Analyze quarterly gross margins across APAC region.")
+    session_id: str = Field(..., example="sess_apac_01")
+    temperature: float = Field(0.0, ge=0.0, le=1.0)
+
+async def simulate_agent_event_stream(query: str) -> AsyncGenerator[str, None]:
+    """
+    Simulates LangGraph astream_events(version='v2') yielding SSE data blocks.
+    In production, replace with: async for event in app.astream_events(payload, ...):
+    """
+    # Step 1: Emit Thought / Tool Event
+    yield f"event: thought\ndata: {json.dumps({'status': 'SEARCHING_VECTOR_DB', 'details': f'Querying index for: {query}'})}\n\n"
+    await asyncio.sleep(0.4)
+    
+    # Step 2: Emit Tool Execution
+    yield f"event: thought\ndata: {json.dumps({'status': 'TOOL_EXECUTION', 'tool': 'SqlFinanceQuery', 'query': 'SELECT margin FROM apac_sales'})}\n\n"
+    await asyncio.sleep(0.5)
+
+    # Step 3: Stream Synthesized Response Tokens
+    response_tokens = [
+        "Based", " on", " APAC", " financial", " filings,", " gross", " margins",
+        " expanded", " to", " 42.8%", " in", " Q3,", " reflecting", " an", " increase",
+        " of", " 310", " basis", " points", " YoY."
+    ]
+    
+    for token in response_tokens:
+        yield f"event: token\ndata: {json.dumps({'delta': token})}\n\n"
+        await asyncio.sleep(0.05)
+
+    # Step 4: Emit Terminal Completion Event
+    yield f"event: end\ndata: {json.dumps({'status': 'COMPLETE', 'tokens_emitted': len(response_tokens)})}\n\n"
+
+@app.post("/api/v1/agent/stream", tags=["Streaming"])
+async def stream_agent_execution(
+    request: AgentExecutionRequest,
+    auth: str = Depends(authenticate_client)
+):
+    """Endpoint serving real-time Server-Sent Events to web and mobile clients."""
+    return StreamingResponse(
+        simulate_agent_event_stream(request.query),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no" # Prevents NGINX reverse proxy buffer delays
+        }
+    )
+
+@app.get("/health", tags=["Telemetry"])
+async def health():
+    return {"status": "HEALTHY", "tier": "API_GATEWAY"}
+
+if __name__ == "__main__":
+    import uvicorn
+    print("Starting FastAPI Agent Server on http://localhost:8000 ...")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Complete Python Implementation 2: Streamlit Studio with Thought Accordions & HITL Gate</h2>
+                <p>Streamlit delivers interactive visual dashboards in pure Python. Program 21.2 features collapsible reasoning trees (<code>st.status</code>), thread session persistence, and an interactive Human-in-the-Loop approval gate.</p>
+
+                <div class="code-header">
+                    <span>program_21_2_streamlit_studio.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 21.2: Streamlit Enterprise Agent Studio with Thought Accordions
+Demonstrates multi-turn session chat, collapsible tool execution, and HITL gate.
+"""
+
+import time
+import streamlit as st
+
+st.set_page_config(page_title="Enterprise Agent Cockpit", page_icon="⚡", layout="wide")
+
+# Sidebar Configuration Controls
+st.sidebar.title("🛠️ Agent Configurations")
+model_name = st.sidebar.selectbox("Model Provider", ["gpt-4o", "gpt-4o-mini", "claude-3-5-sonnet"])
+temperature = st.sidebar.slider("Temperature", 0.0, 1.0, 0.2, 0.05)
+enable_db_write = st.sidebar.checkbox("Allow Database Writes (Requires HITL)", value=True)
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = [
+        {"role": "assistant", "content": "Welcome to the Enterprise Agent Cockpit. How can I assist your team today?"}
+    ]
+
+if "pending_approval" not in st.session_state:
+    st.session_state.pending_approval = None
+
+st.title("⚡ Enterprise Autonomous Agent Cockpit")
+st.caption("Connected to LangGraph Pregel Engine | Persistent SQLite Checkpointer Active")
+
+# Render Past Conversation
+for message in st.session_state.chat_history:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Render Pending Human Approval Box if active
+if st.session_state.pending_approval:
+    st.warning("⚠️ High-Impact Operation Pending Human Sign-Off")
+    action_info = st.session_state.pending_approval
+    st.markdown(f"**Proposed Action:** `{action_info['action']}`")
+    st.markdown(f"**Target System:** `{action_info['target']}`")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("✅ Approve & Dispatch", use_container_width=True):
+            st.success("Action approved by operator. Resuming graph execution...")
+            st.session_state.chat_history.append({
+                "role": "assistant",
+                "content": f"Action committed: `{action_info['action']}` executed successfully."
+            })
+            st.session_state.pending_approval = None
+            st.rerun()
+    with col2:
+        if st.button("❌ Reject & Abort", use_container_width=True):
+            st.error("Action aborted by operator. Graph state rolled back.")
+            st.session_state.chat_history.append({
+                "role": "assistant",
+                "content": f"Operation aborted: Operator rejected `{action_info['action']}`."
+            })
+            st.session_state.pending_approval = None
+            st.rerun()
+
+# User Input Processing
+if prompt := st.chat_input("Enter instruction or business query..."):
+    st.session_state.chat_history.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        # Collapsible Reasoning Accordion
+        with st.status("Agent Reasoning & Tool Orchestration...", expanded=True) as status_box:
+            st.write("🔍 **Step 1: Security Triage & Input Guardrail**")
+            time.sleep(0.3)
+            st.write("📂 **Step 2: Vector Similarity Search across Company KB**")
+            time.sleep(0.4)
+            
+            # Check for destructive command trigger
+            if "delete" in prompt.lower() or "drop" in prompt.lower() or "update" in prompt.lower():
+                st.write("🛑 **Step 3: High-Risk Action Detected: Halting at Interrupt Gate**")
+                status_box.update(label="Halted: Awaiting Human Authorization", state="error")
+                st.session_state.pending_approval = {
+                    "action": prompt,
+                    "target": "Production Postgres Cluster"
+                }
+                st.rerun()
+            else:
+                st.write("✍️ **Step 3: Formulating Verified Final Response**")
+                time.sleep(0.3)
+                status_box.update(label="Reasoning Complete!", state="complete", expanded=False)
+
+        # Output final synthesized answer
+        answer = f"Synthesized response for instruction: '{prompt}' using {model_name} (Temp: {temperature}). All guardrails verified."
+        st.markdown(answer)
+        st.session_state.chat_history.append({"role": "assistant", "content": answer})
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Complete Python Implementation 3: SSE Streaming Client with Disconnect Handling</h2>
+                <p>An enterprise backend must be validated by a robust client script. Program 21.3 implements a streaming consumer in Python that parses SSE event blocks and handles graceful connection drops.</p>
+
+                <div class="code-header">
+                    <span>program_21_3_sse_client_consumer.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 21.3: Asynchronous SSE Client Consumer with Telemetry & Disconnect Guard
+Connects to FastAPI SSE endpoints and reconstructs streaming tokens and events.
+"""
+
+import asyncio
+import json
+import httpx
+
+API_URL = "http://localhost:8000/api/v1/agent/stream"
+HEADERS = {
+    "x-api-key": "corp-prod-secret-9941",
+    "Content-Type": "application/json"
+}
+
+async def consume_agent_stream(query: str):
+    payload = {
+        "query": query,
+        "session_id": "client_sess_501",
+        "temperature": 0.0
+    }
+    
+    print(f"Connecting to Agent SSE Stream at {API_URL}...")
+    start_time = asyncio.get_event_loop().time()
+    first_token_time = None
+    token_count = 0
+    
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        try:
+            async with client.stream("POST", API_URL, json=payload, headers=HEADERS) as response:
+                if response.status_code != 200:
+                    print(f"Error: Server returned status {response.status_code}")
+                    return
+                
+                print("Stream Connected! Receiving events:\n" + "-"*50)
+                current_event = None
+                
+                async for line in response.aiter_lines():
+                    if not line:
+                        continue
+                    
+                    if line.startswith("event: "):
+                        current_event = line.replace("event: ", "").strip()
+                    elif line.startswith("data: "):
+                        raw_data = line.replace("data: ", "").strip()
+                        data_json = json.loads(raw_data)
+                        
+                        if current_event == "thought":
+                            print(f"  [THOUGHT STEP] {data_json.get('status')} -> {data_json.get('details', '')}")
+                        elif current_event == "token":
+                            if first_token_time is None:
+                                first_token_time = asyncio.get_event_loop().time()
+                                ttft = (first_token_time - start_time) * 1000
+                                print(f"\n⚡ Time To First Token (TTFT): {ttft:.1f} ms\n--- STREAMED OUTPUT ---")
+                            
+                            delta = data_json.get("delta", "")
+                            print(delta, end="", flush=True)
+                            token_count += 1
+                        elif current_event == "end":
+                            total_time = (asyncio.get_event_loop().time() - start_time)
+                            print(f"\n\n--- STREAM COMPLETE ---")
+                            print(f"Total Tokens: {token_count} | Duration: {total_time:.2f}s")
+                            
+        except httpx.ConnectError:
+            print("Connection failed: Is the FastAPI server running on localhost:8000?")
+
+if __name__ == "__main__":
+    test_query = "What were our top performing automotive parts in Q2?"
+    asyncio.run(consume_agent_stream(test_query))
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Operational Gotchas</h2>
+
+                <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #ef4444; margin-top: 0;">Gotcha 1: Zombie LLM Generation on Client Disconnect</h4>
+                    <p><strong>The Failure:</strong> A user submits a query, but closes their browser tab after 2 seconds. The client socket disconnects, but the FastAPI backend continues executing costly multi-step LLM calls in the background, consuming hundreds of dollars in unread tokens.</p>
+                    <p><strong>Production Fix:</strong> Check <code>await request.is_disconnected()</code> inside the streaming generator loop. If true, immediately break the generator and cancel the downstream LangGraph background task.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #f59e0b; margin-top: 0;">Gotcha 2: Streamlit Script Re-Execution Race Conditions</h4>
+                    <p><strong>The Failure:</strong> Streamlit reruns the entire Python script from line 1 on every user widget interaction. Storing graph instances or unpickled database connections directly in global variables causes re-instantiation on every click, wiping ephemeral caches.</p>
+                    <p><strong>Production Fix:</strong> Use <code>st.cache_resource</code> for global stateful objects (LangGraph compiled apps, database connection pools) and <code>st.session_state</code> for user-specific conversation history.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(59, 130, 246, 0.08); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #3b82f6; margin-top: 0;">Gotcha 3: Reverse Proxy SSE Buffer Freezes (NGINX / Cloudflare)</h4>
+                    <p><strong>The Failure:</strong> The FastAPI server streams tokens, but the user sees nothing for 10 seconds, followed by the entire answer arriving in one single burst. Reverse proxies (NGINX, Envoy) buffer HTTP responses by default to optimize packet sizes.</p>
+                    <p><strong>Production Fix:</strong> Include the header <code>X-Accel-Buffering: no</code> in FastAPI's <code>StreamingResponse</code>, and configure NGINX with <code>proxy_buffering off;</code> for all streaming agent routes.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
+                    
+                    <!-- Question 1 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">1. Why is Server-Sent Events (SSE) preferred over standard HTTP POST for agent responses?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q1" value="A"> A) It eliminates the need for SSL encryption</label></li>
+                            <li><label><input type="radio" name="q1" value="B"> B) It drastically reduces perceived user latency (TTFT) by streaming tokens and tool status blocks as they are computed</label></li>
+                            <li><label><input type="radio" name="q1" value="C"> C) It runs exclusively on UDP sockets</label></li>
+                            <li><label><input type="radio" name="q1" value="D"> D) It reduces model temperature</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q1', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q1-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">2. What HTTP response header is mandatory to prevent NGINX reverse proxies from buffering SSE token streams?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q2" value="A"> A) <code>X-Accel-Buffering: no</code></label></li>
+                            <li><label><input type="radio" name="q2" value="B"> B) <code>Content-Type: application/zip</code></label></li>
+                            <li><label><input type="radio" name="q2" value="C"> C) <code>Cache-Control: public</code></label></li>
+                            <li><label><input type="radio" name="q2" value="D"> D) <code>Server: Apache</code></label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q2', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q2-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">3. In Streamlit, why should database connections and compiled LangGraph apps be wrapped in <code>@st.cache_resource</code>?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q3" value="A"> A) To encrypt the source code</label></li>
+                            <li><label><input type="radio" name="q3" value="B"> B) To prevent re-instantiating heavy stateful objects every time Streamlit reruns the script upon user interaction</label></li>
+                            <li><label><input type="radio" name="q3" value="C"> C) To translate Python into JavaScript</label></li>
+                            <li><label><input type="radio" name="q3" value="D"> D) To limit memory usage to 128MB</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q3', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q3-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">4. What is the standard W3C MIME type for Server-Sent Events?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q4" value="A"> A) <code>application/json</code></label></li>
+                            <li><label><input type="radio" name="q4" value="B"> B) <code>text/event-stream</code></label></li>
+                            <li><label><input type="radio" name="q4" value="C"> C) <code>multipart/form-data</code></label></li>
+                            <li><label><input type="radio" name="q4" value="D"> D) <code>text/html</code></label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q4', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q4-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">5. How does a FastAPI server detect that a client closed their browser tab during an active SSE stream?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q5" value="A"> A) By pinging the client's home IP</label></li>
+                            <li><label><input type="radio" name="q5" value="B"> B) By evaluating <code>await request.is_disconnected()</code> inside the generator loop</label></li>
+                            <li><label><input type="radio" name="q5" value="C"> C) By checking system RAM</label></li>
+                            <li><label><input type="radio" name="q5" value="D"> D) It cannot detect client disconnects</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q5', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q5-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">6. In an agent user interface, why are collapsible thought accordions (e.g. <code>st.status</code>) critical?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q6" value="A"> A) They hide errors so the user cannot see bugs</label></li>
+                            <li><label><input type="radio" name="q6" value="B"> B) They provide transparency and explainability by showing intermediate tool steps while keeping the main UI clean</label></li>
+                            <li><label><input type="radio" name="q6" value="C"> C) They double the font size</label></li>
+                            <li><label><input type="radio" name="q6" value="D"> D) They prevent SQL injections</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q6', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q6-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">7. What library does FastAPI rely on for strict JSON schema enforcement and request validation?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q7" value="A"> A) Pydantic</label></li>
+                            <li><label><input type="radio" name="q7" value="B"> B) PyTorch</label></li>
+                            <li><label><input type="radio" name="q7" value="C"> C) NumPy</label></li>
+                            <li><label><input type="radio" name="q7" value="D"> D) Beautiful Soup</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q7', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q7-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 8 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">8. Which metric measures the elapsed time between user request submission and the arrival of the first generated word?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q8" value="A"> A) TPOT (Time Per Output Token)</label></li>
+                            <li><label><input type="radio" name="q8" value="B"> B) TTFT (Time To First Token)</label></li>
+                            <li><label><input type="radio" name="q8" value="C"> C) MTBF (Mean Time Between Failures)</label></li>
+                            <li><label><input type="radio" name="q8" value="D"> D) FLOPS</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q8', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q8-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 9 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">9. In Streamlit, where should conversational chat history across multiple user turns be stored?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q9" value="A"> A) In <code>st.session_state</code></label></li>
+                            <li><label><input type="radio" name="q9" value="B"> B) In a global Python list variable</label></li>
+                            <li><label><input type="radio" name="q9" value="C"> C) In an environment variable</label></li>
+                            <li><label><input type="radio" name="q9" value="D"> D) In the browser cookie directly</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q9', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q9-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 10 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">10. What is the consequence of failing to implement rate limiting on an agent API?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q10" value="A"> A) The CSS styles will fail to render</label></li>
+                            <li><label><input type="radio" name="q10" value="B"> B) Denial of Wallet attacks and sudden budget exhaustion from automated crawlers or loops</label></li>
+                            <li><label><input type="radio" name="q10" value="C"> C) The server runs out of disk space instantly</label></li>
+                            <li><label><input type="radio" name="q10" value="D"> D) Python upgrades itself automatically</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q10', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q10-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>8. Hands-On Engineering Assignments</h2>
+                
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 21.1: Build an SSE Fast-Streaming Endpoint with Disconnect Guards</h4>
+                    <p><strong>Specification:</strong> Implement a FastAPI endpoint that streams tokens from a LangChain chain. Wrap the generator with an active cancellation checker: if <code>await request.is_disconnected()</code> triggers, log the cancellation event and immediately terminate model execution.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #10b981; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 21.2: Multi-Turn Streamlit App with Model Switching</h4>
+                    <p><strong>Specification:</strong> Build a Streamlit application that allows the user to switch dynamically between OpenAI and Anthropic models via a sidebar dropdown. Preserve full conversation history in <code>st.session_state</code> across model switches.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 21.3: Real-Time Human Approval Gate in Streamlit</h4>
+                    <p><strong>Specification:</strong> Wire a LangGraph workflow containing an <code>interrupt_before=["commit_action"]</code> node to a Streamlit frontend. When the graph pauses, render Approve and Reject buttons. Demonstrate resuming the thread from the exact checkpoint when clicked.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #8b5cf6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 21.4: Benchmarking TTFT vs Perceived Latency</h4>
+                    <p><strong>Specification:</strong> Write an automated test script using <code>httpx</code> that measures the Time To First Token (TTFT) and Total Execution Time for 20 queries across non-streaming vs SSE streaming endpoints. Plot the latency distribution in a comparative bar chart.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #ec4899; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 21.5: Dockerized NGINX Reverse Proxy for SSE</h4>
+                    <p><strong>Specification:</strong> Create a <code>docker-compose.yml</code> file containing an NGINX container routing traffic to a FastAPI service. Configure <code>proxy_buffering off;</code> and verify that token streaming is delivered in real time without buffering delays.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">W3C Standard</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Web Standard</span>
+                            </div>
+                            <h4>Server-Sent Events (SSE) W3C Recommendation</h4>
+                            <p>The official web standard defining the text/event-stream MIME type and client EventSource interface.</p>
+                            <a href="https://www.w3.org/TR/eventsource/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">FastAPI Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">FastAPI</span>
+                            </div>
+                            <h4>FastAPI Streaming Responses & Server-Sent Events</h4>
+                            <p>Official guide on yielding event streams via Starlette's StreamingResponse and handling client disconnects.</p>
+                            <a href="https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Streamlit Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">UI Framework</span>
+                            </div>
+                            <h4>Streamlit Chat Elements & Streaming (`st.chat_message`, `st.status`)</h4>
+                            <p>Official documentation for building conversational interfaces with live status containers and streaming text.</p>
+                            <a href="https://docs.streamlit.io/develop/api-reference/chat" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Mozilla MDN</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Web API</span>
+                            </div>
+                            <h4>Using Server-Sent Events with EventSource API</h4>
+                            <p>MDN comprehensive reference for consuming streaming event feeds in modern web browsers.</p>
+                            <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        function checkAnswer(questionName, correctAnswer, btnElement) {
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            const feedback = document.getElementById(`${questionName}-feedback`);
+            if (!selected) {
+                feedback.style.display = "block";
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "Please select an option before checking.";
+                return;
+            }
+            feedback.style.display = "block";
+            if (selected.value === correctAnswer) {
+                feedback.style.color = "#10b981";
+                feedback.textContent = "✓ Correct! " + getExplanation(questionName);
+            } else {
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "✗ Incorrect. " + getExplanation(questionName);
+            }
+        }
+
+        function getExplanation(questionName) {
+            const explanations = {
+                "q1": "SSE streams tokens incrementally, cutting perceived latency (TTFT) from 10+ seconds down to a few hundred milliseconds.",
+                "q2": "X-Accel-Buffering: no instructs reverse proxies like NGINX not to buffer chunked responses.",
+                "q3": "Streamlit reruns scripts from top to bottom on each interaction; @st.cache_resource keeps heavy objects in memory across reruns.",
+                "q4": "The standard MIME type for SSE streams is text/event-stream.",
+                "q5": "FastAPI enables checking request.is_disconnected() to cancel running LLM tasks when users close connections.",
+                "q6": "Collapsible accordions show intermediate tool steps, maintaining explainability and user trust without cluttering the screen.",
+                "q7": "FastAPI uses Pydantic models for validation, serialization, and auto-generated OpenAPI documentation.",
+                "q8": "Time To First Token (TTFT) measures the latency until the initial token is received by the client.",
+                "q9": "st.session_state is the standard mechanism in Streamlit to persist chat history across script reruns.",
+                "q10": "Unprotected endpoints risk Denial of Wallet attacks where automated bots exhaust cloud LLM budgets with endless requests."
+            };
+            return explanations[questionName] || "";
+        }
+
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const code = pre.querySelector('code');
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => { button.textContent = 'Copy Code'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

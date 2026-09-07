@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 9: The Agentic Mindset: Assistant vs. Workflow vs. Agent</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li class="active"><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>38%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 9.0</span>
+                <h1>Day 9: The Agentic Mindset: Assistant vs. Workflow vs. Agent</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> Millions of engineers interact with ChatGPT daily, but a conversational chatbot cannot run an autonomous enterprise. If you assign a complex business objective like: <em>"Audit our top 3 competitors, compare their electric vehicle range against our internal test telemetry, generate a competitive pricing matrix, and commit the report to Git,"</em> a chatbot stops after a single generic paragraph. Why isn't a chatbot enough, and what exact architectural mechanics turn an LLM into an Autonomous Agent?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 2.0</span>
+                            <span class="plan-badge plan-badge-secondary">Week 2</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Mathematically formalize autonomous agent reasoning loops as Partially Observable Markov Decision Processes (POMDPs).</li><li>Analyze and mitigate quadratic cumulative token growth ($\mathcal{O}(N^2)$) in multi-turn reasoning chains.</li><li>Implement Reflexion episodic memory and verbal critique to prevent repetitive agent mistakes.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>POMDP formalization: State $S$, Action $A$, Transition $\mathcal{T}$, Reward $\mathcal{R}$, Observation $\Omega$, Emission $\mathcal{O}$.</li><li>Quadratic context window scaling: Total Tokens $= \sum_{i=1}^N (P + i \cdot \Delta) = N \cdot P + rac{N(N+1)}{2}\Delta$.</li><li>Reflexion episodic memory buffers: Storing verbal self-critiques to condition subsequent trial trajectories.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 9.1: Bounded ReAct Agent Loop with Real-Time Quadratic Token Telemetry.</li><li>Program 9.2: Reflexion Episodic Memory Engine with Verbal Self-Critique and Trial Re-runs.</li><li>Program 9.3: Multi-Path Tool Execution Fallback with Dynamic Schema Recovery.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Infinite Thought Loops: Agent loops between identical Thought and Action states without generating new observations.</li><li>Context Window Saturation: ReAct loop exceeds context length due to verbose observations, crashing the LLM call.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Bounded ReAct & Reflexion Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Spectrum of AI Autonomy: Assistant vs. Workflow vs. Agent</h2>
+                <p>To architect production agentic systems, you must clearly distinguish between the three stages of modern AI software engineering:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #ef4444; font-weight: bold;">1. SIMPLE ASSISTANT (Chatbot / Single-Turn):</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">User Prompt &rarr; LLM &rarr; Output Text. (Zero tools, zero environment feedback, human drives every step).</div>
+                        
+                        <div style="color: #f59e0b; font-weight: bold; margin-top: 1rem;">2. STATIC WORKFLOW (Hardcoded DAG Chain):</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">Extract &rarr; SQL Query &rarr; Format &rarr; Email. (Fixed Directed Acyclic Graph. Predictable, but crashes if any API returns unexpected schema).</div>
+                        
+                        <div style="color: #10b981; font-weight: bold; margin-top: 1rem;">3. AUTONOMOUS AGENT (ReAct Loop):</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">Goal &rarr; [Thought &rarr; Tool Call &rarr; Observation &rarr; Reflection] &times; N &rarr; Terminal Condition.<br>(LLM dynamically drives execution path, handles failures, and decides termination).</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 9.0-1: The Three Paradigms of Modern AI Software Architecture</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Mathematical Formalization: The Agent as a Markov Decision Process (MDP)</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">Formal Agent-Environment Interaction</h3>
+                    <p>An autonomous agent operating within an external software environment can be modeled as a discrete-time Partially Observable Markov Decision Process (POMDP) defined by the tuple $(\mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \Omega, \mathcal{O})$:</p>
+                    <ul style="padding-left: 1.2rem;">
+                        <li><strong>$\mathcal{S}$ (State Space):</strong> The ground-truth state of the external environment (e.g., database records, files on disk, remote API state).</li>
+                        <li><strong>$\mathcal{A}$ (Action Space):</strong> The set of valid tool invocations (e.g., <code>web_search(query)</code>, <code>run_sql(query)</code>) plus the terminal action <code>FINISH(answer)</code>.</li>
+                        <li><strong>$\Omega$ (Observation Space):</strong> The textual/JSON responses returned by tools when executed.</li>
+                        <li><strong>$H_t$ (Context History at step $t$):</strong> The accumulated trajectory in the LLM's context window:
+                            $$H_t = (u, c_1, a_1, o_1, c_2, a_2, o_2, \dots, c_t, a_t, o_t)$$
+                            where $u$ is the user goal, $c_i$ is the internal chain-of-thought, $a_i \in \mathcal{A}$ is the action, and $o_i \in \Omega$ is the observation.</li>
+                    </ul>
+
+                    <h4 style="color: #f59e0b; margin-top: 1.2rem;">Cumulative Quadratic Token Physics</h4>
+                    <p>At turn $t$, the LLM must ingest the entire cumulative history $H_t$ to predict action $a_{t+1}$. If each turn produces an average of $\bar{L}$ tokens between thought, tool call, and observation:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #f59e0b; margin: 1rem 0;">
+                        \text{Total Tokens Billed across } N \text{ turns} = \sum_{t=1}^N (T_0 + t \cdot \bar{L}) = N \cdot T_0 + \bar{L} \cdot \frac{N(N+1)}{2} = \mathcal{O}(N^2)
+                    </div>
+                    <p style="margin-bottom: 0;"><strong>Engineering Implication:</strong> Agent trajectories exhibit <strong>quadratic token growth $\mathcal{O}(N^2)$</strong>. If an agent loops 15 times with 1,000-token tool observations, token consumption does not scale linearly; it burns over 120,000 billed input tokens! Unbounded agent loops are financial emergencies.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: Production Bounded ReAct Agent Loop with Token Telemetry</h2>
+                <p>The implementation below features an autonomous ReAct loop with hard turn limits, dynamic tool dispatching, token accounting, and explicit termination detection:</p>
+
+                <div class="code-header">
+                    <span>program_9_1_bounded_react_agent.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 9.0-1: Production Bounded ReAct Autonomous Agent Loop with Token Telemetry
+import json
+import time
+from typing import List, Dict, Any, Optional
+from openai import OpenAI
+
+client = OpenAI()
+
+# --- TOOL REGISTRY ---
+def query_ev_telemetry(model_name: str) -> str:
+    """Mock database of automotive vehicle specs and battery metrics."""
+    fleet = {
+        "tata nexon ev": {"battery_kwh": 40.5, "range_km": 465, "price_inr_lakh": 14.49, "fast_charge_min": 56},
+        "mahindra xuv400": {"battery_kwh": 39.4, "range_km": 456, "price_inr_lakh": 15.49, "fast_charge_min": 50},
+        "mg zs ev": {"battery_kwh": 50.3, "range_km": 461, "price_inr_lakh": 18.98, "fast_charge_min": 60}
+    }
+    key = model_name.strip().lower()
+    for name, data in fleet.items():
+        if name in key or key in name:
+            return json.dumps({"status": "found", "vehicle": name, "specs": data})
+    return json.dumps({"status": "not_found", "message": f"No telemetry on record for '{model_name}'."})
+
+def calculate_cost_per_km(battery_kwh: float, range_km: float, electricity_rate_inr: float = 8.5) -> str:
+    """Calculates operational cost per kilometer for an EV."""
+    if range_km <= 0:
+        return json.dumps({"status": "error", "message": "Range must be positive."})
+    cost_per_charge = battery_kwh * electricity_rate_inr
+    cost_per_km = cost_per_charge / range_km
+    return json.dumps({
+        "status": "success",
+        "battery_kwh": battery_kwh,
+        "range_km": range_km,
+        "cost_per_km_inr": round(cost_per_km, 3)
+    })
+
+tools_schema = [
+    {
+        "type": "function",
+        "function": {
+            "name": "query_ev_telemetry",
+            "description": "Look up battery capacity, range, and price for electric vehicles",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "model_name": {"type": "string", "description": "Name of EV model (e.g., Tata Nexon EV)"}
+                },
+                "required": ["model_name"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate_cost_per_km",
+            "description": "Calculate operating cost in INR per km based on battery capacity and range",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "battery_kwh": {"type": "number", "description": "Battery pack capacity in kWh"},
+                    "range_km": {"type": "number", "description": "ARAI rated range in kilometers"},
+                    "electricity_rate_inr": {"type": "number", "description": "Cost per kWh in INR (default: 8.5)"}
+                },
+                "required": ["battery_kwh", "range_km"]
+            }
+        }
+    }
+]
+
+def run_bounded_agent(goal: str, max_turns: int = 5) -> Dict[str, Any]:
+    print("=" * 65)
+    print(f"AGENT INITIALIZED. GOAL:\n'{goal}'")
+    print("=" * 65)
+    
+    messages: List[Dict[str, Any]] = [
+        {
+            "role": "system",
+            "content": (
+                "You are an Autonomous Automotive Intelligence Agent. "
+                "You reason sequentially using the ReAct paradigm: Thought -> Action -> Observation. "
+                "Call tools to retrieve facts, compute operational metrics, and terminate only when the user goal is fully answered."
+            )
+        },
+        {"role": "user", "content": goal}
+    ]
+    
+    total_prompt_tokens = 0
+    total_completion_tokens = 0
+    start_time = time.perf_counter()
+    
+    for turn in range(1, max_turns + 1):
+        print(f"\n--> [Turn {turn}/{max_turns}] Generating Reasoning / Tool Action...")
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            tools=tools_schema,
+            temperature=0.1
+        )
+        
+        usage = response.usage
+        total_prompt_tokens += usage.prompt_tokens
+        total_completion_tokens += usage.completion_tokens
+        
+        msg = response.choices[0].message
+        messages.append(msg)
+        
+        # Check termination: If no tool calls were made, the agent decided it is done!
+        if not msg.tool_calls:
+            print(f"&check; [TERMINAL CONDITION REACHED] Agent determined goal is satisfied on Turn {turn}.")
+            elapsed = time.perf_counter() - start_time
+            return {
+                "final_answer": msg.content,
+                "turns_taken": turn,
+                "elapsed_seconds": round(elapsed, 2),
+                "total_prompt_tokens": total_prompt_tokens,
+                "total_completion_tokens": total_completion_tokens
+            }
+            
+        # Execute tool calls
+        for tc in msg.tool_calls:
+            fn = tc.function.name
+            args = json.loads(tc.function.arguments)
+            print(f"    [ACTION] Executing tool: {fn}({args})")
+            
+            if fn == "query_ev_telemetry":
+                tool_output = query_ev_telemetry(args.get("model_name", ""))
+            elif fn == "calculate_cost_per_km":
+                tool_output = calculate_cost_per_km(
+                    args.get("battery_kwh", 0),
+                    args.get("range_km", 0),
+                    args.get("electricity_rate_inr", 8.5)
+                )
+            else:
+                tool_output = json.dumps({"error": f"Tool '{fn}' not registered."})
+                
+            print(f"    [OBSERVATION] Output: {tool_output}")
+            messages.append({
+                "role": "tool",
+                "tool_call_id": tc.id,
+                "content": tool_output
+            })
+
+    return {
+        "final_answer": "ERROR: Max iteration budget exhausted without convergence.",
+        "turns_taken": max_turns,
+        "elapsed_seconds": round(time.perf_counter() - start_time, 2),
+        "total_prompt_tokens": total_prompt_tokens,
+        "total_completion_tokens": total_completion_tokens
+    }
+
+if __name__ == "__main__":
+    test_goal = "Compare the operational cost per km between the Tata Nexon EV and Mahindra XUV400 assuming 9.0 INR/kWh electricity."
+    result = run_bounded_agent(test_goal)
+    print("\n" + "=" * 30 + " FINAL REPORT " + "=" * 30)
+    print(result["final_answer"])
+    print(f"\n[Telemetry] Turns: {result['turns_taken']} | Prompt Tokens: {result['total_prompt_tokens']} | Elapsed: {result['elapsed_seconds']}s")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 9.0-1: Bounded Autonomous ReAct Loop with Tool Telemetry and Token Physics</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: The Reflexion Architecture (Self-Critique & Memory)</h2>
+                <p>Standard agents fail when a tool returns an unexpected error and the agent repeats the exact same failing query in the next turn (the "Groundhog Day Loop"). The <strong>Reflexion Architecture</strong> (Shinn et al., 2023) equips the agent with verbal self-reflection stored in an episodic memory buffer:</p>
+
+                <div class="code-header">
+                    <span>program_9_2_reflexion_agent.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 9.0-2: Reflexion Architecture: Self-Critique with Episodic Memory Buffer
+from typing import List, Dict, Any
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+client = OpenAI()
+
+class TaskEvaluation(BaseModel):
+    is_successful: bool
+    critique: str = Field(description="Honest diagnosis of why the previous attempt succeeded or failed")
+    actionable_remedy: str = Field(description="Concrete change to make in the next trial")
+
+class ReflexionMemory:
+    def __init__(self):
+        self.reflections: List[str] = []
+
+    def add_critique(self, trial_num: int, critique: str, remedy: str):
+        self.reflections.append(f"[Trial {trial_num} Critique]: {critique}\n[Remedy]: {remedy}")
+
+    def get_memory_context(self) -> str:
+        if not self.reflections:
+            return "No prior failures on record."
+        return "\n\n".join(self.reflections)
+
+def generate_trial_code(task: str, memory: ReflexionMemory) -> str:
+    """Generates code conditioned on past trial critiques."""
+    prompt = f"""
+    You are a software agent tasked with solving:
+    "{task}"
+    
+    CRITICAL - PAST FAILURE MEMORY:
+    {memory.get_memory_context()}
+    
+    Write Python code to solve the task. Ensure you do NOT repeat any past errors flagged in the critique.
+    Return ONLY pure Python code.
+    """
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.0
+    )
+    return res.choices[0].message.content.replace("```python", "").replace("```", "").strip()
+
+def evaluate_and_reflect(task: str, code: str) -> TaskEvaluation:
+    """Evaluates output and formulates verbal self-critique."""
+    eval_prompt = f"""
+    Evaluate if this Python solution for: '{task}' is robust.
+    Code:
+    {code}
+    
+    Check for:
+    1. Edge cases (division by zero, empty inputs)
+    2. Correct mathematical formula
+    3. Type errors
+    """
+    comp = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": eval_prompt}],
+        response_format=TaskEvaluation,
+        temperature=0.0
+    )
+    return comp.choices[0].message.parsed
+
+def run_reflexion_loop(task: str, max_trials: int = 3) -> str:
+    memory = ReflexionMemory()
+    
+    for trial in range(1, max_trials + 1):
+        print(f"\n--> [Trial {trial}/{max_trials}] Synthesizing solution...")
+        code = generate_trial_code(task, memory)
+        print(f"    Proposed Code:\n    {code[:80]}...")
+        
+        evaluation = evaluate_and_reflect(task, code)
+        
+        if evaluation.is_successful:
+            print(f"&check; [SUCCESS on Trial {trial}] Code passed evaluation!")
+            return code
+        else:
+            print(f"&cross; [TRIAL {trial} FAILED] Critique: {evaluation.critique}")
+            print(f"    Actionable Remedy: {evaluation.actionable_remedy}")
+            memory.add_critique(trial, evaluation.critique, evaluation.actionable_remedy)
+            
+    return code
+
+if __name__ == "__main__":
+    task_desc = "Write a function calculate_weighted_average(values, weights) handling mismatched lengths and zero total weight safely."
+    final_code = run_reflexion_loop(task_desc)
+    print("\n" + "=" * 25 + " FINAL REFLECTED CODE " + "=" * 25)
+    print(final_code)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 9.0-2: Reflexion Architecture with Verbal Self-Critique and Episodic Memory</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: Multi-Path Tool Selection with Dynamic Fallback</h2>
+                <p>Autonomous agents must survive unexpected environment degradation. If a primary REST API fails with HTTP 503 or an API rate-limit occurs, the agent must autonomously fall back to secondary data sources rather than failing the run:</p>
+
+                <div class="code-header">
+                    <span>program_9_3_dynamic_fallback.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 9.0-3: Resilient Agent with Dynamic Tool Fallback & Error Routing
+import json
+from openai import OpenAI
+
+client = OpenAI()
+
+# Tool 1: Flaky primary API
+def fetch_stock_quote_live(ticker: str) -> str:
+    """Primary high-precision API (simulates 503 outage)."""
+    return json.dumps({"status": "error", "code": 503, "message": "Primary market data feed temporarily unavailable."})
+
+# Tool 2: Reliable fallback cache
+def fetch_stock_quote_cached(ticker: str) -> str:
+    """Fallback cache with yesterday's closing price."""
+    prices = {"RELIANCE": 2980.50, "TCS": 4150.00, "INFY": 1820.75}
+    sym = ticker.upper()
+    if sym in prices:
+        return json.dumps({"status": "success", "source": "cached_eod", "ticker": sym, "close_price_inr": prices[sym]})
+    return json.dumps({"status": "not_found", "message": f"Ticker {sym} not found."})
+
+tools_def = [
+    {
+        "type": "function",
+        "function": {
+            "name": "fetch_stock_quote_live",
+            "description": "Fetch real-time live stock price from national exchange",
+            "parameters": {
+                "type": "object",
+                "properties": {"ticker": {"type": "string"}},
+                "required": ["ticker"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "fetch_stock_quote_cached",
+            "description": "Fetch fallback cached end-of-day closing price if live feed is offline",
+            "parameters": {
+                "type": "object",
+                "properties": {"ticker": {"type": "string"}},
+                "required": ["ticker"]
+            }
+        }
+    }
+]
+
+def query_resilient_financial_agent(query: str) -> str:
+    messages = [
+        {"role": "system", "content": "You are a financial agent. If the live feed fails, automatically switch to cached fallback data."},
+        {"role": "user", "content": query}
+    ]
+    
+    for turn in range(4):
+        resp = client.chat.completions.create(model="gpt-4o-mini", messages=messages, tools=tools_def)
+        msg = resp.choices[0].message
+        messages.append(msg)
+        
+        if not msg.tool_calls:
+            return msg.content
+            
+        for tc in msg.tool_calls:
+            fn = tc.function.name
+            args = json.loads(tc.function.arguments)
+            print(f"  [Turn {turn+1}] Agent calling: {fn}({args})")
+            
+            if fn == "fetch_stock_quote_live":
+                out = fetch_stock_quote_live(args["ticker"])
+            elif fn == "fetch_stock_quote_cached":
+                out = fetch_stock_quote_cached(args["ticker"])
+            else:
+                out = json.dumps({"error": "Unknown tool"})
+                
+            print(f"     Tool Returned: {out}")
+            messages.append({"role": "tool", "tool_call_id": tc.id, "content": out})
+            
+    return "Failed to resolve query."
+
+if __name__ == "__main__":
+    result = query_resilient_financial_agent("What is the current stock price of TCS?")
+    print(f"\nFinal Agent Resolution:\n{result}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 9.0-3: Multi-Path Tool Selection with Dynamic Fallback Recovery</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. The Groundhog Day Loop:</strong> When an API returns an error message like <code>{"error": "Invalid format"}</code>, models without explicit reflection often re-execute the exact same command with identical parameters on the next turn, burning token budget until hard crash. <em>Mitigation:</em> Track past tool arguments in a set; throw a programmatic warning if the agent attempts duplicate invocations.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Quadratic Token Drain:</strong> Because the LLM must re-read all prior reasoning, tool inputs, and raw JSON outputs on every turn, cost scales as $\mathcal{O}(N^2)$. <em>Mitigation:</em> Compress old observations after turn 3 using an LLM summarizer or retain only the extracted entity subset in state.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Premature Termination:</strong> Models frequently decide they have satisfied the goal after gathering only partial data (e.g., retrieving specs for car A, but forgetting car B). <em>Mitigation:</em> Pair the agent with an external completion checker gate before returning the answer to the user.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Tool Signature Drift:</strong> Defining vague descriptions (e.g., <code>"date": "the date"</code>) causes the model to guess formats (<code>"2026-09-06"</code> vs <code>"06/09/2026"</code>). <em>Mitigation:</em> Provide regex or ISO-8601 examples directly inside tool parameter descriptions.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Assistant vs. Workflow vs. Agent Architectural Matrix</h2>
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Architecture Factor</th>
+                            <th style="padding: 12px; text-align: left;">Assistant (Chatbot)</th>
+                            <th style="padding: 12px; text-align: left;">Static Workflow (DAG)</th>
+                            <th style="padding: 12px; text-align: left;">Autonomous Agent (ReAct)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Control Flow</td>
+                            <td style="padding: 12px;">Human-driven turn-by-turn</td>
+                            <td style="padding: 12px;">Code-driven static sequence</td>
+                            <td style="padding: 12px;">LLM-driven dynamic feedback loop</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Tool Execution</td>
+                            <td style="padding: 12px;">None (un-grounded)</td>
+                            <td style="padding: 12px;">Hardcoded function calls</td>
+                            <td style="padding: 12px;">Autonomous runtime selection</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Error Adaptation</td>
+                            <td style="padding: 12px;">Zero (requires re-prompting)</td>
+                            <td style="padding: 12px;">Rigid exception handling</td>
+                            <td style="padding: 12px;">Verbal reflection & alternative path discovery</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Token Complexity</td>
+                            <td style="padding: 12px;">$\mathcal{O}(1)$ single turn</td>
+                            <td style="padding: 12px;">$\mathcal{O}(K)$ linear in chain steps</td>
+                            <td style="padding: 12px;">$\mathcal{O}(N^2)$ quadratic cumulative history</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. What differentiates an Autonomous Agent from a standard ChatGPT Assistant?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The agent uses faster internet fiber optic cables.</li>
+                        <li class="mcq-option" data-correct="true">An agent dynamically plans, autonomously invokes tools, observes results, and iterates until its goal is satisfied.</li>
+                        <li class="mcq-option" data-correct="false">Assistants are trained on Python; agents are trained on Java.</li>
+                        <li class="mcq-option" data-correct="false">Assistants can only run on Linux.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. What are the three core phases of the ReAct cognitive loop?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Read, Encrypt, Terminate.</li>
+                        <li class="mcq-option" data-correct="true">Reason (Thought) &rarr; Act (Tool Call) &rarr; Observe (Tool Result).</li>
+                        <li class="mcq-option" data-correct="false">Request, Respond, Refresh.</li>
+                        <li class="mcq-option" data-correct="false">Compile, Link, Execute.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. Why do multi-step agent trajectories exhibit quadratic O(N^2) token growth if uncompressed?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">Because the full cumulative history of thoughts, tool parameters, and observations is re-ingested on every consecutive turn.</li>
+                        <li class="mcq-option" data-correct="false">Because API providers square the token price on weekends.</li>
+                        <li class="mcq-option" data-correct="false">Because JSON strings duplicate on disk.</li>
+                        <li class="mcq-option" data-correct="false">Because GPU memory halves on every iteration.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. How does the agent loop recognize that the goal has been achieved?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">When the user types 'exit' in the terminal.</li>
+                        <li class="mcq-option" data-correct="true">When the LLM finishes reasoning and generates a normal assistant response without calling any external tools.</li>
+                        <li class="mcq-option" data-correct="false">When the computer shuts down.</li>
+                        <li class="mcq-option" data-correct="false">When the token budget reaches zero.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. What is the 'Groundhog Day' failure mode in agentic systems?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">An agent that only works in Pennsylvania.</li>
+                        <li class="mcq-option" data-correct="true">An agent repeatedly invoking the exact same failing tool query in an infinite loop without adapting its parameters.</li>
+                        <li class="mcq-option" data-correct="false">An agent predicting tomorrow's weather accurately.</li>
+                        <li class="mcq-option" data-correct="false">An agent deleting its own system prompt.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. In the Reflexion architecture (Shinn et al.), what role does the episodic memory buffer serve?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">It stores verbal critiques of past failed trials so subsequent attempts do not repeat identified mistakes.</li>
+                        <li class="mcq-option" data-correct="false">It stores credit card numbers for auto-billing.</li>
+                        <li class="mcq-option" data-correct="false">It accelerates Python compiler bytecode generation.</li>
+                        <li class="mcq-option" data-correct="false">It replaces the transformer's multi-head attention.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. Why is an unbounded while True loop considered an anti-pattern in agent engineering?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">While loops are deprecated in Python 3.12.</li>
+                        <li class="mcq-option" data-correct="true">If the model encounters an edge case or confusing tool response, it can loop indefinitely, burning massive API costs.</li>
+                        <li class="mcq-option" data-correct="false">While loops run in 32-bit mode only.</li>
+                        <li class="mcq-option" data-correct="false">OpenAI bans scripts that contain while loops.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What is the fundamental advantage of an Autonomous Agent over a static DAG workflow?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Agents are always cheaper to run than workflows.</li>
+                        <li class="mcq-option" data-correct="true">Agents can dynamically discover alternative paths and recover when intermediate steps yield unexpected data or failures.</li>
+                        <li class="mcq-option" data-correct="false">Agents run locally without internet connectivity.</li>
+                        <li class="mcq-option" data-correct="false">Agents require no programming knowledge.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. When should an engineering team prefer a Static Workflow over an Autonomous Agent?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">When the process is highly deterministic, compliance-regulated, and requires strict latency and cost bounds.</li>
+                        <li class="mcq-option" data-correct="false">When the task is ambiguous and creative.</li>
+                        <li class="mcq-option" data-correct="false">When conducting open-ended competitive market research.</li>
+                        <li class="mcq-option" data-correct="false">Workflows should never be chosen over agents.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. In POMDP terms, what represents the Agent's observation O_t?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The temperature setting of the LLM.</li>
+                        <li class="mcq-option" data-correct="true">The text or JSON payload returned by an invoked tool (database result, web snippet, error code).</li>
+                        <li class="mcq-option" data-correct="false">The user's computer webcam feed.</li>
+                        <li class="mcq-option" data-correct="false">The API key string.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master autonomous agent design and safety engineering.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Hard Financial Budget Limiter</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Add a <code>TokenBudgetGuard</code> to <code>Program 9.0-1</code>. Calculate cost per 1,000 prompt and completion tokens on every turn. If cumulative cost exceeds $0.05 USD, immediately abort the loop with a budget overrun notice.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Loop Detection Sentinel</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Implement an argument-hash tracker in the agent loop. If the agent calls the same tool with identical argument parameters twice in succession, intercept the call and inject an observation: <code>"SYSTEM: Identical tool call repeated. You must vary your query or approach."</code></p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Observation Compressor Node</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> When tool observations exceed 500 characters, route the raw observation through a fast compression prompt that condenses it into key bullet points before appending it to the main message trajectory, neutralizing quadratic token growth.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: 3-Way Automotive Benchmark Agent</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Expand <code>Program 9.0-1</code> to query 3 vehicles (Tata Nexon EV, Mahindra XUV400, MG ZS EV). Require the agent to calculate 5-year ownership costs assuming 15,000 km driven per year at ₹9.0/kWh, returning a sorted markdown comparison table.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Dual-Model Cost Optimization</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Refactor the ReAct loop to use <code>gpt-4o-mini</code> for intermediate tool calling turns (Turns 1 to $N-1$), but dynamically switch to frontier <code>gpt-4o</code> for the final synthesis turn once all observations are gathered.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2210.03629</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">NeurIPS 2022</span>
+                            </div>
+                            <h4>ReAct: Synergizing Reasoning and Acting in Language Models</h4>
+                            <p>Yao et al. pioneer interleaved reasoning traces (Thought) and task-specific actions (Action) with observation feedback.</p>
+                            <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2303.11366</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">NeurIPS 2023</span>
+                            </div>
+                            <h4>Reflexion: Language Agents with Verbal Reinforcement Learning</h4>
+                            <p>Shinn et al. establish linguistic self-reflection buffers allowing agents to learn from execution failures without weights update.</p>
+                            <a href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Classic Paper</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">AI Journal</span>
+                            </div>
+                            <h4>Planning and Acting in Partially Observable Stochastic Domains (POMDPs)</h4>
+                            <p>Kaelbling, Littman, and Cassandra's foundational paper formulating optimal decision-making under uncertainty.</p>
+                            <a href="https://www.sciencedirect.com/science/article/pii/S000437029800023X" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Guide</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI CookBook</span>
+                            </div>
+                            <h4>How to Build a ReAct-style Agent from Scratch</h4>
+                            <p>Step-by-step tutorial on implementing the ReAct prompt template, parsing tool calls, and maintaining state.</p>
+                            <a href="https://cookbook.openai.com/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_08.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 08: Project: AI Problem Solver</span>
+                </a>
+                <a href="day_10.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 10: Tool Selection (ReAct)</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

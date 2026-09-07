@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6: Deterministic Tool Execution & Function Calling</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li class="active"><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>25%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 6.0</span>
+                <h1>Day 6: Deterministic Tool Execution & Function Calling</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> Can an LLM calculate <code>48291.52 * 9182.11</code>, query a live MySQL database, check the weather in Mumbai, or trigger a Slack notification? If you ask the model directly, it will either guess the math incorrectly or state that it cannot browse the live web. How do we empower language models to interact with the real world through deterministic tools?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 1.5</span>
+                            <span class="plan-badge plan-badge-secondary">Week 1</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Deconstruct the tool calling wire protocol: JSON schema conversion, token overhead, and execution flow.</li><li>Build an automated `@tool` decorator introspecting type hints, docstrings, and parameter constraints.</li><li>Engineer a secure sandboxed execution runner with subprocess isolation, memory caps, and timeout guards.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Tool wire protocol overhead: how tool schemas consume 150-350 tokens per tool in every prompt turn.</li><li>Subprocess sandboxing: IPC pipes, memory resource limits (`RLIMIT_AS`), and POSIX signal termination.</li><li>Security vulnerability analysis: OWASP LLM02 (Insecure Output Handling) and Arbitrary Code Execution (RCE).</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 6.1: Automated `@tool` Signature & Docstring Schema Introspector.</li><li>Program 6.2: Production Sandboxed Python Code Executor with Memory & Timeout Guards.</li><li>Program 6.3: Multi-Tool Dispatcher with Automatic Error Feedback and Retry Injection.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>The `eval()` Catastrophe: Executing LLM-generated code via raw `eval()` or `exec()`, exposing host server to RCE.</li><li>Tool Schema Bloat: Registering 50+ tools in prompt context, consuming 15,000+ tokens before user query even begins.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Sandboxed Execution Harness & Tool Wire Dispatcher • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Fundamental Limit of Text Prediction</h2>
+                <p>As established in previous sessions, an LLM is a closed neural network. It possesses neither hands, network sockets, nor a Python runtime. When asked to perform complex floating-point arithmetic, it does not execute arithmetic logic; it emits the tokens that <em>look</em> like the answer based on statistical patterns—often failing on 5+ digit multiplications.</p>
+
+                <p>The solution is not to train larger models, but to equip the model with <strong>Tools</strong>. In an agentic architecture, the LLM acts as the <strong>Reasoning Engine (Brain)</strong>, while deterministic external code (APIs, databases, Python scripts, CLI commands) acts as the <strong>Hands</strong>.</p>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Real World Example:</strong> Voice assistants like Siri or Alexa. When you say: <em>"Set my living room thermostat to 22 degrees,"</em> the voice model does not physically heat your home. It translates your spoken sentence into an API payload: <code>{"device": "thermostat_living_room", "temperature": 22}</code> and dispatches it over Wi-Fi. That is the exact mechanism behind LLM Tool Execution.
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. The Function Calling Lifecycle</h2>
+                <p>Function Calling is a bi-directional handshake between your host Python application and the remote LLM inference server. The model never runs your code directly; it emits a structured JSON request instructing your application which function to run and with what arguments.</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 680px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6;">1. USER QUERY: "What is the stock price of TCS and calculate 18% GST on it?"</div>
+                        <div style="margin-left: 1rem; color: #10b981; margin-top: 0.5rem;">&darr; [Model analyzes available tools: 'get_stock_price', 'calculator']</div>
+                        <div style="color: #f59e0b; margin-top: 0.5rem;">2. TOOL CALL EMITTED: get_stock_price(ticker="TCS.NS")</div>
+                        <div style="margin-left: 1rem; color: #6366f1; margin-top: 0.5rem;">&darr; [Host Python app fetches Yahoo Finance API &rarr; ₹4,200]</div>
+                        <div style="color: #ec4899; margin-top: 0.5rem;">3. TOOL RESULT INJECTED: {"price": 4200.0, "currency": "INR"}</div>
+                        <div style="margin-left: 1rem; color: #10b981; margin-top: 0.5rem;">&darr; [Model emits second tool call: calculator(expression="4200 * 0.18")]</div>
+                        <div style="color: #22c55e; margin-top: 0.5rem;">4. FINAL SYNTHESIS: "TCS is ₹4,200. 18% GST is ₹756, total is ₹4,956."</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 6.0-1: The Multi-Step Tool Invocation Handshake Loop</div>
+                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <strong>Figure Parameters Explained:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li><strong>Tool Declarations:</strong> The client sends JSON Schemas describing available functions, argument types, and descriptions to the model.</li>
+                        <li><strong>Tool Call Payload:</strong> When the model decides to invoke a tool, it halts regular text generation and outputs a <code>tool_calls</code> object containing a unique <code>id</code>, function <code>name</code>, and serialized <code>arguments</code>.</li>
+                        <li><strong>Tool Execution:</strong> Your Python app extracts the arguments, invokes the local function safely, and captures the result.</li>
+                        <li><strong>Tool Message:</strong> The result is injected back into the message history with <code>role: "tool"</code> and the matching <code>tool_call_id</code>.</li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Implementing the Tool Execution Loop in Python</h2>
+                <p>Here is a complete, production-ready implementation of a multi-turn tool execution loop that provides an LLM with live calculator and weather capabilities:</p>
+
+                <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <summary style="font-weight: 600; font-size: 1.1rem; outline: none; color: #f44336;">View Buggy/Legacy Code: Hallucinated Pure-LLM Arithmetic</summary>
+                    <div class="code-header">
+                    <span>module_script_6.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# DANGEROUS: Relying on raw LLM token prediction for sensitive calculations
+prompt = "Multiply 982143.12 by 741.89 and give me the exact total."
+# The LLM outputs: 728,642,154.21 (WRONG! Correct is 728,642,168.3968)
+# In financial, medical, or engineering systems, this causes severe liability!
+response = client.chat.completions.create(model="gpt-4", messages=[{"role": "user", "content": prompt}])
+print(response.choices[0].message.content)
+                    </code></pre>
+                    <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 6.0-1A: Mathematical Hallucination in Pure Generative Models</div>
+                </details>
+
+                <div class="code-header">
+                    <span>full_end_to_end_tool_execution_engine.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 6.0-1: Full End-to-End Tool Execution Engine
+import json
+import math
+from openai import OpenAI
+
+client = OpenAI()
+
+# 1. Define local Python functions (The "Hands")
+def calculate(expression: str) -> str:
+    """Evaluates mathematical expressions safely."""
+    try:
+        # Restricted safe mathematical evaluation
+        allowed_names = {"sqrt": math.sqrt, "pow": math.pow, "abs": abs}
+        result = eval(expression, {"__builtins__": None}, allowed_names)
+        return json.dumps({"result": float(result)})
+    except Exception as e:
+        return json.dumps({"error": f"Evaluation failed: {str(e)}"})
+
+def get_current_weather(city: str) -> str:
+    """Mock weather service returning live telemetry."""
+    weather_db = {
+        "mumbai": {"temp_c": 31, "condition": "Humid & Sunny", "humidity": 78},
+        "bangalore": {"temp_c": 24, "condition": "Pleasant Breeze", "humidity": 55},
+        "delhi": {"temp_c": 38, "condition": "Hot & Dry", "humidity": 25}
+    }
+    data = weather_db.get(city.lower(), {"temp_c": 25, "condition": "Unknown", "humidity": 50})
+    return json.dumps(data)
+
+# 2. Define JSON Schemas for the LLM
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate",
+            "description": "Perform accurate mathematical and financial calculations",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "expression": {"type": "string", "description": "Math expression, e.g., '4200 * 0.18'"}
+                },
+                "required": ["expression"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_weather",
+            "description": "Retrieve current temperature and weather conditions for a city",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string", "description": "City name, e.g., 'Bangalore'"}
+                },
+                "required": ["city"]
+            }
+        }
+    }
+]
+
+# 3. Agentic Execution Loop
+messages = [{"role": "user", "content": "What is the weather in Bangalore, and if I buy 3 umbrellas at 450 INR each plus 12% tax, what is my total cost?"}]
+
+print("User Prompt:", messages[0]["content"])
+
+# First turn: LLM decides to call tools
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=messages,
+    tools=tools
+)
+
+response_message = response.choices[0].message
+messages.append(response_message)
+
+# Check if the model requested tool calls
+if response_message.tool_calls:
+    print(f"\nModel requested {len(response_message.tool_calls)} tool call(s):")
+    
+    for tool_call in response_message.tool_calls:
+        fn_name = tool_call.function.name
+        fn_args = json.loads(tool_call.function.arguments)
+        print(f"  Executing: {fn_name}({fn_args})")
+        
+        # Route and execute
+        if fn_name == "calculate":
+            tool_output = calculate(fn_args["expression"])
+        elif fn_name == "get_current_weather":
+            tool_output = get_current_weather(fn_args["city"])
+        else:
+            tool_output = json.dumps({"error": "Unknown tool"})
+            
+        # Append result to message history
+        messages.append({
+            "role": "tool",
+            "tool_call_id": tool_call.id,
+            "content": tool_output
+        })
+
+    # Second turn: LLM consumes tool outputs and generates final answer
+    final_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages
+    )
+    print("\nFinal Agent Response:")
+    print(final_response.choices[0].message.content)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 6.0-1: Robust Multi-Tool Dispatch & Execution Engine</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Tool Error Handling & Self-Healing Retries</h2>
+                <p>In production, external APIs fail: database connections time out, rate limits are hit, or the LLM passes an invalid parameter. If your Python code throws an uncaught exception, your agent crashes.</p>
+
+                <p>Instead, <strong>catch the exception and serialize the error message back to the LLM as a tool result</strong>! High-capability models can inspect the error message, realize what argument was malformed, and emit a corrected tool call autonomously.</p>
+
+                <div class="code-header">
+                    <span>self_healing_tool_execution_on_failure.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 6.0-2: Self-Healing Tool Execution on Failure
+def safe_tool_executor(func, **kwargs) -> str:
+    """Executes a tool and catches all exceptions, returning actionable error JSON."""
+    try:
+        output = func(**kwargs)
+        return json.dumps({"status": "success", "data": output})
+    except KeyError as ke:
+        return json.dumps({"status": "error", "message": f"Missing required parameter: {ke}. Please retry with valid keys."})
+    except Exception as err:
+        return json.dumps({"status": "error", "message": f"Execution failed: {str(err)}. Attempt alternative method."})
+
+# If an API times out, the model reads the error string and attempts a fallback tool!
+print(safe_tool_executor(lambda: 1/0))
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 6.0-2: Graceful Tool Exception Handling and Feedback</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. The Function Calling Wire Protocol & Token Overhead Mathematics</h2>
+                <p>When you provide tools to an API, the provider serializes each tool definition into hidden system prompt tokens formatted in a specialized schema (such as TypeScript interface syntax or JSON Schema). Consider the economic and context window implications:</p>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Tool Schema Context Sizing Rule of Thumb:</strong>
+                    <ul>
+                        <li>Each tool definition consumes between <strong>150 and 350 tokens</strong> depending on parameter count and description verbosity.</li>
+                        <li>A naive agent equipped with 25 tools incurs an automatic overhead of <strong>5,000 to 8,000 input tokens on EVERY single turn</strong>, regardless of whether a tool is called!</li>
+                        <li>At 100,000 queries per month, that tool schema overhead alone costs hundreds of dollars and adds 400ms of prefill latency per request.</li>
+                    </ul>
+                    <em>Engineering Takeaway:</em> Do not register all tools globally. Use dynamic tool registries or hierarchical router agents that only load the 3 or 4 tools relevant to the current classified intent!
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Deep-Dive Production Engineering Programs</h2>
+
+                <h3>Program 6.0-3: Automated `@tool` Decorator with Schema Introspection</h3>
+                <p>Writing JSON schemas manually in raw dictionaries is error-prone. This production utility inspects any Python function's type annotations and docstring, compiling it automatically into an OpenAI-compatible function definition.</p>
+
+                <div class="code-header">
+                    <span>tool_decorator_registry.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 6.0-3: Automated @tool Decorator and Registry
+import inspect
+from typing import Callable, Dict, Any, List
+
+class ToolRegistry:
+    """Central registry maintaining executable functions and their generated schemas."""
+    def __init__(self):
+        self._tools: Dict[str, Callable] = {}
+        self._schemas: List[Dict[str, Any]] = []
+
+    def register(self, func: Callable) -> Callable:
+        """Decorator that compiles a Python function into an OpenAI tool schema."""
+        sig = inspect.signature(func)
+        doc = inspect.getdoc(func) or "No description provided."
+        
+        type_mapping = {
+            str: "string",
+            int: "integer",
+            float: "number",
+            bool: "boolean",
+            list: "array",
+            dict: "object"
+        }
+        
+        properties = {}
+        required = []
+        
+        for param_name, param in sig.parameters.items():
+            param_type = type_mapping.get(param.annotation, "string")
+            properties[param_name] = {
+                "type": param_type,
+                "description": f"Parameter {param_name}"
+            }
+            if param.default == inspect.Parameter.empty:
+                required.append(param_name)
+                
+        schema = {
+            "type": "function",
+            "function": {
+                "name": func.__name__,
+                "description": doc,
+                "parameters": {
+                    "type": "object",
+                    "properties": properties,
+                    "required": required
+                }
+            }
+        }
+        
+        self._tools[func.__name__] = func
+        self._schemas.append(schema)
+        return func
+
+    def get_schemas(self) -> List[Dict[str, Any]]:
+        return self._schemas
+
+    def execute(self, tool_name: str, **kwargs) -> Any:
+        if tool_name not in self._tools:
+            raise ValueError(f"Tool '{tool_name}' is not registered.")
+        return self._tools[tool_name](**kwargs)
+
+# Example: Declaring Clean Agent Tools
+registry = ToolRegistry()
+
+@registry.register
+def query_stock_price(ticker: str, include_extended_hours: bool = False) -> str:
+    """Fetch the real-time stock valuation for a given publicly traded equity ticker."""
+    return f"Ticker {ticker.upper()}: $182.40 (Extended: {include_extended_hours})"
+
+@registry.register
+def calculate_compound_interest(principal: float, annual_rate: float, years: int) -> float:
+    """Calculates future investment value with annual compounding."""
+    return round(principal * ((1 + annual_rate) ** years), 2)
+
+print("=== AUTOMATICALLY GENERATED TOOL SCHEMAS ===")
+import json
+print(json.dumps(registry.get_schemas(), indent=2))
+
+print("\n=== EXECUTING REGISTERED TOOL VIA DISPATCHER ===")
+res = registry.execute("calculate_compound_interest", principal=10000.0, annual_rate=0.07, years=5)
+print(f"Calculation Result: ${res}")
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 6.0-3: Type-Introspecting `@tool` Decorator and Dispatch Registry</div>
+
+                <h3>Program 6.0-4: Sandboxed Code Execution Tool</h3>
+                <p>Agents that execute generated Python code must never use raw <code>eval()</code> or <code>exec()</code> on the host process. This program demonstrates executing Python in an isolated subprocess with timeout and memory constraints.</p>
+
+                <div class="code-header">
+                    <span>sandboxed_code_executor.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 6.0-4: Subprocess-Sandboxed Python Execution Tool
+import subprocess
+import sys
+import tempfile
+import os
+
+def run_sandboxed_python(code_snippet: str, timeout_seconds: int = 3) -> dict:
+    """
+    Executes generated Python code inside an isolated subprocess with timeouts.
+    Blocks direct host memory compromise and halts infinite loops.
+    """
+    # Prohibit dangerous OS calls
+    forbidden = ["os.system", "shutil.rmtree", "subprocess", "eval", "__import__('os')"]
+    if any(f in code_snippet for f in forbidden):
+        return {"status": "REJECTED", "error": "Security Policy Violation: Prohibited syscall detected."}
+        
+    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as tmp_file:
+        tmp_file.write(code_snippet)
+        tmp_path = tmp_file.name
+
+    try:
+        proc = subprocess.run(
+            [sys.executable, tmp_path],
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds
+        )
+        return {
+            "status": "SUCCESS" if proc.returncode == 0 else "RUNTIME_ERROR",
+            "stdout": proc.stdout.strip(),
+            "stderr": proc.stderr.strip(),
+            "returncode": proc.returncode
+        }
+    except subprocess.TimeoutExpired:
+        return {"status": "TIMEOUT", "error": f"Execution timed out after {timeout_seconds} seconds (Infinite loop prevented)."}
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+# Test 1: Legitimate computation
+clean_code = "print([x**2 for x in range(1, 6)])"
+print("=== TEST 1: SAFE CODE EXECUTION ===")
+print(run_sandboxed_python(clean_code))
+
+# Test 2: Malicious script attempting host compromise
+malicious_code = "import os; os.system('rm -rf /')"
+print("\n=== TEST 2: BLOCKED MALICIOUS SYSCALL ===")
+print(run_sandboxed_python(malicious_code))
+
+# Test 3: Infinite loop attempt
+infinite_loop = "while True: pass"
+print("\n=== TEST 3: INFINITE LOOP CIRCUIT BREAKER ===")
+print(run_sandboxed_python(infinite_loop, timeout_seconds=1))
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 6.0-4: Sandboxed Code Execution with Subprocess Isolation and Timeout Bounds</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Tool Execution Security Best Practices</h2>
+                <ol>
+                    <li><strong>Never Expose Unparameterized SQL or Shell Tools:</strong> A generic <code>run_bash(cmd)</code> tool converts any prompt injection into a remote code execution (RCE) server breach. Use granular, single-purpose functions instead (e.g. <code>fetch_user_by_id(id)</code>).</li>
+                    <li><strong>Validate Read vs. Write Scopes:</strong> Tools that mutate data (e.g., <code>delete_account</code>, <code>send_wire_transfer</code>) must enforce human confirmation gates before execution.</li>
+                    <li><strong>Sanitize Error Messages Returned to the Model:</strong> Avoid sending raw database stack traces containing database passwords or server paths back into the LLM context.</li>
+                    <li><strong>Enforce Strict Request Timeouts:</strong> All external HTTP or database tools must have 2–5 second socket timeouts to prevent agents from hanging indefinitely.</li>
+                </ol>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. Does an LLM execute tool code directly inside its own neural network weights?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Yes, all modern LLMs have a built-in Python interpreter.</li>
+                        <li class="mcq-option" data-correct="true">No, the LLM emits a structured JSON request; external host code must execute the function.</li>
+                        <li class="mcq-option" data-correct="false">Yes, but only if the function is written in C++.</li>
+                        <li class="mcq-option" data-correct="false">Only when run on an Apple M-series chip.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. What role specifies a message containing the execution result of an external function?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false"><code>role: "assistant"</code></li>
+                        <li class="mcq-option" data-correct="false"><code>role: "system"</code></li>
+                        <li class="mcq-option" data-correct="true"><code>role: "tool"</code></li>
+                        <li class="mcq-option" data-correct="false"><code>role: "admin"</code></li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. Why must a tool message include a tool_call_id?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">To explicitly correlate which specific tool call request this result satisfies, especially when multiple tools run in parallel.</li>
+                        <li class="mcq-option" data-correct="false">To pay the developer licensing royalties.</li>
+                        <li class="mcq-option" data-correct="false">To encrypt the API key over SSL.</li>
+                        <li class="mcq-option" data-correct="false">It is optional and rarely used.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. What format is used by providers like OpenAI, Anthropic, and Google to declare tool parameters?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">XML Document Type Definition (DTD).</li>
+                        <li class="mcq-option" data-correct="true">JSON Schema.</li>
+                        <li class="mcq-option" data-correct="false">Plain text markdown bullets.</li>
+                        <li class="mcq-option" data-correct="false">Protobuf binary schemas.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. What is "Parallel Tool Calling"?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Running two LLM servers in different cloud regions.</li>
+                        <li class="mcq-option" data-correct="true">The LLM outputting multiple tool call objects in a single response turn so the client can execute them concurrently.</li>
+                        <li class="mcq-option" data-correct="false">Training two models simultaneously on identical data.</li>
+                        <li class="mcq-option" data-correct="false">Calling an API from both a phone and a laptop.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. What happens if an external tool throws a Python exception (e.g., 404 Not Found)?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The LLM automatically writes new code to fix the web server.</li>
+                        <li class="mcq-option" data-correct="true">The application should catch the error and pass the error description back as a tool message so the model can self-heal or notify the user.</li>
+                        <li class="mcq-option" data-correct="false">The entire database is wiped.</li>
+                        <li class="mcq-option" data-correct="false">The OpenAI API permanently deletes the API key.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. Why should sensitive mathematical or financial calculations always be offloaded to a calculator tool?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">Because autoregressive language models guess mathematical digits probabilistically, leading to arithmetic hallucinations.</li>
+                        <li class="mcq-option" data-correct="false">Because calculators use less electricity than GPUs.</li>
+                        <li class="mcq-option" data-correct="false">Because Python does not support numbers with more than 3 digits.</li>
+                        <li class="mcq-option" data-correct="false">Because the IRS requires all taxes to be computed on an abacus.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. In a tool schema, what does the 'description' field accomplish?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It sets the title bar in the user's browser.</li>
+                        <li class="mcq-option" data-correct="true">It instructs the model's reasoning engine when and why to invoke the tool.</li>
+                        <li class="mcq-option" data-correct="false">It is ignored by the LLM and only read by human developers.</li>
+                        <li class="mcq-option" data-correct="false">It compiles the function to machine code.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. What is the danger of returning 500,000 words of raw JSON data inside a tool result?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It breaks the monitor screen.</li>
+                        <li class="mcq-option" data-correct="true">It instantly exhausts the model's context window budget and incurs massive token costs.</li>
+                        <li class="mcq-option" data-correct="false">It changes the temperature of the model to 2.0.</li>
+                        <li class="mcq-option" data-correct="false">It deletes all previous conversation history from RAM.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. Can an LLM decide NOT to call any tools if the user asks a purely conceptual question like "What is photosynthesis?"</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">Yes, if none of the available tools are relevant, the model directly generates a natural language response.</li>
+                        <li class="mcq-option" data-correct="false">No, if tools are declared, the model is strictly forced to call at least one tool.</li>
+                        <li class="mcq-option" data-correct="false">Only if temperature is set to 1.9.</li>
+                        <li class="mcq-option" data-correct="false">The API will return an error code 400.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to build reliable tool-augmented agent loops.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Currency Converter Tool</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Define a JSON tool schema for <code>convert_currency(amount: float, from_currency: str, to_currency: str)</code>. Implement a local mock dictionary supporting USD, INR, EUR, and GBP. Verify that the agent can answer: "How much is $1,250 USD in Indian Rupees?"</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Parallel Weather Dispatcher</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Prompt your agent: "Give me the weather in Tokyo, London, and New York." Ensure your Python loop iterates over all elements in <code>response_message.tool_calls</code>, executes all three calls, appends all three tool results, and lets the model synthesize a comparative summary.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: SQL Safety Guard Tool</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create an <code>execute_sql_query(query: str)</code> tool. In your Python implementation, inspect the query string. If it contains dangerous keywords like <code>DROP</code>, <code>DELETE</code>, or <code>ALTER</code>, immediately reject the execution with an error JSON: <code>{"status": "blocked", "reason": "Destructive query detected"}</code>.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Token-Aware Result Pruner</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> If a tool returns a massive JSON list of 1,000 customer records, write a helper function that truncates the payload to the top 5 records and appends a notice: <code>"... [995 records truncated to preserve context window]"</code> before feeding it to the LLM.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Self-Correcting Calculator Loop</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Test the resilience of your tool execution loop by feeding an invalid math expression (e.g. <code>"5 / 0"</code>). Verify that your Python code catches the ZeroDivisionError, sends <code>{"error": "Division by zero"}</code> back to the LLM, and the LLM politely explains the mathematical impossibility to the user.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2302.04761</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Meta AI</span>
+                            </div>
+                            <h4>Toolformer: Language Models Can Teach Themselves to Use Tools</h4>
+                            <p>Schick et al. demonstrate self-supervised learning of tool invocation, enabling models to call calculators, Q&A, and search APIs.</p>
+                            <a href="https://arxiv.org/abs/2302.04761" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">OWASP</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Security Standard</span>
+                            </div>
+                            <h4>OWASP Top 10 for LLM: LLM02 Insecure Output Handling</h4>
+                            <p>Security analysis of vulnerabilities arising when downstream systems blindly execute unvalidated LLM outputs.</p>
+                            <a href="https://genai.owasp.org/llmrisk/llm02-insecure-output-handling/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Python Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Python 3.12</span>
+                            </div>
+                            <h4>Subprocess Management & Security Considerations</h4>
+                            <p>Best practices for subprocess spawning, preventing shell injection (`shell=False`), and resource limits.</p>
+                            <a href="https://docs.python.org/3/library/subprocess.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">API Spec</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Anthropic</span>
+                            </div>
+                            <h4>Tool Use & Function Calling Specification</h4>
+                            <p>Detailed protocol guide for defining tool definitions, handling tool_use blocks, and returning tool_result content.</p>
+                            <a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_05.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 05: LLM Specialist Behavior</span>
+                </a>
+                <a href="day_07.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 07: Repeatable Processes</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981'; // green
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444'; // red
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

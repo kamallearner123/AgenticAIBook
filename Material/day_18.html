@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 18: Agent Persistence & State Management: Checkpoints, Time-Travel & Recovery</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li class="active"><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>75%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 18.0</span>
+                <h1>Day 18: Agent Persistence & State Management: Checkpoints, Time-Travel & Recovery</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Production Problem Statement:</strong> An autonomous loan-underwriting agent executes an 8-node pipeline: document OCR ingestion, tax fraud screening, credit bureau retrieval, multi-year asset evaluation, and risk scoring. Steps 1 through 5 run successfully over 4 minutes, consuming $1.80 in API tokens. At Step 6 (calling an external bank verification API), a socket timeout raises an unhandled <code>ConnectionResetError</code>. In an in-memory runtime, the entire Python process terminates: all intermediate data is wiped from RAM. Resuming requires restarting from Step 1—doubling inference costs, triggering duplicate side-effects, and degrading SLA. How do we architect persistent state machines that withstand catastrophic host crashes, resume cleanly from the exact failure point, and enable human-in-the-loop time-travel debugging?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 3.1</span>
+                            <span class="plan-badge plan-badge-secondary">Week 3</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Understand why in-memory agent state is an enterprise anti-pattern: server crashes destroy in-flight reasoning.</li><li>Implement durable state persistence with SqliteSaver and PostgresSaver checkpointing engines.</li><li>Master time-travel debugging: inspect execution histories, rewind state, and fork alternative reasoning branches.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Storage footprint scaling: Checkpoint storage grows linearly $\Omega(N)$ with trajectory length.</li><li>Recovery Time Objective (RTO) and Recovery Point Objective (RPO) equations in autonomous agent workflows.</li><li>Thread isolation in multi-tenant systems: Partitioning state histories by composite `(thread_id, user_id)` keys.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 18.1: Production SqliteSaver State Persistence & Crash-Recovery Simulator.</li><li>Program 18.2: Time-Travel State Inspection, Rollback & Branching Engine (`update_state`).</li><li>Program 18.3: Multi-Tenant Agent Session Isolation & Garbage Collection Manager.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Thread ID Collisions: Sharing `thread_id` across different users, causing catastrophic data leaks and crossed memory.</li><li>Checkpoint Bloat Outages: Storing large binary payloads inside state dictionaries, filling up checkpoint database disks.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> SqliteSaver Crash-Recovery Engine & Time-Travel Debugger • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. Mathematical Formalization of Checkpoint Storage & Recovery</h2>
+                <p>In distributed agentic systems, execution resilience is governed by the <strong>Recovery Time Objective (RTO)</strong> and <strong>Write Amplification Factor (WAF)</strong>. Consider an agent trajectory of $N$ discrete node transitions $v_1, v_2, \dots, v_N$:</p>
+
+                <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
+                    $$\text{Total Storage Footprint: } \Omega(N) = \sum_{t=1}^{N} \Big( |s_t| + |\Delta s_t| + |\mu_t| \Big)$$
+                    $$\text{Recovery Time Objective: } \text{RTO} = t_{\text{checkpoint\_load}} + \sum_{j=k+1}^{N} t_{\text{exec}}(v_j)$$
+                </div>
+
+                <ul>
+                    <li><strong>$|s_t|$ (State Snapshot Magnitude):</strong> The serialized payload size of state channels at step $t$. If state stores raw PDF text or high-dimensional embeddings, cumulative footprint scales linearly $\mathcal{O}(N \cdot \bar{s})$, demanding state pruning or off-band blob storage.</li>
+                    <li><strong>$k$ (Last Committed Checkpoint):</strong> If node $v_{k+1}$ experiences a hardware failure, uncommitted mutations are discarded. The runtime loads checkpoint $s_k$ in time $t_{\text{checkpoint\_load}}$ (typically 1.5ms for SQLite, 4ms for Postgres) and executes only the remaining $N - k$ nodes.</li>
+                    <li><strong>Economic Savings Factor:</strong> Compared to non-persistent architectures where failed workflows forfeit $\sum_{i=1}^{k} \text{Cost}(v_i)$, checkpointed recovery yields a cost preservation ratio of:
+                    $$\eta_{\text{saved}} = \frac{\sum_{i=1}^k \text{Cost}(v_i)}{\sum_{i=1}^N \text{Cost}(v_i)} \times 100\%$$</li>
+                </ul>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Architecture Blueprint: The Checkpointer Storage Subsystem</h2>
+                <p>Every LangGraph checkpointer conforms to an atomic transactional interface. When a node executes, the graph runtime executes a three-phase commit:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color); font-size: 0.85rem; line-height: 1.45;">
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span> <span style="color: #3b82f6; font-weight: bold;">LANGGRAPH PERSISTENCE &amp; TIME-TRAVEL ARCHITECTURE</span>                                 <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>  Thread: "tenant_corp_9021"                                                        <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                                                                   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    [Node 1: OCR] ------&gt; [Node 2: Sanitize] ------&gt; [Node 3: Fraud Check]        <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>          |                      |                           |                     <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>          v                      v                           v                     <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    (Checkpoint 1)        (Checkpoint 2)              (Checkpoint 3)               <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>          |                      |                           |                     <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +--------------------------------------------------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | CHECKPOINTER ENGINE (SqliteSaver / PostgresSaver)                        |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | Table: checkpoints (thread_id, checkpoint_ns, checkpoint_id, parent_id) |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | Table: writes      (thread_id, checkpoint_id, channel, value)           |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +--------------------------------------------------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                                              |                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>          +---------------------------------------------------+                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>          v                                                                        <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    [Node 4: Call Credit Bureau API]  =================&gt; CRASH! (504 Gateway Timeout)  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>          |                                                                        <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>          x (Uncommitted - Discarded)                                              <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                                                                   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    ================================ RECOVERY PHASE ============================   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    1. Worker re-invoked with: app.invoke(None, config={"thread_id": "..."})     <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    2. Checkpointer fetches Checkpoint 3 (latest committed state).                 <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    3. Skips Nodes 1, 2, and 3 entirely.                                           <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    4. Re-attempts Node 4 directly!                                                <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 18.0-1: LangGraph Checkpoint Persistence & Crash Recovery Trajectory</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Production Checkpointer Storage Matrix</h2>
+                <div class="table-responsive">
+                    <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="background-color: var(--sidebar-bg); border-bottom: 2px solid var(--border-color); text-align: left;">
+                                <th style="padding: 0.75rem;">Checkpointer Backend</th>
+                                <th style="padding: 0.75rem;">Durability Tier</th>
+                                <th style="padding: 0.75rem;">Latency (Write/Read)</th>
+                                <th style="padding: 0.75rem;">Horizontal Concurrency</th>
+                                <th style="padding: 0.75rem;">Target Production Topology</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">MemorySaver</td>
+                                <td style="padding: 0.75rem;"><strong style="color: #ef4444;">Volatile (RAM)</strong></td>
+                                <td style="padding: 0.75rem;">&lt; 0.05 ms</td>
+                                <td style="padding: 0.75rem;">Single Process Only</td>
+                                <td style="padding: 0.75rem;">Local PyTest test suites and quick script prototyping.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">SqliteSaver</td>
+                                <td style="padding: 0.75rem;"><strong style="color: #f59e0b;">Single-Host Disk</strong></td>
+                                <td style="padding: 0.75rem;">1.0 – 2.5 ms</td>
+                                <td style="padding: 0.75rem;">Single Host (WAL mode)</td>
+                                <td style="padding: 0.75rem;">Desktop apps, CLI tools, edge IoT devices, single-VM services.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">PostgresSaver</td>
+                                <td style="padding: 0.75rem;"><strong style="color: #10b981;">Enterprise ACID</strong></td>
+                                <td style="padding: 0.75rem;">3.0 – 8.0 ms</td>
+                                <td style="padding: 0.75rem;">Distributed K8s Clusters</td>
+                                <td style="padding: 0.75rem;">Multi-tenant SaaS, healthcare HIPAA workflows, banking engines.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Complete Python Implementation 1: SqliteSaver with Crash Simulation & Recovery</h2>
+                <p>This script instantiates an 8-node pipeline backed by persistent SQLite disk storage. Step 5 is intentionally armed to raise a simulated network crash during the first attempt. We catch the crash, verify the checkpoint database, and resume execution with <code>app.invoke(None)</code>—proving that steps 1 to 4 are never re-run.</p>
+
+                <div class="code-header">
+                    <span>program_18_1_sqlite_crash_recovery.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 18.1: Persistent Agent Workflow with SqliteSaver and Crash Recovery
+Demonstrating durable state capture, failure recovery, and zero duplicate execution.
+"""
+
+import os
+import sqlite3
+import time
+from typing import TypedDict, Annotated, List, Dict, Any
+import operator
+from langgraph.graph import StateGraph, END
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+# 1. State Definition
+class BatchJobState(TypedDict):
+    job_id: str
+    steps_completed: Annotated[List[str], operator.add]
+    last_completed_node: str
+    items_processed: int
+    crash_simulation_active: bool
+    final_output: str
+
+# 2. Node Generator Factory
+def make_step_node(step_num: int, step_title: str):
+    def node_function(state: BatchJobState) -> Dict[str, Any]:
+        print(f"  [EXEC] Step {step_num}: {step_title} (Thread: {state['job_id']})")
+        time.sleep(0.1) # Simulate I/O computation
+        
+        # Trigger simulated hardware crash at Step 5 on first attempt
+        if step_num == 5 and state.get("crash_simulation_active", False):
+            print("\n  🚨 [SIMULATED CRASH] External API timeout at Step 5! Host process dying...")
+            raise ConnectionResetError("Remote gateway closed connection unexpectedly at Step 5!")
+            
+        return {
+            "steps_completed": [f"Step {step_num}: {step_title}"],
+            "last_completed_node": f"step_{step_num}",
+            "items_processed": state.get("items_processed", 0) + 250
+        }
+    node_function.__name__ = f"node_step_{step_num}"
+    return node_function
+
+def finalize_workflow_node(state: BatchJobState) -> Dict[str, Any]:
+    summary = f"Job {state['job_id']} SUCCESS. Steps: {len(state['steps_completed'])}, Total Items: {state['items_processed']}"
+    print(f"\n[FINALIZE] {summary}")
+    return {"final_output": summary}
+
+# 3. Assemble Linear StateGraph
+def build_batch_graph(conn: sqlite3.Connection):
+    workflow = StateGraph(BatchJobState)
+    
+    stages = [
+        "Ingest Raw Files",
+        "Sanitize Sensitive PII",
+        "Semantic Text Chunking",
+        "Compute Dense Embeddings",
+        "Write to Vector Database", # Crash point
+        "Generate Cluster Summaries",
+        "Compliance Policy Audit",
+        "Dispatch Kafka Events"
+    ]
+    
+    for idx, name in enumerate(stages, start=1):
+        workflow.add_node(f"step_{idx}", make_step_node(idx, name))
+        
+    workflow.add_node("finalize", finalize_workflow_node)
+    
+    workflow.set_entry_point("step_1")
+    for i in range(1, 8):
+        workflow.add_edge(f"step_{i}", f"step_{i+1}")
+    workflow.add_edge("step_8", "finalize")
+    workflow.add_edge("finalize", END)
+    
+    checkpointer = SqliteSaver(conn)
+    return workflow.compile(checkpointer=checkpointer)
+
+if __name__ == "__main__":
+    DB_PATH = "agent_checkpoints.sqlite"
+    if os.path.exists(DB_PATH):
+        os.remove(DB_PATH)
+        
+    db_conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    app = build_batch_graph(db_conn)
+    
+    job_config = {"configurable": {"thread_id": "batch_job_alpha_900"}}
+    
+    print("=== PHASE 1: STARTING INITIAL RUN (ARMED TO CRASH AT STEP 5) ===")
+    initial_payload: BatchJobState = {
+        "job_id": "batch_job_alpha_900",
+        "steps_completed": [],
+        "last_completed_node": "START",
+        "items_processed": 0,
+        "crash_simulation_active": True,
+        "final_output": ""
+    }
+    
+    try:
+        app.invoke(initial_payload, config=job_config)
+    except ConnectionResetError as e:
+        print(f"\nCaught Expected Host Failure: {e}")
+
+    # Inspect Checkpointed Database State
+    print("\n--- QUERYING DURABLE DATABASE CHECKPOINT ---")
+    persisted_state = app.get_state(job_config)
+    print(f"Database Thread ID: {persisted_state.config['configurable']['thread_id']}")
+    print(f"Last Successfully Committed Node: {persisted_state.values.get('last_completed_node')}")
+    print(f"Processed Items Saved to Disk: {persisted_state.values.get('items_processed')}")
+    print("Committed Steps in Storage:")
+    for step in persisted_state.values.get("steps_completed", []):
+        print(f"  ✓ {step}")
+        
+    print("\n=== PHASE 2: RESUMING WORKFLOW (CRASH DISARMED) ===")
+    print("Notice: Steps 1, 2, 3, and 4 will NOT re-execute!")
+    
+    # Update state to disarm simulated failure
+    app.update_state(job_config, {"crash_simulation_active": False})
+    
+    # Resume by passing None as input!
+    resumed_result = app.invoke(None, config=job_config)
+    
+    print("\n=== RESUME EXECUTION SUCCESSFUL ===")
+    print(f"Final Report: {resumed_result['final_output']}")
+    print(f"Total Steps Completed: {len(resumed_result['steps_completed'])}")
+    
+    db_conn.close()
+    if os.path.exists(DB_PATH):
+        os.remove(DB_PATH)
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Complete Python Implementation 2: Time-Travel Debugging & State Forking</h2>
+                <p>Time-travel debugging allows developers and human reviewers to inspect past states, rewind the graph to a prior checkpoint, modify a variable, and fork execution down an alternate path.</p>
+
+                <div class="code-header">
+                    <span>program_18_2_time_travel_branching.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 18.2: Time-Travel History Inspection & State Forking
+Demonstrating get_state_history, state rewinding, and alternate branch execution.
+"""
+
+from typing import TypedDict, Annotated, List, Dict, Any
+import operator
+from langgraph.graph import StateGraph, END
+from langgraph.checkpoint.memory import MemorySaver
+
+class CodeReviewState(TypedDict):
+    pr_id: str
+    code_diff: str
+    linter_errors: Annotated[List[str], operator.add]
+    security_verdict: str
+    approved: bool
+
+def parse_pr_node(state: CodeReviewState) -> Dict[str, Any]:
+    print(f"[NODE 1: Parser] Processing PR: {state['pr_id']}")
+    return {"linter_errors": ["Line 12: Missing type annotation"]}
+
+def static_analysis_node(state: CodeReviewState) -> Dict[str, Any]:
+    print("[NODE 2: Static Analysis] Checking AST security rules...")
+    if "eval(" in state["code_diff"]:
+        return {
+            "linter_errors": ["CRITICAL: Dangerous eval() usage detected"],
+            "security_verdict": "REJECTED_SECURITY_RISK",
+            "approved": False
+        }
+    return {
+        "security_verdict": "CLEAN",
+        "approved": True
+    }
+
+def gatekeeper_node(state: CodeReviewState) -> Dict[str, Any]:
+    status = "MERGED" if state["approved"] else "BLOCKED"
+    print(f"[NODE 3: Gatekeeper] Final Status -> {status}")
+    return {}
+
+def build_review_graph(checkpointer):
+    workflow = StateGraph(CodeReviewState)
+    workflow.add_node("parse_pr", parse_pr_node)
+    workflow.add_node("static_analysis", static_analysis_node)
+    workflow.add_node("gatekeeper", gatekeeper_node)
+    
+    workflow.set_entry_point("parse_pr")
+    workflow.add_edge("parse_pr", "static_analysis")
+    workflow.add_edge("static_analysis", "gatekeeper")
+    workflow.add_edge("gatekeeper", END)
+    
+    return workflow.compile(checkpointer=checkpointer)
+
+if __name__ == "__main__":
+    checkpointer = MemorySaver()
+    app = build_review_graph(checkpointer)
+    
+    thread_cfg = {"configurable": {"thread_id": "pr_review_branch_01"}}
+    
+    # Run 1: Flawed PR containing dangerous eval()
+    print("=== RUN 1: SUBMITTING PR WITH DANGEROUS CODE ===")
+    bad_pr: CodeReviewState = {
+        "pr_id": "PR-4019",
+        "code_diff": "def compute(user_str):\n    return eval(user_str)",
+        "linter_errors": [],
+        "security_verdict": "",
+        "approved": False
+    }
+    
+    res1 = app.invoke(bad_pr, config=thread_cfg)
+    print(f"Result 1 Verdict: {res1['security_verdict']} | Approved: {res1['approved']}")
+    
+    # 2. Inspect Full Time-Travel Checkpoint History
+    print("\n=== INSPECTING TIME-TRAVEL STATE HISTORY ===")
+    history = list(app.get_state_history(thread_cfg))
+    print(f"Total committed checkpoints in history: {len(history)}")
+    for idx, snapshot in enumerate(reversed(history)):
+        node_name = snapshot.metadata.get("source", "root")
+        step_verdict = snapshot.values.get("security_verdict", "N/A")
+        print(f"  Step {idx}: Node='{snapshot.next}' (Source='{node_name}'), Verdict='{step_verdict}'")
+
+    # 3. Time-Travel Fork: Rewind to Checkpoint 1 (After parse_pr, before static_analysis)
+    target_checkpoint = history[-2] # Checkpoint right after parse_pr
+    fork_config = target_checkpoint.config
+    print(f"\nTargeting Checkpoint for Fork: {fork_config['configurable']}")
+
+    # 4. Human Intervention: Overwrite state with sanitized code
+    print("\n=== FORKING STATE: INJECTING SANITIZED CODE ===")
+    sanitized_diff = "def compute(user_str):\n    return int(user_str)"
+    app.update_state(
+        fork_config,
+        {"code_diff": sanitized_diff, "linter_errors": ["Sanitized eval() -> int()"]}
+    )
+    
+    # 5. Resume from Forked State
+    res2 = app.invoke(None, config=fork_config)
+    print("\n=== FORKED TRAJECTORY COMPLETED ===")
+    print(f"Forked Verdict: {res2['security_verdict']} | Approved: {res2['approved']}")
+    print("Audit Log of Linter Messages:")
+    for err in res2["linter_errors"]:
+        print(f"  • {err}")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Complete Python Implementation 3: Multi-Tenant Concurrency & Thread Isolation</h2>
+                <p>Enterprise platforms run thousands of agents concurrently. Program 18.3 proves how distinct <code>thread_id</code> configurations guarantee strict multi-tenant isolation within a shared checkpointer database.</p>
+
+                <div class="code-header">
+                    <span>program_18_3_multitenant_threads.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 18.3: Multi-Tenant State Isolation Across Distinct Thread IDs
+Verifies that concurrent threads execute independently without state leakage.
+"""
+
+from typing import TypedDict, Dict, Any
+from langgraph.graph import StateGraph, END
+from langgraph.checkpoint.memory import MemorySaver
+
+class TenantSessionState(TypedDict):
+    tenant_name: str
+    account_balance: float
+    transaction_count: int
+
+def deposit_node(state: TenantSessionState) -> Dict[str, Any]:
+    print(f"  [DEPOSIT] Processing {state['tenant_name']} (Current: ${state['account_balance']:.2f})")
+    return {
+        "account_balance": state["account_balance"] + 1000.0,
+        "transaction_count": state.get("transaction_count", 0) + 1
+    }
+
+def audit_node(state: TenantSessionState) -> Dict[str, Any]:
+    print(f"  [AUDIT] {state['tenant_name']} Verified. Balance: ${state['account_balance']:.2f}")
+    return {}
+
+def build_tenant_graph(saver):
+    builder = StateGraph(TenantSessionState)
+    builder.add_node("deposit", deposit_node)
+    builder.add_node("audit", audit_node)
+    builder.set_entry_point("deposit")
+    builder.add_edge("deposit", "audit")
+    builder.add_edge("audit", END)
+    return builder.compile(checkpointer=saver)
+
+if __name__ == "__main__":
+    shared_checkpointer = MemorySaver()
+    app = build_tenant_graph(shared_checkpointer)
+    
+    tenant_a_cfg = {"configurable": {"thread_id": "tenant_acme_corp"}}
+    tenant_b_cfg = {"configurable": {"thread_id": "tenant_globex_inc"}}
+    
+    print("=== INITIALIZING CONCURRENT TENANTS ===")
+    # Initialize Tenant A
+    app.invoke(
+        {"tenant_name": "Acme Corp", "account_balance": 500.0, "transaction_count": 0},
+        config=tenant_a_cfg
+    )
+    
+    # Initialize Tenant B with completely different data
+    app.invoke(
+        {"tenant_name": "Globex Inc", "account_balance": 25000.0, "transaction_count": 0},
+        config=tenant_b_cfg
+    )
+    
+    # Execute a second transaction strictly for Tenant A
+    print("\n=== RUNNING SECOND TRANSACTION ON TENANT A ONLY ===")
+    app.invoke(None, config=tenant_a_cfg)
+    
+    # Verify Isolated States
+    state_a = app.get_state(tenant_a_cfg).values
+    state_b = app.get_state(tenant_b_cfg).values
+    
+    print("\n=== VERIFYING THREAD ISOLATION INTEGRITY ===")
+    print(f"Tenant A ({state_a['tenant_name']}): Balance = ${state_a['account_balance']:.2f}, Txs = {state_a['transaction_count']}")
+    print(f"Tenant B ({state_b['tenant_name']}): Balance = ${state_b['account_balance']:.2f}, Txs = {state_b['transaction_count']}")
+    
+    assert state_a["account_balance"] == 2500.0, "Tenant A balance mismatch!"
+    assert state_b["account_balance"] == 26000.0, "Tenant B balance contaminated!"
+    print("\n✓ Thread isolation verified: No cross-tenant state contamination detected.")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Production Failure Modes & Operational Gotchas</h2>
+
+                <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #ef4444; margin-top: 0;">Gotcha 1: Unserializable State Values (Pickle / JSON Crashes)</h4>
+                    <p><strong>The Failure:</strong> Placing open socket connections, file descriptors, database connections, or unpicklable lambda functions inside the state dictionary. Checkpointers serialize state to binary or JSON before saving. If unpicklable objects exist, LangGraph crashes at the checkpoint boundary, failing the entire step.</p>
+                    <p><strong>Production Fix:</strong> Store only JSON-serializable primitives (strings, floats, ints, dicts, lists) in graph state. Keep connection pools, clients, and database handles outside state as global singletons or inject them via node dependencies.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #f59e0b; margin-top: 0;">Gotcha 2: SQLite Write Concurrency Locks (<code>sqlite3.OperationalError: database is locked</code>)</h4>
+                    <p><strong>The Failure:</strong> Using <code>SqliteSaver</code> in multi-threaded web servers (FastAPI/Gunicorn with multiple workers). SQLite enforces file-level write locking. Concurrent writes from parallel requests collide, causing HTTP 500 crashes.</p>
+                    <p><strong>Production Fix:</strong> Enable Write-Ahead Logging (WAL) via <code>PRAGMA journal_mode=WAL;</code> for local workloads, or migrate immediately to <code>PostgresSaver</code> with connection pooling (e.g. <code>psycopg_pool</code>) for multi-worker production deployments.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(59, 130, 246, 0.08); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #3b82f6; margin-top: 0;">Gotcha 3: Unbounded Checkpoint History Bloat</h4>
+                    <p><strong>The Failure:</strong> In long-running autonomous workflows (e.g. 1,000 steps), storing a full state snapshot at every node causes the checkpoint database to grow by gigabytes per hour.</p>
+                    <p><strong>Production Fix:</strong> Implement periodic checkpoint retention policies. Schedule a nightly cleanup job to purge intermediate micro-checkpoints older than 7 days while preserving the final state of each thread.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>8. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
+                    
+                    <!-- Question 1 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">1. What is the fundamental purpose of an agent checkpointer in LangGraph?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q1" value="A"> A) To accelerate GPU matrix multiplication</label></li>
+                            <li><label><input type="radio" name="q1" value="B"> B) To persist state snapshots to durable storage so workflows can recover from host failures and support pauses</label></li>
+                            <li><label><input type="radio" name="q1" value="C"> C) To format Python code according to PEP 8 standards</label></li>
+                            <li><label><input type="radio" name="q1" value="D"> D) To compress prompt vectors before indexing</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q1', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q1-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">2. How does LangGraph isolate state across distinct users or independent workflow executions in storage?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q2" value="A"> A) By OS process ID</label></li>
+                            <li><label><input type="radio" name="q2" value="B"> B) By timestamp only</label></li>
+                            <li><label><input type="radio" name="q2" value="C"> C) By the unique <code>thread_id</code> passed in the configuration dictionary</label></li>
+                            <li><label><input type="radio" name="q2" value="D"> D) By client IP address</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q2', 'C', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q2-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">3. When resuming an interrupted or failed workflow from its latest checkpoint, what should be passed as the first parameter to <code>app.invoke()</code>?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q3" value="A"> A) <code>initial_state</code></label></li>
+                            <li><label><input type="radio" name="q3" value="B"> B) <code>None</code></label></li>
+                            <li><label><input type="radio" name="q3" value="C"> C) <code>True</code></label></li>
+                            <li><label><input type="radio" name="q3" value="D"> D) The string <code>"RESUME"</code></label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q3', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q3-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">4. Why is <code>MemorySaver</code> unsuitable for multi-container enterprise deployments?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q4" value="A"> A) It requires a commercial OpenAI enterprise license</label></li>
+                            <li><label><input type="radio" name="q4" value="B"> B) Checkpoints are held only in local process RAM and disappear on container crash or pod restart</label></li>
+                            <li><label><input type="radio" name="q4" value="C"> C) It cannot handle string variables</label></li>
+                            <li><label><input type="radio" name="q4" value="D"> D) It only runs on Linux kernels</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q4', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q4-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">5. What capability does LangGraph's Time-Travel feature provide to engineers?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q5" value="A"> A) Speculative forward sampling of LLM outputs</label></li>
+                            <li><label><input type="radio" name="q5" value="B"> B) The ability to inspect past checkpoints, modify state values, and resume down alternate branches</label></li>
+                            <li><label><input type="radio" name="q5" value="C"> C) NTP clock synchronization across servers</label></li>
+                            <li><label><input type="radio" name="q5" value="D"> D) Automatic Git commit generation</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q5', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q5-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">6. Which checkpointer backend is recommended for high-availability horizontally scaled Kubernetes pods?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q6" value="A"> A) SqliteSaver pointing to local ephemeral disk</label></li>
+                            <li><label><input type="radio" name="q6" value="B"> B) MemorySaver</label></li>
+                            <li><label><input type="radio" name="q6" value="C"> C) PostgresSaver with an external PostgreSQL cluster</label></li>
+                            <li><label><input type="radio" name="q6" value="D"> D) Local JSON flat files</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q6', 'C', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q6-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">7. What happens if a node throws an unhandled exception midway through its computation?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q7" value="A"> A) All past checkpoints for that thread are deleted</label></li>
+                            <li><label><input type="radio" name="q7" value="B"> B) The checkpointer preserves the last successfully committed checkpoint from the prior node</label></li>
+                            <li><label><input type="radio" name="q7" value="C"> C) The database tables are truncated</label></li>
+                            <li><label><input type="radio" name="q7" value="D"> D) The LLM invents a fallback state</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q7', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q7-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 8 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">8. Which LangGraph API function modifies the state of a thread before resuming execution?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q8" value="A"> A) <code>app.modify_ram()</code></label></li>
+                            <li><label><input type="radio" name="q8" value="B"> B) <code>app.update_state(config, values)</code></label></li>
+                            <li><label><input type="radio" name="q8" value="C"> C) <code>app.patch_json()</code></label></li>
+                            <li><label><input type="radio" name="q8" value="D"> D) <code>app.force_restart()</code></label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q8', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q8-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 9 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">9. Why must objects stored in graph state be strictly JSON- or Pickle-serializable?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q9" value="A"> A) Because Python does not allow dictionaries with complex types</label></li>
+                            <li><label><input type="radio" name="q9" value="B"> B) Checkpointers serialize state to binary/JSON blobs when writing to database storage</label></li>
+                            <li><label><input type="radio" name="q9" value="C"> C) LLMs can only read JSON</label></li>
+                            <li><label><input type="radio" name="q9" value="D"> D) To comply with CSS formatting rules</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q9', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q9-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 10 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">10. How does checkpointer persistence empower human-in-the-loop approval workflows?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q10" value="A"> A) By keeping CPU threads blocked in a <code>while True: sleep(1)</code> loop</label></li>
+                            <li><label><input type="radio" name="q10" value="B"> B) By saving graph state to disk, freeing server memory while waiting days for human review</label></li>
+                            <li><label><input type="radio" name="q10" value="C"> C) By broadcasting raw state over WebSockets</label></li>
+                            <li><label><input type="radio" name="q10" value="D"> D) By forcing human reviewers to run local terminal debuggers</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q10', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q10-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>9. Hands-On Engineering Assignments</h2>
+                
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 18.1: Multi-Step Data Ingestion with Manual Crash Injection</h4>
+                    <p><strong>Specification:</strong> Build a 6-node LangGraph pipeline processing a batch of customer records. Include an environmental flag <code>SIMULATE_FAIL=True</code>. Trigger a crash at Node 4, verify that rows processed in Nodes 1–3 exist in SQLite, switch the flag to <code>False</code>, and verify recovery without duplicate processing.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #10b981; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 18.2: Thread Isolation Multi-Tenant Test</h4>
+                    <p><strong>Specification:</strong> Instantiate two threads simultaneously: <code>tenant_alpha</code> and <code>tenant_beta</code>. Run <code>tenant_alpha</code> through step 3, pause, run <code>tenant_beta</code> to completion, and then resume <code>tenant_alpha</code>. Verify that neither tenant accessed or mutated the other's state dictionary.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 18.3: History Audit & Time-Travel Explorer</h4>
+                    <p><strong>Specification:</strong> Use <code>app.get_state_history(config)</code> to print a formatted ASCII timeline of all historical states for a workflow run, displaying node name, timestamp, and state delta at each step.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #8b5cf6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 18.4: Human Correction via <code>update_state</code></h4>
+                    <p><strong>Specification:</strong> Configure a graph that generates SQL queries. Add a human review node. In your script, intercept the checkpoint, call <code>app.update_state()</code> to rewrite a flawed SQL query into an optimized query, and verify that downstream execution uses the human-corrected SQL.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #ec4899; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 18.5: Stress-Testing Checkpoint Storage</h4>
+                    <p><strong>Specification:</strong> Write a script that executes 100 sequential graph iterations. Measure database file size growth and average checkpoint write latency. Implement a cleanup utility that prunes intermediate checkpoints while retaining the initial and final states.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangGraph Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Persistence</span>
+                            </div>
+                            <h4>LangGraph Checkpointing & State Persistence Guide</h4>
+                            <p>Official guide on BaseCheckpointSaver, SqliteSaver, PostgresSaver, and asynchronous state serialization.</p>
+                            <a href="https://langchain-ai.github.io/langgraph/how-tos/persistence/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangGraph Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Time-Travel</span>
+                            </div>
+                            <h4>Human-in-the-Loop & Time-Travel Debugging in LangGraph</h4>
+                            <p>Tutorial on using `get_state_history`, editing past states with `update_state`, and resuming from arbitrary checkpoints.</p>
+                            <a href="https://langchain-ai.github.io/langgraph/how-tos/time-travel/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">SQLite Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Database</span>
+                            </div>
+                            <h4>Write-Ahead Logging (WAL) Mode in SQLite</h4>
+                            <p>Technical overview of WAL mode providing concurrency, high write throughput, and crash resilience for checkpointing.</p>
+                            <a href="https://www.sqlite.org/wal.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">SRE Standard</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Disaster Recovery</span>
+                            </div>
+                            <h4>Recovery Time Objective (RTO) and Recovery Point Objective (RPO)</h4>
+                            <p>Industry metrics defining tolerable data loss and downtime for enterprise mission-critical stateful systems.</p>
+                            <a href="https://en.wikipedia.org/wiki/Disaster_recovery#RTO_and_RPO" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        function checkAnswer(questionName, correctAnswer, btnElement) {
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            const feedback = document.getElementById(`${questionName}-feedback`);
+            if (!selected) {
+                feedback.style.display = "block";
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "Please select an option before checking.";
+                return;
+            }
+            feedback.style.display = "block";
+            if (selected.value === correctAnswer) {
+                feedback.style.color = "#10b981";
+                feedback.textContent = "✓ Correct! " + getExplanation(questionName);
+            } else {
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "✗ Incorrect. " + getExplanation(questionName);
+            }
+        }
+
+        function getExplanation(questionName) {
+            const explanations = {
+                "q1": "Checkpointers write state to durable storage after each node, allowing graphs to recover after crashes and pause for human review.",
+                "q2": "LangGraph enforces tenant separation through unique thread_id strings in the configurable dictionary.",
+                "q3": "Passing None signals to LangGraph to load the latest checkpoint for the specified thread_id rather than resetting state.",
+                "q4": "MemorySaver stores snapshots in RAM; when the container or process stops, all state is lost.",
+                "q5": "Time-travel enables inspecting previous checkpoints, modifying state variables, and branching execution.",
+                "q6": "PostgresSaver provides ACID guarantees, distributed locking, and horizontal scalability across Kubernetes pods.",
+                "q7": "Checkpoints are transactional; uncommitted failing nodes roll back to the last stable state.",
+                "q8": "app.update_state() injects new or corrected values into an existing checkpoint before execution resumes.",
+                "q9": "Storage backends serialize state into binary blobs or JSON strings, requiring all state attributes to be serializable.",
+                "q10": "Durable state persistence enables zero-CPU idle waiting while human reviewers review decisions over hours or days."
+            };
+            return explanations[questionName] || "";
+        }
+
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const code = pre.querySelector('code');
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => { button.textContent = 'Copy Code'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

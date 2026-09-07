@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 13: LangChain Abstractions & LangChain Expression Language (LCEL)</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li class="active"><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>54%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 13.0</span>
+                <h1>Day 13: LangChain Abstractions & LangChain Expression Language (LCEL)</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> In Days 11 and 12, building a working RAG pipeline required writing over 80 lines of procedural glue code: instantiating embedding clients, vector query unpacking, string concatenation, token tracking, and manual error recovery. Can we eliminate this repetitive boilerplate without sacrificing modularity, transparency, and production reliability?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 2.4</span>
+                            <span class="plan-badge plan-badge-secondary">Week 2</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Deconstruct LangChain Expression Language (LCEL) as a functional monadic pipeline ($g \mid f$).</li><li>Master the 6 fundamental `Runnable` methods: `invoke`, `ainvoke`, `stream`, `astream`, `batch`, `astream_events`.</li><li>Build dynamic conditional routing branches and resilient fallback chains with automated retries.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Monadic composition in software engineering: pipe operator mechanics and lazy evaluation.</li><li>Asynchronous generator streaming (`astream`) for real-time token delivery to frontends.</li><li>Circuit breaker patterns: fallback chains using `.with_fallbacks()` across primary and secondary models.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 13.1: Declarative RAG Pipeline with Real-Time Asynchronous Streaming (`astream`).</li><li>Program 13.2: Dynamic `RunnableBranch` Router with Structured Pydantic Output Parsing.</li><li>Program 13.3: Resilient Model Fallback Chain with Automatic Retry Backoff.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>The Silent Monad Crash: Passing non-dictionary payloads into an LCEL pipe expecting structured keys.</li><li>Memory Leaks with Async Generators: Abandoning open streaming connections without proper cancellation handling.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Streaming LCEL Dynamic Routing Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Evolution of LangChain: From Black-Box Chains to LCEL</h2>
+                <p>Early versions of LangChain (v0.0.x) relied on monolithic classes like <code>RetrievalQA</code> or <code>LLMChain</code>. These legacy classes acted as opaque black boxes: inspecting prompts required monkey-patching internal methods, token streaming was cumbersome, and switching foundation model providers required rewriting application code.</p>
+
+                <p>Modern LangChain (v0.2+) introduced <strong>LangChain Expression Language (LCEL)</strong>. LCEL treats every component—prompt templates, chat models, vector retrievers, and output parsers—as a standardized <strong>Runnable</strong> that composes via the standard Unix pipe operator (<code>|</code>):</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6; font-weight: bold;">chain = (</div>
+                        <div style="margin-left: 1.5rem; color: #10b981;">RunnableParallel({</div>
+                        <div style="margin-left: 3rem; color: var(--text-muted);">"context": retriever | format_docs,</div>
+                        <div style="margin-left: 3rem; color: var(--text-muted);">"question": RunnablePassthrough()</div>
+                        <div style="margin-left: 1.5rem; color: #10b981;">})</div>
+                        <div style="margin-left: 1.5rem; color: #f59e0b;">| prompt_template</div>
+                        <div style="margin-left: 1.5rem; color: #6366f1;">| chat_model</div>
+                        <div style="margin-left: 1.5rem; color: #ec4899;">| StrOutputParser()</div>
+                        <div style="color: #3b82f6; font-weight: bold;">)</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 13.0-1: Declarative Composition Flow under LangChain Expression Language (LCEL)</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Mathematical Formalization: The Runnable Protocol & Monadic Composition</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">The Runnable Functional Interface</h3>
+                    <p>In category theory and functional programming, the pipe operator represents function composition: $(f \circ g)(x) = f(g(x))$, written in LCEL as <code>g | f</code>. Every component conforming to the <code>Runnable[Input, Output]</code> protocol guarantees 6 fundamental runtime behaviors:</p>
+                    <table style="width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.05); color: var(--accent);">
+                                <th style="padding: 8px; text-align: left;">Method</th>
+                                <th style="padding: 8px; text-align: left;">Type Signature</th>
+                                <th style="padding: 8px; text-align: left;">Operational Guarantee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 8px; font-family: monospace;">invoke()</td>
+                                <td style="padding: 8px; font-family: monospace;">Input &rarr; Output</td>
+                                <td style="padding: 8px;">Synchronous single-shot execution.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 8px; font-family: monospace;">ainvoke()</td>
+                                <td style="padding: 8px; font-family: monospace;">async Input &rarr; Output</td>
+                                <td style="padding: 8px;">Native non-blocking asynchronous coroutine.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 8px; font-family: monospace;">stream()</td>
+                                <td style="padding: 8px; font-family: monospace;">Input &rarr; Iterator[OutputChunk]</td>
+                                <td style="padding: 8px;">Synchronous token generator yielding deltas in real-time.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 8px; font-family: monospace;">astream()</td>
+                                <td style="padding: 8px; font-family: monospace;">Input &rarr; AsyncIterator[OutputChunk]</td>
+                                <td style="padding: 8px;">Asynchronous token streaming for FastAPI / SSE endpoints.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 8px; font-family: monospace;">batch() / abatch()</td>
+                                <td style="padding: 8px; font-family: monospace;">List[Input] &rarr; List[Output]</td>
+                                <td style="padding: 8px;">Auto-parallelized batching across worker thread pools.</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; font-family: monospace;">astream_events()</td>
+                                <td style="padding: 8px; font-family: monospace;">Input &rarr; AsyncIterator[StreamEvent]</td>
+                                <td style="padding: 8px;">v2 Event Bus emitting intermediate tool starts, retriever hits, and tokens.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-bottom: 0;">Because every element in an LCEL chain inherits these signatures, declaring <code>chain = prompt | model</code> automatically grants full streaming, async, and batch capabilities without writing a single line of custom threading code!</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: Declarative RAG Pipeline with Streaming Token Iteration</h2>
+                <p>The implementation below showcases an end-to-end RAG pipeline constructed in LCEL, demonstrating <code>RunnableParallel</code>, in-memory Chroma vector retrieval, and live token-by-token streaming to the terminal:</p>
+
+                <div class="code-header">
+                    <span>program_13_1_lcel_rag_streaming.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 13.0-1: Declarative LCEL RAG Pipeline with Real-Time Streaming
+import sys
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
+
+# 1. Models & Embeddings
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0, streaming=True)
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+
+# 2. Ingest Sample Indian Automotive EV Regulations
+knowledge_corpus = [
+    "Section 12.1: The PM E-DRIVE scheme in India allocates ₹10,900 crore for electric 2-wheelers, 3-wheelers, and e-buses.",
+    "Section 12.2: EV battery testing in India mandates AIS-156 Amendment 3 standards, requiring thermal propagation and overcharge protection.",
+    "Section 12.3: Goods and Services Tax (GST) for electric vehicles and battery packs is capped at a concessional rate of 5%."
+]
+
+vectorstore = Chroma.from_texts(texts=knowledge_corpus, embedding=embeddings)
+retriever = vectorstore.as_retriever(search_kwargs={"k": 2})
+
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
+# 3. Prompt Template
+template = """
+You are an Automotive Regulatory Counsel. Answer the user query using only the approved statutory excerpts below.
+Cite the relevant Section number for every statement.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
+prompt = ChatPromptTemplate.from_template(template)
+
+# 4. Compose Declarative LCEL Chain
+rag_chain = (
+    RunnableParallel({
+        "context": retriever | format_docs,
+        "question": RunnablePassthrough()
+    })
+    | prompt
+    | llm
+    | StrOutputParser()
+)
+
+if __name__ == "__main__":
+    user_query = "What safety standard is mandated for EV batteries in India and what is the GST rate?"
+    print(f"Query: '{user_query}'\nStreaming Response:")
+    print("-" * 50)
+    
+    # Real-time token streaming via .stream()
+    for chunk in rag_chain.stream(user_query):
+        sys.stdout.write(chunk)
+        sys.stdout.flush()
+    print("\n" + "-" * 50)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 13.0-1: Declarative LCEL Pipeline with Real-Time Token Streaming</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: Multi-Branch Dynamic Router with Pydantic Schema Validation</h2>
+                <p>Real-world applications don't execute a single pipeline for every request. The code below uses <code>RunnableBranch</code> to route queries into specialized sub-chains based on classification, extracting strongly-typed Pydantic output schemas:</p>
+
+                <div class="code-header">
+                    <span>program_13_2_lcel_dynamic_router.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 13.0-2: Dynamic Multi-Branch Routing with Pydantic Output Enforcement
+from typing import Literal, List
+from pydantic import BaseModel, Field
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser, PydanticOutputParser
+from langchain_core.runnables import RunnableBranch, RunnablePassthrough
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
+
+# 1. Output Schema for Technical Diagnosis
+class TechnicalDiagnostic(BaseModel):
+    category: Literal["battery", "motor", "software", "chassis"]
+    severity: Literal["low", "medium", "critical"]
+    recommended_tools: List[str]
+    resolution_steps: List[str]
+
+diagnostic_parser = PydanticOutputParser(pydantic_object=TechnicalDiagnostic)
+
+# 2. Classifier Chain
+classifier_prompt = ChatPromptTemplate.from_template("""
+Classify the user ticket into exactly one category: 'technical', 'billing', or 'general'.
+Query: {input}
+Classification:
+""")
+classifier_chain = classifier_prompt | llm | StrOutputParser()
+
+# 3. Specialized Sub-Chains
+tech_prompt = ChatPromptTemplate.from_template("""
+You are a Principal Automotive Diagnostic Engineer. Analyze the technical issue and output JSON.
+{format_instructions}
+
+Issue: {input}
+""")
+tech_chain = (
+    {"input": RunnablePassthrough(), "format_instructions": lambda _: diagnostic_parser.get_format_instructions()}
+    | tech_prompt
+    | llm
+    | diagnostic_parser
+)
+
+billing_prompt = ChatPromptTemplate.from_template("You are a Billing Specialist. Answer politely: {input}")
+billing_chain = billing_prompt | llm | StrOutputParser()
+
+general_prompt = ChatPromptTemplate.from_template("You are a General Concierge. Assist: {input}")
+general_chain = general_prompt | llm | StrOutputParser()
+
+# 4. Declarative Dynamic Branching
+router_branch = RunnableBranch(
+    (lambda x: "technical" in x["classification"].lower(), lambda x: tech_chain.invoke(x["input"])),
+    (lambda x: "billing" in x["classification"].lower(), lambda x: billing_chain.invoke(x["input"])),
+    lambda x: general_chain.invoke(x["input"])
+)
+
+full_routing_pipeline = (
+    RunnablePassthrough.assign(classification=classifier_chain)
+    | router_branch
+)
+
+if __name__ == "__main__":
+    ticket = "High voltage alert: Inverter temperature exceeded 105C during regenerative braking on highway."
+    print("Ingesting Ticket:", ticket)
+    result = full_routing_pipeline.invoke({"input": ticket})
+    
+    if isinstance(result, TechnicalDiagnostic):
+        print("\n--> Classified as TECHNICAL. Typed Pydantic Output:")
+        print(f"    Category: {result.category.upper()} | Severity: {result.severity.upper()}")
+        print(f"    Tools Required: {result.recommended_tools}")
+        print(f"    Steps: {result.resolution_steps}")
+    else:
+        print("\n--> Resolution:", result)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 13.0-2: Dynamic Branch Routing with Typed Schema Enforcement</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: Resilient Chains with Model Fallbacks & Automatic Retries</h2>
+                <p>Production systems must survive OpenAI rate-limits (HTTP 429) or transient outages. LCEL provides declarative resilience methods: <code>.with_fallbacks()</code> switches to backup model providers (e.g. Anthropic Claude or local Ollama), while <code>.with_retry()</code> implements exponential backoff:</p>
+
+                <div class="code-header">
+                    <span>program_13_3_lcel_fallbacks_retry.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 13.0-3: Resilient LCEL with Declarative Model Fallbacks & Exponential Retries
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+# Primary model (e.g. high-reasoning GPT-4o)
+primary_model = ChatOpenAI(
+    model="gpt-4o",
+    temperature=0.0,
+    max_retries=2
+)
+
+# Fallback backup model (e.g. fast, highly available GPT-4o-mini)
+backup_model = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0.0
+)
+
+# Attach fallback failover chain
+resilient_model = primary_model.with_fallbacks([backup_model])
+
+prompt = ChatPromptTemplate.from_template("""
+Summarize the key compliance requirement in 15 words:
+{text}
+""")
+
+resilient_chain = (
+    prompt
+    | resilient_model.with_retry(stop_after_attempt=3)
+    | StrOutputParser()
+)
+
+if __name__ == "__main__":
+    regulatory_text = (
+        "Under the Central Motor Vehicles Rules (CMVR), all commercial electric vehicles "
+        "registered in India must be fitted with an AIS-140 compliant vehicle tracking unit (VLTD) "
+        "and emergency panic buttons connected directly to state emergency response servers."
+    )
+    summary = resilient_chain.invoke({"text": regulatory_text})
+    print("Resilient Summary Output:\n", summary)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 13.0-3: Declarative Fallback Architecture with Exponential Retry Backoff</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Legacy Churn & Deprecated Classes:</strong> Using deprecated classes from <code>langchain.chains</code> (like <code>LLMChain</code> or <code>RetrievalQA</code>) causes version incompatibilities and lacks native streaming support. <em>Mitigation:</em> Build exclusively with <code>langchain_core.runnables</code> and LCEL pipe syntax.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Async Event Loop Starvation:</strong> Running synchronous <code>.invoke()</code> inside an <code>asyncio</code> FastAPI route blocks the entire Python event loop for all concurrent users. <em>Mitigation:</em> Always use <code>await chain.ainvoke()</code> or <code>chain.astream()</code> in web servers.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Silent Parser Collapses:</strong> If a model outputs markdown code fences (<code>```json ... ```</code>) when using <code>JsonOutputParser</code>, the parser may fail. <em>Mitigation:</em> Combine <code>ChatOpenAI(model="gpt-4o-mini").with_structured_output(Schema)</code> for schema-enforced JSON.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Memory Leaks in Callback Handlers:</strong> Accumulating raw token streams in stateful global callback lists across thousands of requests exhausts server memory. <em>Mitigation:</em> Use request-scoped callbacks or standard OpenTelemetry tracers.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Raw Python API vs. Modern LCEL Comparison Matrix</h2>
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Dimension</th>
+                            <th style="padding: 12px; text-align: left;">Raw Python API (Day 11)</th>
+                            <th style="padding: 12px; text-align: left;">LangChain LCEL (Day 13)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Boilerplate Code</td>
+                            <td style="padding: 12px;">High (60–100 lines for basic RAG).</td>
+                            <td style="padding: 12px;">Minimal (5–10 declarative lines).</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Streaming & Async Support</td>
+                            <td style="padding: 12px;">Requires manual generator loops and threading code.</td>
+                            <td style="padding: 12px;">Built-in for free via <code>.stream()</code>, <code>.astream()</code>, and <code>.abatch()</code>.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Provider Portability</td>
+                            <td style="padding: 12px;">Locked to vendor SDK syntax (OpenAI vs Anthropic vs Gemini).</td>
+                            <td style="padding: 12px;">Instantly swappable via uniform <code>BaseChatModel</code> interface.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Fallback & Retries</td>
+                            <td style="padding: 12px;">Manual try/except blocks around every HTTP call.</td>
+                            <td style="padding: 12px;">Declarative failover via <code>chain.with_fallbacks([backup])</code>.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. What is the primary purpose of LangChain Expression Language (LCEL)?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To compile Python programs into WebAssembly.</li>
+                        <li class="mcq-option" data-correct="true">To provide a declarative, composable pipe syntax (|) for chaining LLMs, retrievers, and parsers with native streaming and async support.</li>
+                        <li class="mcq-option" data-correct="false">To write CSS animations.</li>
+                        <li class="mcq-option" data-correct="false">To replace SQL queries with natural language.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. In an LCEL chain, what does RunnablePassthrough() do?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It deletes the user input to save memory.</li>
+                        <li class="mcq-option" data-correct="true">It passes the incoming input through without modification, making it available to subsequent components in the dictionary.</li>
+                        <li class="mcq-option" data-correct="false">It terminates the chain immediately.</li>
+                        <li class="mcq-option" data-correct="false">It translates the prompt into binary.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. What is the role of RunnableParallel in LCEL?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">It runs multiple sub-runnables concurrently over the same input (e.g. running retriever and forwarding question simultaneously).</li>
+                        <li class="mcq-option" data-correct="false">It doubles the GPU clock speed.</li>
+                        <li class="mcq-option" data-correct="false">It runs two operating systems at once.</li>
+                        <li class="mcq-option" data-correct="false">It splits strings into arrays.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. Which LCEL method should be called to stream tokens in real-time to the terminal?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">.run()</li>
+                        <li class="mcq-option" data-correct="true">.stream()</li>
+                        <li class="mcq-option" data-correct="false">.download()</li>
+                        <li class="mcq-option" data-correct="false">.broadcast()</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. How does .with_fallbacks() enhance production reliability in LCEL?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">If the primary model fails (e.g. 429 rate limit or outage), it automatically redirects the payload to backup models.</li>
+                        <li class="mcq-option" data-correct="false">It saves a copy of the output to Google Drive.</li>
+                        <li class="mcq-option" data-correct="false">It reduces token cost by 90%.</li>
+                        <li class="mcq-option" data-correct="false">It translates the prompt to French.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. What is the fundamental difference between legacy RetrievalQA and modern LCEL RAG?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">RetrievalQA is faster than LCEL.</li>
+                        <li class="mcq-option" data-correct="true">RetrievalQA is an opaque black box, whereas LCEL makes the prompt, retriever, and streaming steps completely transparent and customizable.</li>
+                        <li class="mcq-option" data-correct="false">LCEL requires paying a monthly licensing fee.</li>
+                        <li class="mcq-option" data-correct="false">RetrievalQA runs locally without internet.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. In Program 13.0-2, what does RunnableBranch do?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Creates a new branch in Git.</li>
+                        <li class="mcq-option" data-correct="true">Evaluates condition predicates sequentially and routes the input into the first matching sub-chain.</li>
+                        <li class="mcq-option" data-correct="false">Splits a tree into leaves.</li>
+                        <li class="mcq-option" data-correct="false">Shuts down the server.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What is the danger of calling synchronous .invoke() inside an asynchronous FastAPI endpoint?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It causes a syntax error.</li>
+                        <li class="mcq-option" data-correct="true">It blocks the main Python event loop thread, preventing all other concurrent users from being served.</li>
+                        <li class="mcq-option" data-correct="false">It increases token pricing.</li>
+                        <li class="mcq-option" data-correct="false">FastAPI deletes the route.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. What does StrOutputParser() do?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Encrypts strings with AES.</li>
+                        <li class="mcq-option" data-correct="true">Extracts the plain string content from an AIMessage response object, dropping extraneous metadata.</li>
+                        <li class="mcq-option" data-correct="false">Translates text into audio.</li>
+                        <li class="mcq-option" data-correct="false">Splits strings on commas.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. In LCEL, how can an arbitrary Python function be integrated into a pipe?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">By converting it to a C++ shared library.</li>
+                        <li class="mcq-option" data-correct="true">By wrapping it in a RunnableLambda (or using a lambda function directly in the pipe).</li>
+                        <li class="mcq-option" data-correct="false">By uploading it to npm.</li>
+                        <li class="mcq-option" data-correct="false">Functions cannot be piped in LCEL.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master LCEL composition and production resilience.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Asynchronous Batch Document Processing</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build an LCEL summarization chain. Use <code>await chain.abatch(texts, config={"max_concurrency": 5})</code> to process 20 customer tickets in parallel, measuring total wall-clock time.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Cross-Provider Fallback Architecture</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Configure a primary <code>ChatOpenAI(model="gpt-4o")</code> with a fallback to <code>ChatAnthropic(model="claude-3-5-sonnet")</code>. Simulate a 429 rate limit error on OpenAI and verify seamless automatic failover.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Custom Token Usage Callback</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Implement a custom <code>BaseCallbackHandler</code> that intercepts <code>on_llm_end</code>. Log cumulative prompt and completion tokens across every component in your LCEL chain.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Dynamic Self-Querying Vector Filter</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build an LCEL chain that takes a user query, extracts filter criteria (e.g. <code>{"year": 2026}</code>), and dynamically passes those metadata filters into ChromaDB's retriever.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Multi-Modal LCEL Document Analyzer</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create an LCEL pipeline that accepts an image URL (e.g. vehicle damage photo) and text description, passing both to <code>gpt-4o</code> to generate an insurance estimate as a validated Pydantic model.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangChain Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">LCEL</span>
+                            </div>
+                            <h4>LangChain Expression Language (LCEL) Architectural Guide</h4>
+                            <p>Official specification on Runnable protocols, streaming primitives, batch execution, and chaining syntax.</p>
+                            <a href="https://python.langchain.com/docs/concepts/lcel/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangChain API</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Core API</span>
+                            </div>
+                            <h4>RunnableInterface & Core Primitives Reference</h4>
+                            <p>Complete API reference for RunnableParallel, RunnableBranch, RunnablePassthrough, and fallback adapters.</p>
+                            <a href="https://api.python.langchain.com/en/latest/core/runnables.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">PEP 525</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Python Standard</span>
+                            </div>
+                            <h4>Asynchronous Generators in Python</h4>
+                            <p>Official Python specification for async generators (`async for`, `yield`), powering real-time LLM token streaming.</p>
+                            <a href="https://peps.python.org/pep-0525/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Martin Fowler</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Software Architecture</span>
+                            </div>
+                            <h4>Circuit Breaker Design Pattern</h4>
+                            <p>Architectural guide for protecting distributed microservices against cascading failures via automated fallbacks.</p>
+                            <a href="https://martinfowler.com/bliki/CircuitBreaker.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_12.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 12: Improving Retrieval Quality</span>
+                </a>
+                <a href="day_14.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 14: n8n Visual Automation</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

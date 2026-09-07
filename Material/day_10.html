@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10: Dynamic Tool Selection via ReAct & Pydantic</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li class="active"><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>42%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 10.0</span>
+                <h1>Day 10: Dynamic Tool Selection via ReAct & Pydantic</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> In Day 6, we configured an LLM to call a single pre-determined tool. But enterprise agents operate in environments with 20+ specialized capabilities: SQL querying, vector search, financial calculators, email dispatchers, and external APIs. When a catalog grows large, dumping every tool into the system prompt causes <em>Tool Distraction</em>, context window bloat, and parameter hallucinations. How do we engineer dynamic, two-stage semantic tool selection and resilient dispatching?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 2.1</span>
+                            <span class="plan-badge plan-badge-secondary">Week 2</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Solve the 'Too Many Tools' bottleneck: register 100+ tools without blowing past context limits.</li><li>Build a dynamic tool registry with automatic type introspection and documentation extraction.</li><li>Implement a two-stage semantic tool index using vector embeddings and resilient parameter coercion.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Semantic Tool Retrieval theory: Modeling tool selection as Top-$K$ semantic similarity in embedding space.</li><li>Two-stage dispatch architecture: Retrieve Top-3 relevant tools $	o$ Inject into LLM prompt $	o$ Execute.</li><li>Pydantic runtime type coercion: Gracefully converting stringified numbers and dates to typed objects.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 10.1: Production Dynamic Tool Registry with `@registry.register` Introspection.</li><li>Program 10.2: Two-Stage Semantic Tool Index using Vector Embeddings and Cosine Distance.</li><li>Program 10.3: Resilient Tool Dispatcher with Automated Pydantic Type Coercion.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Tool Selection Collision: Registering multiple tools with overlapping, vague docstrings, causing hallucinated calls.</li><li>Type Mismatch Exceptions: Passing stringified arguments from LLM to typed functions without automated coercion.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Semantic Tool Index & Resilient Dispatcher • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Mechanics of Dynamic Tool Selection</h2>
+                <p>When you provide an array of tools to a foundation model, the model does not execute code or inspect your Python function bodies. It performs <strong>in-context semantic matching</strong> between the user's intent and the <code>description</code>, <code>parameters</code>, and docstrings defined in the OpenAPI schema.</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #6366f1;">Thought: "The user needs to retrieve customer CUST-101's account and calculate a 15% discount if spend > ₹500,000."</div>
+                        <div style="margin-top: 0.5rem; color: #f59e0b;">Action 1: query_customer_database(customer_id="CUST-101")</div>
+                        <div style="margin-top: 0.5rem; color: #10b981;">Observation 1: {"name": "Infosys Tech", "total_spend_inr": 850000, "status": "Platinum"}</div>
+                        <div style="margin-top: 0.5rem; color: #6366f1;">Thought: "Spend is ₹850,000 (> ₹500,000). Now I calculate 15% discount: 850000 * 0.15."</div>
+                        <div style="margin-top: 0.5rem; color: #f59e0b;">Action 2: run_calculator(expression="850000 * 0.15")</div>
+                        <div style="margin-top: 0.5rem; color: #10b981;">Observation 2: {"status": "success", "result": 127500.0}</div>
+                        <div style="margin-top: 0.5rem; color: #22c55e; font-weight: bold;">Final Answer: "Customer Infosys Tech has total spend of ₹850,000. Their 15% renewal discount is ₹127,500."</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 10.0-1: Multi-Tool ReAct Execution Trace with Interleaved Observations</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Theory: Two-Stage Semantic Tool Retrieval for Large Catalogs</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">The Tool Bloat Problem & Mathematical Sizing</h3>
+                    <p>Each tool schema in the OpenAI function specification consumes approximately $150 \text{ to } 350 \text{ tokens}$. If an enterprise platform provides $M = 50$ enterprise tools:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #ef4444; margin: 1rem 0;">
+                        \text{Baseline Overhead per Turn} = 50 \times 250 \approx 12,500 \text{ tokens}
+                    </div>
+                    <p>Across a 6-turn agent trajectory, this overhead wastes <strong>75,000 tokens</strong> solely defining irrelevant tools! Even worse, large tool catalogs trigger <em>Tool Confusion</em>, where models pick the wrong tool because of overlapping keywords.</p>
+
+                    <h4 style="color: #10b981; margin-top: 1.2rem;">The Vector-Indexed Two-Stage Solution</h4>
+                    <p>Instead of passing all $M$ tools to the LLM, we embed tool descriptions into a dense vector index. On each turn, given user query $q$, we compute cosine similarity between the query embedding $e_q$ and all tool description embeddings $e_{t_i}$:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #10b981; margin: 1rem 0;">
+                        \text{Sim}(q, t_i) = \frac{e_q \cdot e_{t_i}}{\|e_q\|_2 \|e_{t_i}\|_2}
+                    </div>
+                    <p style="margin-bottom: 0;">We dynamically select the <strong>Top-$k$ (e.g., $k=4$)</strong> highest scoring tools, slashing token consumption by <strong>92%</strong> and eliminating model distraction.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: Dynamic Multi-Tool Registry with Pydantic v2 Introspection</h2>
+                <p>The code below demonstrates a production tool registry with an automated <code>@agent_tool</code> decorator that uses type introspection to compile OpenAPI JSON schemas directly from Python signatures:</p>
+
+                <div class="code-header">
+                    <span>program_10_1_dynamic_tool_registry.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 10.0-1: Production Multi-Tool Registry with Pydantic Introspection
+import inspect
+import json
+import math
+from typing import Callable, Dict, Any, List, Optional
+from pydantic import BaseModel, Field, create_model
+from openai import OpenAI
+
+client = OpenAI()
+
+class ToolRegistry:
+    def __init__(self):
+        self.tools: Dict[str, Callable] = {}
+        self.schemas: List[Dict[str, Any]] = []
+
+    def register(self, name: Optional[str] = None, description: Optional[str] = None):
+        """Decorator to register a typed Python function into the agent's tool catalog."""
+        def decorator(func: Callable):
+            fn_name = name or func.__name__
+            fn_doc = description or (func.__doc__ or "No description provided.").strip()
+            
+            sig = inspect.signature(func)
+            fields: Dict[str, Any] = {}
+            
+            for param_name, param in sig.parameters.items():
+                param_type = param.annotation if param.annotation != inspect.Parameter.empty else str
+                default_val = param.default if param.default != inspect.Parameter.empty else ...
+                fields[param_name] = (param_type, default_val)
+                
+            ParamModel = create_model(f"{fn_name}_args", **fields)
+            
+            tool_spec = {
+                "type": "function",
+                "function": {
+                    "name": fn_name,
+                    "description": fn_doc,
+                    "parameters": ParamModel.model_json_schema()
+                }
+            }
+            
+            self.tools[fn_name] = func
+            self.schemas.append(tool_spec)
+            return func
+        return decorator
+
+    def dispatch(self, tool_name: str, arguments_json: str) -> str:
+        """Safely parses arguments and executes the registered tool."""
+        if tool_name not in self.tools:
+            return json.dumps({"status": "error", "message": f"Tool '{tool_name}' is not registered."})
+        
+        try:
+            args = json.loads(arguments_json)
+            func = self.tools[tool_name]
+            result = func(**args)
+            return json.dumps({"status": "success", "result": result})
+        except Exception as err:
+            return json.dumps({"status": "error", "message": f"Execution failed: {str(err)}"})
+
+# Initialize registry
+registry = ToolRegistry()
+
+@registry.register(description="Perform high-precision mathematical and algebraic calculations")
+def calculate_expression(expression: str) -> float:
+    sanitized = expression.replace("^", "**")
+    allowed = {"sqrt": math.sqrt, "abs": abs, "pow": math.pow}
+    return float(eval(sanitized, {"__builtins__": None}, allowed))
+
+@registry.register(description="Retrieve customer profile, billing status, and total revenue in INR")
+def lookup_customer(customer_id: str) -> Dict[str, Any]:
+    mock_db = {
+        "CUST-101": {"name": "Infosys Tech", "total_spend_inr": 850000, "status": "Platinum"},
+        "CUST-102": {"name": "Wipro Global", "total_spend_inr": 420000, "status": "Gold"}
+    }
+    return mock_db.get(customer_id, {"error": "Customer not found"})
+
+@registry.register(description="Retrieve live meteorological conditions for an Indian tech hub")
+def get_weather(city: str) -> Dict[str, Any]:
+    return {"city": city, "temperature_c": 28.5, "condition": "Overcast", "humidity_percent": 65}
+
+def run_multi_tool_agent(prompt: str) -> str:
+    messages = [
+        {"role": "system", "content": "You are an autonomous operations assistant. Use tools to verify all data."},
+        {"role": "user", "content": prompt}
+    ]
+    
+    for step in range(1, 5):
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            tools=registry.schemas,
+            temperature=0.0
+        )
+        msg = resp.choices[0].message
+        messages.append(msg)
+        
+        if not msg.tool_calls:
+            return msg.content
+            
+        for tc in msg.tool_calls:
+            print(f"[Turn {step}] Model selecting: {tc.function.name} with args: {tc.function.arguments}")
+            tool_output = registry.dispatch(tc.function.name, tc.function.arguments)
+            messages.append({"role": "tool", "tool_call_id": tc.id, "content": tool_output})
+            
+    return "Max steps exhausted."
+
+if __name__ == "__main__":
+    task = "Find customer CUST-101. If their spend > 500,000 INR, calculate a 12% loyalty rebate and check weather in Bengaluru."
+    print("Agent Result:\n", run_multi_tool_agent(task))
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 10.0-1: Dynamic Tool Registry with Automatic Schema Generation</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: Two-Stage Semantic Tool Retrieval Engine</h2>
+                <p>When an enterprise provides 30+ tools, passing all definitions causes massive context bloat. The implementation below uses dense vector embeddings to index tool capabilities, retrieving only the Top-3 relevant tools per turn:</p>
+
+                <div class="code-header">
+                    <span>program_10_2_semantic_tool_search.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 10.0-2: Two-Stage Semantic Tool Retrieval with Vector Embeddings
+import numpy as np
+from typing import List, Dict, Any
+from openai import OpenAI
+
+client = OpenAI()
+
+class SemanticToolIndex:
+    def __init__(self, catalog: List[Dict[str, Any]]):
+        self.catalog = catalog
+        self.embeddings: List[np.ndarray] = []
+        self._build_index()
+
+    def _get_embedding(self, text: str) -> np.ndarray:
+        resp = client.embeddings.create(model="text-embedding-3-small", input=text)
+        return np.array(resp.data[0].embedding, dtype=np.float32)
+
+    def _build_index(self):
+        print(f"Embedding {len(self.catalog)} enterprise tool descriptions...")
+        for tool in self.catalog:
+            desc = f"{tool['function']['name']}: {tool['function']['description']}"
+            self.embeddings.append(self._get_embedding(desc))
+
+    def retrieve_top_k(self, query: str, k: int = 3) -> List[Dict[str, Any]]:
+        """Computes cosine similarity and returns top-k tools."""
+        q_emb = self._get_embedding(query)
+        q_norm = np.linalg.norm(q_emb)
+        
+        scores = []
+        for idx, t_emb in enumerate(self.embeddings):
+            sim = np.dot(q_emb, t_emb) / (q_norm * np.linalg.norm(t_emb))
+            scores.append((sim, idx))
+            
+        scores.sort(key=lambda x: x[0], reverse=True)
+        top_tools = [self.catalog[idx] for _, idx in scores[:k]]
+        return top_tools
+
+# Expanded enterprise catalog (simulated 8 diverse tools)
+enterprise_catalog = [
+    {"type": "function", "function": {"name": "query_sql", "description": "Execute read-only SQL queries against Postgres database"}},
+    {"type": "function", "function": {"name": "calculate_roi", "description": "Calculate return on investment, net present value, and IRR"}},
+    {"type": "function", "function": {"name": "fetch_jira_ticket", "description": "Retrieve agile ticket status, assignee, and comments"}},
+    {"type": "function", "function": {"name": "query_ec2_instances", "description": "List active AWS cloud compute instances and CPU metrics"}},
+    {"type": "function", "function": {"name": "send_slack_alert", "description": "Post notifications to engineering incident Slack channels"}},
+    {"type": "function", "function": {"name": "search_patents", "description": "Search USPTO and European patent office legal filings"}},
+    {"type": "function", "function": {"name": "ping_dns_server", "description": "Test network latency and packet loss to hostname"}},
+    {"type": "function", "function": {"name": "scan_docker_vulnerabilities", "description": "Scan container images for CVE security flaws"}}
+]
+
+if __name__ == "__main__":
+    indexer = SemanticToolIndex(enterprise_catalog)
+    
+    test_query = "Our production server is running slow and we need to check CPU utilization on our cloud servers."
+    selected_tools = indexer.retrieve_top_k(test_query, k=2)
+    
+    print("\n" + "=" * 25 + " TOP-2 RETRIEVED TOOLS " + "=" * 25)
+    for t in selected_tools:
+        print(f" -> {t['function']['name']}: {t['function']['description']}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 10.0-2: Two-Stage Semantic Tool Retrieval Engine</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: Resilient Tool Dispatcher with Auto-Coercion & Error Healing</h2>
+                <p>LLMs sometimes pass integer strings (<code>"850000"</code>) when a tool expects a float (<code>850000.0</code>), or miss mandatory parameters. The resilient dispatcher below intercepts validation errors, auto-coerces types, and feeds structured error feedback back to the LLM if coercion fails:</p>
+
+                <div class="code-header">
+                    <span>program_10_3_resilient_dispatcher.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 10.0-3: Resilient Tool Dispatcher with Type Auto-Coercion
+import json
+from typing import Dict, Any, Callable
+from pydantic import BaseModel, Field, ValidationError
+
+class TaxCalculationParams(BaseModel):
+    annual_income_inr: float = Field(..., ge=0.0, description="Gross taxable income in INR")
+    tax_slab_percentage: float = Field(..., ge=0.0, le=50.0, description="Percentage rate e.g., 20.0")
+
+def compute_tax(annual_income_inr: float, tax_slab_percentage: float) -> Dict[str, Any]:
+    tax_due = annual_income_inr * (tax_slab_percentage / 100.0)
+    return {"status": "success", "tax_payable_inr": tax_due, "net_takehome": annual_income_inr - tax_due}
+
+def safe_dispatch_with_coercion(raw_json_args: str) -> str:
+    """Validates raw LLM arguments against Pydantic schema with auto-coercion."""
+    try:
+        parsed_dict = json.loads(raw_json_args)
+    except json.JSONDecodeError as e:
+        return json.dumps({"status": "error", "error_type": "JSONDecodeError", "message": f"Malformed JSON: {str(e)}"})
+
+    try:
+        validated = TaxCalculationParams(**parsed_dict)
+        result = compute_tax(validated.annual_income_inr, validated.tax_slab_percentage)
+        return json.dumps(result)
+    except ValidationError as val_err:
+        errors = [f"Field '{e['loc'][0]}': {e['msg']}" for e in val_err.errors()]
+        return json.dumps({
+            "status": "validation_failed",
+            "error_type": "ValidationError",
+            "errors": errors,
+            "instruction": "Please correct the argument types and retry."
+        })
+
+if __name__ == "__main__":
+    # Test 1: String coercion (Pydantic auto-converts string numbers to floats)
+    test_1 = '{"annual_income_inr": "1800000", "tax_slab_percentage": "30"}'
+    print("Test 1 (Auto-Coercion):", safe_dispatch_with_coercion(test_1))
+
+    # Test 2: Invalid percentage (> 50%)
+    test_2 = '{"annual_income_inr": 1800000, "tax_slab_percentage": 75.0}'
+    print("Test 2 (Validation Guard):", safe_dispatch_with_coercion(test_2))
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 10.0-3: Resilient Dispatcher with Pydantic Auto-Coercion</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Tool Name Collisions:</strong> Having tools with overlapping names (e.g., <code>search_database</code> vs <code>query_database</code>) confuses the model's logits, leading to random tool switching across turns. <em>Mitigation:</em> Namespace tools by resource domain (e.g., <code>postgres_query</code> vs <code>confluence_search</code>).
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Unbounded Observation Bloat:</strong> If a tool like <code>query_sql</code> returns a 10,000-row table, dumping the entire JSON array into the observation crashes the context window. <em>Mitigation:</em> Paginate tool outputs; return a maximum of 10 rows with an explicit <code>"total_rows_truncated": 9990</code> notice.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Silent Type Failure:</strong> Passing string floats into strict functions causing Python <code>TypeError</code> crashes. <em>Mitigation:</em> Always wrap tool parameter payloads in Pydantic models with auto-coercion enabled.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Lack of Negative Constraints in Docstrings:</strong> LLMs love calling tools. If you have a tool called <code>send_email</code>, the model will call it even when asked to "draft" an email. <em>Mitigation:</em> Explicitly state negative conditions: <em>"Do NOT call this tool if the user only wants to preview or review an email draft."</em>
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Tool Description Engineering Guidelines</h2>
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Element</th>
+                            <th style="padding: 12px; text-align: left;">Weak Description (Ambiguous)</th>
+                            <th style="padding: 12px; text-align: left;">Strong Description (Production-Grade)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Tool Purpose</td>
+                            <td style="padding: 12px;">"Calculates numbers"</td>
+                            <td style="padding: 12px;">"Evaluate algebraic expressions for financial ROI, tax, and amortization. Do NOT use for basic counting."</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Parameter Format</td>
+                            <td style="padding: 12px;">"date: string"</td>
+                            <td style="padding: 12px;">"date: ISO-8601 calendar date formatted strictly as 'YYYY-MM-DD' (e.g., '2026-09-06')."</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Failure Boundary</td>
+                            <td style="padding: 12px;">"Returns user info"</td>
+                            <td style="padding: 12px;">"Returns customer spending profile. If customer_id does not match 'CUST-XXXX', this tool returns not_found."</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. How does an LLM decide which tool to execute from a tool manifest?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">By executing the Python bytecode directly.</li>
+                        <li class="mcq-option" data-correct="true">By performing semantic matching between the user query and the tool's name, description, and parameter docstrings.</li>
+                        <li class="mcq-option" data-correct="false">By selecting the first tool in the list alphabetically.</li>
+                        <li class="mcq-option" data-correct="false">Tools are chosen at random using temperature 1.0.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. Why does providing 50+ tools in a single system prompt degrade agent performance?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">It wastes thousands of tokens per turn and causes 'Tool Confusion' due to overlapping parameter keywords.</li>
+                        <li class="mcq-option" data-correct="false">OpenAI strictly limits tools to a maximum of 3.</li>
+                        <li class="mcq-option" data-correct="false">It disables Python's garbage collector.</li>
+                        <li class="mcq-option" data-correct="false">Tools beyond 10 are automatically deleted by the compiler.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. How does Two-Stage Semantic Tool Retrieval resolve tool bloat?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It deletes 50% of the tools permanently.</li>
+                        <li class="mcq-option" data-correct="true">It embeds tool descriptions in a vector index and injects only the Top-k most relevant tools into the active turn's prompt.</li>
+                        <li class="mcq-option" data-correct="false">It merges all tools into a single mega-function.</li>
+                        <li class="mcq-option" data-correct="false">It converts Python code to C++.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. What is the primary benefit of generating OpenAPI schemas using Pydantic's model_json_schema()?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">It guarantees 100% JSON Schema compliance and eliminates manual syntax errors in parameter dictionaries.</li>
+                        <li class="mcq-option" data-correct="false">It increases token generation speed by 10x.</li>
+                        <li class="mcq-option" data-correct="false">It bypasses the need for an API key.</li>
+                        <li class="mcq-option" data-correct="false">It prevents the model from using memory.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. What should a tool return if an unrecoverable error occurs during execution?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">An unhandled Python exception that terminates the process.</li>
+                        <li class="mcq-option" data-correct="true">A structured JSON string with {"status": "error", "message": "..."} explaining the exact cause to the LLM.</li>
+                        <li class="mcq-option" data-correct="false">An empty string.</li>
+                        <li class="mcq-option" data-correct="false">A random number.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. What happens if a tool returns a massive 5MB JSON payload to the agent?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The LLM processes it in 1 millisecond.</li>
+                        <li class="mcq-option" data-correct="true">It floods the context window, triggering context length errors or extreme billing costs.</li>
+                        <li class="mcq-option" data-correct="false">The computer's RAM upgrades automatically.</li>
+                        <li class="mcq-option" data-correct="false">The payload is automatically saved to Dropbox.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. Why are negative instructions important in tool descriptions (e.g. 'Do NOT use for...')?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">Because LLMs are biased toward calling available tools; negative boundaries prevent premature or destructive side-effects.</li>
+                        <li class="mcq-option" data-correct="false">They reduce the file size of the Python script.</li>
+                        <li class="mcq-option" data-correct="false">They prevent hackers from reading the code.</li>
+                        <li class="mcq-option" data-correct="false">Negative instructions are ignored by transformers.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. In Program 10.0-1, what does the @registry.register decorator do?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Sends your code to the Indian Patent Office.</li>
+                        <li class="mcq-option" data-correct="true">Inspects Python function parameter annotations, compiles OpenAPI tool schemas, and registers the callable into the dispatcher.</li>
+                        <li class="mcq-option" data-correct="false">Encrypts the Python file with AES-256.</li>
+                        <li class="mcq-option" data-correct="false">Converts functions into async coroutines.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. What is 'Auto-Coercion' in a resilient tool dispatcher?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Forcing the user to pay for subscriptions.</li>
+                        <li class="mcq-option" data-correct="true">Automatically converting string representations of numbers (e.g. '1800000') into required numeric types without throwing validation crashes.</li>
+                        <li class="mcq-option" data-correct="false">Auto-restarting the server every 5 minutes.</li>
+                        <li class="mcq-option" data-correct="false">Changing variable names to lowercase.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. When should an agent use a Calculator tool instead of computing the answer in its text generation?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Only for simple addition like 2 + 2.</li>
+                        <li class="mcq-option" data-correct="true">For any precision-critical, multi-step, or floating-point financial and tax calculations to prevent token hallucination.</li>
+                        <li class="mcq-option" data-correct="false">Never; LLMs are mathematically infallible.</li>
+                        <li class="mcq-option" data-correct="false">Only when running on battery power.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master dynamic tool engineering and semantic retrieval.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Auto-Paginating SQL Tool</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build a tool <code>query_sqlite(query: str, page_size: int = 5)</code>. If the SQL query returns >5 rows, return the first 5 rows with an explicit metadata message: <code>{"total_found": 42, "showing": 5, "instruction": "Call query_sqlite with offset=5 for next page."}</code>.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Semantic Vector Tool Indexer with ChromaDB</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create a persistent ChromaDB vector store containing 15 mock IT admin tools (e.g., <code>reboot_vm</code>, <code>check_ssl_expiry</code>, <code>rotate_iam_keys</code>). Connect it to your agent so each user query only retrieves the Top-3 candidate tools.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Destructive Action Safety Guard</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Add a <code>is_destructive: bool = False</code> attribute to <code>@registry.register</code>. If the agent invokes a tool where <code>is_destructive=True</code> (e.g. <code>delete_user_record</code>), pause execution and demand confirmation in the terminal before running.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Dynamic Tool Call Latency Profiler</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Wrap the <code>registry.dispatch</code> method with a time profiler. Record the execution duration of every tool call and append the elapsed milliseconds to the tool observation metadata.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Multi-Tool Invoice Reconciliation Agent</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Equip an agent with 3 tools: <code>read_invoice_pdf</code>, <code>query_erp_po_database</code>, and <code>calculate_discrepancy</code>. Run a test where the invoice charge differs from the PO, ensuring the agent uses all 3 tools to find the discrepancy.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2305.15334</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">UC Berkeley</span>
+                            </div>
+                            <h4>Gorilla: Large Language Model Connected with Massive APIs</h4>
+                            <p>Patil et al. demonstrate retriever-aware training for selecting from thousands of APIs without context bloat.</p>
+                            <a href="https://arxiv.org/abs/2305.15334" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2307.16789</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Tsinghua</span>
+                            </div>
+                            <h4>ToolBench: An Open Platform for Large Language Models to Use 16,000+ APIs</h4>
+                            <p>Qin et al. curate the definitive benchmark for multi-step tool retrieval, execution, and trajectory evaluation.</p>
+                            <a href="https://arxiv.org/abs/2307.16789" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangChain Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Tool Integration</span>
+                            </div>
+                            <h4>Dynamic Tool Selection & Semantic Retrieval</h4>
+                            <p>Official guide on using vector stores as tool retrievers to dynamically inject relevant tool schemas per turn.</p>
+                            <a href="https://python.langchain.com/docs/how_to/tools_as_openai_functions/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">OpenAPI Org</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">API Standard</span>
+                            </div>
+                            <h4>OpenAPI 3.1.0 Specification</h4>
+                            <p>The open industry standard for describing HTTP REST APIs, used for automated agent tool synthesis.</p>
+                            <a href="https://spec.openapis.org/oas/v3.1.0" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_09.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 09: Agentic Mindset</span>
+                </a>
+                <a href="day_11.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 11: Intro to RAG Pipelines</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

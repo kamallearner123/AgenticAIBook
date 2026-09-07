@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agentic AI - Learn by Examples</title>
+    <title>Agentic AI - Engineering Masterclass: Learn by Examples</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 
     <script>
-        const savedTheme = localStorage.getItem('rust-book-theme');
+        const savedTheme = localStorage.getItem('rust-book-theme') || localStorage.getItem('agentic-ai-theme');
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
         } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -66,7 +66,7 @@
             <header class="top-nav" id="top-nav">
                 <!-- Left Nav (Hamburger) -->
                 <div class="nav-left">
-                    <button class="menu-toggle" aria-label="Toggle Menu">
+                    <button class="menu-toggle" aria-label="Toggle Menu" title="Toggle Navigation Sidebar">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="3" y1="12" x2="21" y2="12"></line>
                             <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -78,27 +78,27 @@
                 <!-- Right Nav Actions -->
                 <div class="nav-actions">
                     <div class="completeness-badge">
-                        Completeness: <span>0%</span>
+                        Curriculum: <span>100% Ready</span>
                     </div>
-                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme" title="Toggle Light/Dark Theme">
                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                         </svg>
                     </button>
-                    <button class="icon-btn" aria-label="Search">
+                    <button class="icon-btn" aria-label="Search" title="Quick Search (Ctrl + K)">
                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                     </button>
-                    <button class="icon-btn" aria-label="Print">
+                    <button class="icon-btn" aria-label="Print" title="Print Lesson / Save PDF">
                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="6 9 6 2 18 2 18 9"></polyline>
                             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                             <rect x="6" y="14" width="12" height="8"></rect>
                         </svg>
                     </button>
-                    <button class="icon-btn" aria-label="GitHub">
+                    <button class="icon-btn" aria-label="GitHub" title="View GitHub Repository">
                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                         </svg>
@@ -106,52 +106,596 @@
                 </div>
             </header>
 
-            <article class="book-page">
-                <h1>Agentic AI - Learn by Examples</h1>
-                <p>Welcome to the comprehensive guide on using Python for Agentic Systems programming. This book is designed to take you from understanding why agents matter, all the way to writing production-ready, autonomous workflows.</p>
-                
-                <div class="callout">
-                    <span style="font-weight: 500; color: var(--text-color);">Video Reference:</span> <a href="https://meet.google.com/ecn-rkai-bra" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">Watch the Introduction to Agentic AI Video</a>
+            <article class="book-page" style="max-width: 960px;">
+                <!-- Hero Section -->
+                <div style="text-align: center; padding: 2.5rem 1rem 2rem; border-bottom: 1px solid var(--border-color); margin-bottom: 2.5rem;">
+                    <div style="display: inline-block; background-color: var(--accent-light); color: var(--accent); font-weight: 700; font-size: 0.85rem; padding: 0.35rem 1rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; border: 1px solid var(--accent);">
+                        Professional Engineering Curriculum
+                    </div>
+                    <h1 style="font-size: 2.75rem; line-height: 1.2; margin-bottom: 1rem; letter-spacing: -0.02em;">
+                        Agentic AI Systems Engineering
+                    </h1>
+                    <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 780px; margin: 0 auto 1.75rem; line-height: 1.6;">
+                        A rigorous, 24-day engineering blueprint for designing, testing, and shipping autonomous AI agents. Master deterministic state machines, LangGraph architectures, hybrid vector retrieval, and cyber-physical safety gates.
+                    </p>
+
+                    <!-- Quick Metrics Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 2rem 0; text-align: center;">
+                        <div style="background-color: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent); font-family: 'Outfit', sans-serif;">24</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Intensive Days</div>
+                        </div>
+                        <div style="background-color: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent); font-family: 'Outfit', sans-serif;">20+</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Production Projects</div>
+                        </div>
+                        <div style="background-color: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent); font-family: 'Outfit', sans-serif;">240</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Interactive MCQs</div>
+                        </div>
+                        <div style="background-color: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent); font-family: 'Outfit', sans-serif;">120</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Hands-on Labs</div>
+                        </div>
+                        <div style="background-color: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                            <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent); font-family: 'Outfit', sans-serif;">100%</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Typed Python 3.12</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="day_01.html" style="background-color: var(--accent); color: #ffffff; text-decoration: none; padding: 0.75rem 1.75rem; border-radius: 6px; font-weight: 600; font-size: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;">
+                            Start Day 1: AI Landscape &rarr;
+                        </a>
+                        <a href="#syllabus-section" style="background-color: var(--sidebar-bg); color: var(--text-color); border: 1px solid var(--border-color); text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; font-size: 1rem;">
+                            View Full Syllabus
+                        </a>
+                        <a href="https://github.com/kamallearner123/AgenticAIBook" target="_blank" rel="noopener noreferrer" style="background-color: var(--sidebar-bg); color: var(--text-color); border: 1px solid var(--border-color); text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; font-size: 1rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            GitHub Repository
+                        </a>
+                    </div>
                 </div>
-                
-                <h2>Table of Contents</h2>
-                
-                <ul style="list-style: none; padding-left: 0; display: grid; gap: 1rem; margin-top: 2rem;">
-                    <li><a href="day_01.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 1: The AI Landscape</a></li>
-                    <li><a href="day_02.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 2: Python Fundamentals</a></li>
-                    <li><a href="day_03.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 3: LLMs Under the Hood</a></li>
-                    <li><a href="day_04.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 4: Prompt Engineering</a></li>
-                    <li><a href="day_05.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 5: LLM Specialist Behavior</a></li>
-                    <li><a href="day_06.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 6: Tool Execution</a></li>
-                    <li><a href="day_07.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 7: Repeatable Processes</a></li>
-                    <li><a href="day_08.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 8: Project: AI Problem Solver</a></li>
-                    <li><a href="day_09.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 9: Agentic Mindset</a></li>
-                    <li><a href="day_10.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 10: Tool Selection (ReAct)</a></li>
-                    <li><a href="day_11.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 11: Intro to RAG Pipelines</a></li>
-                    <li><a href="day_12.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 12: Improving Retrieval Quality</a></li>
-                    <li><a href="day_13.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 13: LangChain Abstractions</a></li>
-                    <li><a href="day_14.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 14: n8n Visual Automation</a></li>
-                    <li><a href="day_15.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 15: RAG + Tools</a></li>
-                    <li><a href="day_16.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 16: Project: Company Knowledge Agent</a></li>
-                    <li><a href="day_17.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 17: LangGraph Fundamentals</a></li>
-                    <li><a href="day_18.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 18: Agent Persistence & State</a></li>
-                    <li><a href="day_19.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 19: Multi-Agent Systems</a></li>
-                    <li><a href="day_20.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 20: Security & Guardrails</a></li>
-                    <li><a href="day_21.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 21: UI & Productionization</a></li>
-                    <li><a href="day_22.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 22: Shipping Real Agents</a></li>
-                    <li><a href="day_23.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 23: Project: Recoverable Agent</a></li>
-                    <li><a href="day_24.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 1.15rem;">Day 24: Capstone: Automotive Agent</a></li>
-                </ul>
+
+                <!-- Section: Why Agentic AI? -->
+                <h2>1. Executive Summary: The Agentic Paradigm Shift</h2>
+                <p>
+                    Over the last two years, software engineering has transitioned from simple, single-turn generative AI queries to <strong>Agentic Systems</strong>. A traditional LLM operates as a purely probabilistic text completer: given an input prompt, it predicts the next token without situational awareness, state persistence, or tool feedback.
+                </p>
+                <p>
+                    In contrast, an <strong>Autonomous AI Agent</strong> is an active, goal-seeking computing entity operating in a continuous closed loop:
+                </p>
+                <div style="background-color: var(--sidebar-bg); border-left: 4px solid var(--accent); padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
+                    <strong>The Agentic Cybernetic Loop:</strong><br>
+                    State \(s_t\) &rarr; Perception (\(\mathcal{O}\)) &rarr; Deliberative Reasoning (\(\text{Thought}\)) &rarr; Deterministic Tool Execution (\(\text{Action}\)) &rarr; Environment Telemetry (\(\text{Observation}\)) &rarr; Reflection & Update (\(s_{t+1}\))
+                </div>
+                <p>
+                    This course does not teach toy "chatbots". It teaches real enterprise systems engineering: how to make LLM decisions mathematically reliable, prevent unbounded token-consumption loops, eliminate hallucinations with hybrid retrieval, persist state across process crashes, and enforce Human-in-the-Loop approval gates for safety-critical operations.
+                </p>
+
+                <!-- Section: Who Is This For? -->
+                <h2>2. Target Audience & Prerequisites</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+                    <div style="background: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="color: var(--accent); margin-top: 0; font-size: 1.15rem;">Who This Course Is Built For</h3>
+                        <ul style="padding-left: 1.25rem; margin-bottom: 0; color: var(--text-color); font-size: 0.92rem; line-height: 1.6;">
+                            <li><strong>Backend & Platform Engineers</strong> transitioning into AI systems architecture.</li>
+                            <li><strong>Full-Stack Developers</strong> seeking to orchestrate deterministic multi-agent workflows.</li>
+                            <li><strong>AI & ML Engineers</strong> requiring rigorous state machines, LangGraph orchestration, and evaluation frameworks.</li>
+                            <li><strong>Automotive & Embedded Specialists</strong> building cyber-physical diagnostic and control assistants.</li>
+                        </ul>
+                    </div>
+                    <div style="background: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="color: var(--accent); margin-top: 0; font-size: 1.15rem;">Recommended Prerequisites</h3>
+                        <ul style="padding-left: 1.25rem; margin-bottom: 0; color: var(--text-color); font-size: 0.92rem; line-height: 1.6;">
+                            <li><strong>Intermediate Python 3.10+</strong>: Proficiency with Type Hints, async/await, dictionaries, and classes.</li>
+                            <li><strong>HTTP & Web Basics</strong>: Understanding REST APIs, JSON schemas, webhooks, and client-server flows.</li>
+                            <li><strong>Fundamental Math</strong>: High school vector operations (dot products, cosine distances) and basic probability.</li>
+                            <li><strong>Terminal & Git</strong>: Familiarity with running CLI commands, virtual environments, and source control.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section: 3-Week Curriculum Structure -->
+                <h2>3. The 3-Week Progressive Learning Architecture</h2>
+                <div style="display: grid; gap: 1.5rem; margin: 1.5rem 0;">
+                    <!-- Week 1 -->
+                    <div style="background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-left: 5px solid #3b82f6; border-radius: 8px; padding: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.25rem; color: #3b82f6;">Week 1: AI Foundations & Deterministic Agentic Primitives (Days 1–8)</h3>
+                            <span class="plan-badge" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid #3b82f6;">Days 1–8</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.75rem;">
+                            Establish foundational mastery over LLM mechanics, Python 3.12 typing, Pydantic v2 schema constraints, BPE tokenization, KV cache VRAM sizing, constrained decoding DFA grammars, tool wire protocols, and compound reliability.
+                        </p>
+                        <div style="font-size: 0.88rem; color: var(--text-color);">
+                            <strong>Week 1 Capstone (Day 8):</strong> <a href="day_08.html" style="color: var(--accent); font-weight: 600;">Autonomous Problem Solver CLI</a> — Hierarchical Pydantic decomposition, Rich terminal UI, Human-in-the-Loop plan approval, and sandboxed self-healing code executor.
+                        </div>
+                    </div>
+
+                    <!-- Week 2 -->
+                    <div style="background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-left: 5px solid #10b981; border-radius: 8px; padding: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.25rem; color: #10b981;">Week 2: Autonomous Loops, Vector RAG & Workflow Engines (Days 9–16)</h3>
+                            <span class="plan-badge" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981;">Days 9–16</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.75rem;">
+                            Formulate the ReAct loop as a POMDP, build dynamic semantic tool registries, write pure Python Okapi BM25 inverted indexes, engineer Hybrid Reciprocal Rank Fusion (RRF), orchestrate LCEL streaming pipelines, and secure n8n visual automation webhooks with HMAC-SHA256.
+                        </p>
+                        <div style="font-size: 0.88rem; color: var(--text-color);">
+                            <strong>Week 2 Capstone (Day 16):</strong> <a href="day_16.html" style="color: var(--accent); font-weight: 600;">Multi-Silo Enterprise Knowledge Agent</a> — Multi-silo retrieval engine uniting ChromaDB corporate policies, SQLite HRIS records, safe math calculations, and citation faithfulness auditing.
+                        </div>
+                    </div>
+
+                    <!-- Week 3 -->
+                    <div style="background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-left: 5px solid #f59e0b; border-radius: 8px; padding: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="margin: 0; font-size: 1.25rem; color: #f59e0b;">Week 3: Multi-Agent Systems, LangGraph & Productionization (Days 17–24)</h3>
+                            <span class="plan-badge" style="background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid #f59e0b;">Days 17–24</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.75rem;">
+                            Master cyclic StateGraph state machines, SqliteSaver crash persistence, Dec-POMDP multi-agent supervisor/worker swarms, OWASP prompt injection defense, reversible PII sanitization, FastAPI Server-Sent Events (SSE) streaming, and SRE availability testing.
+                        </p>
+                        <div style="font-size: 0.88rem; color: var(--text-color); margin-bottom: 0.5rem;">
+                            <strong>Milestone Project (Day 23):</strong> <a href="day_23.html" style="color: var(--accent); font-weight: 600;">Self-Recovering Distributed Agent Workflow</a> — Distributed Saga pattern with zero-duplicate crash reboot idempotency and Streamlit HITL approval cockpit.
+                        </div>
+                        <div style="font-size: 0.88rem; color: var(--text-color);">
+                            <strong>Grand Capstone (Day 24):</strong> <a href="day_24.html" style="color: var(--accent); font-weight: 600;">Cyber-Physical Automotive Diagnostic Assistant</a> — SAE J1979 OBD-II CAN bus PID decoder, ISO 26262 ASIL safety risk gate, and multi-node diagnostic master console.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: 20 Real-World Everyday Projects -->
+                <h2>4. The 20+ Real-World Engineering Projects</h2>
+                <p>
+                    Every concept in this curriculum is anchored in an end-to-end executable project that solves real developer and enterprise problems. Here is the curated portfolio of systems you build from scratch:
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 1</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Foundations</span>
+                        </div>
+                        <h4>1. TTFT & TPOT Latency Profiler</h4>
+                        <p>Real-time micro-benchmarker calculating Time-to-First-Token, inter-token jitter, and enterprise token ROI across models.</p>
+                        <a href="day_01.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 2</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Concurrency</span>
+                        </div>
+                        <h4>2. Resilient Async Agent Gateway</h4>
+                        <p>Pydantic v2 schema-enforced pipeline with full-jitter exponential backoff and rate-limiting concurrency semaphores.</p>
+                        <a href="day_02.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 3</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Architecture</span>
+                        </div>
+                        <h4>3. Pure Python BPE Tokenizer</h4>
+                        <p>From-scratch Byte Pair Encoding engine and KV cache VRAM sizing calculator simulating context degradation.</p>
+                        <a href="day_03.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 4</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Reasoning</span>
+                        </div>
+                        <h4>4. Dynamic Few-Shot & CoVe Engine</h4>
+                        <p>Cosine-similarity exemplar selector paired with a 4-stage Chain-of-Verification self-auditing hallucination detector.</p>
+                        <a href="day_04.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 5</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Reliability</span>
+                        </div>
+                        <h4>5. Multi-Specialist Pydantic Dispatcher</h4>
+                        <p>Constrained decoding grammar engine with deterministic DFA logit masking routing to strict schema specialists.</p>
+                        <a href="day_05.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 6</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Execution</span>
+                        </div>
+                        <h4>6. Sandboxed Code Execution Runner</h4>
+                        <p>Subprocess isolation harness with memory caps, timeout sentinels, and dynamic @tool introspection wire protocols.</p>
+                        <a href="day_06.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 7</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Workflows</span>
+                        </div>
+                        <h4>7. Financial Portfolio Risk Chain</h4>
+                        <p>Asynchronous fan-out/fan-in risk aggregator running parallel sector analyses into a JSON state machine snapshot.</p>
+                        <a href="day_07.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag" style="background-color: var(--accent); color: #fff;">Day 8 Capstone</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">CLI System</span>
+                        </div>
+                        <h4>8. Autonomous Problem Solver CLI</h4>
+                        <p>Full-scale terminal agent with Rich UI, interactive Human-in-the-Loop plan approval, and self-repairing code execution.</p>
+                        <a href="day_08.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 9</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Reasoning</span>
+                        </div>
+                        <h4>9. Bounded ReAct & Reflexion Engine</h4>
+                        <p>POMDP-grounded reasoning loop with quadratic token telemetry and episodic verbal critique memory.</p>
+                        <a href="day_09.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 10</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Tooling</span>
+                        </div>
+                        <h4>10. Semantic Tool Index & Coercer</h4>
+                        <p>Dynamic tool registry with vector embedding retrieval and resilient Pydantic parameter auto-coercion.</p>
+                        <a href="day_10.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 11</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">RAG</span>
+                        </div>
+                        <h4>11. Semantic Chunker & ChromaDB RAG</h4>
+                        <p>Sliding-window semantic text partitioner integrated with ChromaDB collection metadata pre-filtering.</p>
+                        <a href="day_11.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 12</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Search</span>
+                        </div>
+                        <h4>12. BM25 + Cross-Encoder Hybrid Search</h4>
+                        <p>Pure Python Okapi BM25 inverted index fused with dense vector search via Reciprocal Rank Fusion (RRF k=60).</p>
+                        <a href="day_12.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 13</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Frameworks</span>
+                        </div>
+                        <h4>13. Streaming LCEL Dynamic Router</h4>
+                        <p>Monadic composition (g | f) with real-time SSE streaming, dynamic RunnableBranch routing, and model fallbacks.</p>
+                        <a href="day_13.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 14</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Automation</span>
+                        </div>
+                        <h4>14. HMAC-SHA256 n8n Automation Bridge</h4>
+                        <p>FastAPI cryptographic webhook gateway communicating with visual n8n agent workflows with Dead-Letter Queues.</p>
+                        <a href="day_14.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 15</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Agentic RAG</span>
+                        </div>
+                        <h4>15. Self-Correcting Multi-Hop RAG</h4>
+                        <p>Self-RAG reflection engine grading document relevance, rewriting unanswerable queries, and querying multiple silos.</p>
+                        <a href="day_15.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag" style="background-color: var(--accent); color: #fff;">Day 16 Capstone</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Enterprise</span>
+                        </div>
+                        <h4>16. Company Knowledge Agent</h4>
+                        <p>Multi-silo enterprise agent combining ChromaDB policy store, SQLite HRIS records, calculator, and citation auditor.</p>
+                        <a href="day_16.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 17</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">LangGraph</span>
+                        </div>
+                        <h4>17. Cyclic Self-Refining Code Evaluator</h4>
+                        <p>Finite state machine with operator.add reducers, automated test execution, and bounded self-correction cycles.</p>
+                        <a href="day_17.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 18</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Persistence</span>
+                        </div>
+                        <h4>18. SqliteSaver Crash Recovery & Time-Travel</h4>
+                        <p>State persistence engine capable of rebooting interrupted workflows and rolling back state via update_state.</p>
+                        <a href="day_18.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 19</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Multi-Agent</span>
+                        </div>
+                        <h4>19. Hierarchical Supervisor & Swarm</h4>
+                        <p>Dec-POMDP multi-agent supervisor orchestrating specialized worker subgraphs and peer-to-peer handoffs.</p>
+                        <a href="day_19.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 20</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Security</span>
+                        </div>
+                        <h4>20. Multi-Vector Guardrail & PII Redactor</h4>
+                        <p>Reversible PII/secret sanitizer shielding against indirect prompt injection with LangGraph interrupt approval gates.</p>
+                        <a href="day_20.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 21</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Production UI</span>
+                        </div>
+                        <h4>21. FastAPI SSE Streaming & Streamlit Studio</h4>
+                        <p>Real-time token and thought stream server consuming Server-Sent Events with interactive HITL input widgets.</p>
+                        <a href="day_21.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag">Day 22</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">SRE / DevOps</span>
+                        </div>
+                        <h4>22. Hardened Agent Docker & PyTest Suite</h4>
+                        <p>Production deployment pipeline with automated regression test harness, non-root Dockerfile, and GitHub Actions CI/CD.</p>
+                        <a href="day_22.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag" style="background-color: #10b981; color: #fff;">Day 23 Milestone</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Distributed</span>
+                        </div>
+                        <h4>23. Self-Recovering Saga Agent</h4>
+                        <p>Distributed transactional state machine ensuring zero duplicate side-effects after ungraceful SIGKILL reboot.</p>
+                        <a href="day_23.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+
+                    <div class="reference-card" style="margin: 0;">
+                        <div class="reference-header">
+                            <span class="ref-tag" style="background-color: #ef4444; color: #fff;">Day 24 Grand Capstone</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Cyber-Physical</span>
+                        </div>
+                        <h4>24. Automotive OBD-II Diagnostic Assistant</h4>
+                        <p>SAE J1979 CAN bus PID decoder, ISO 26262 ASIL safety risk evaluator, OEM repair manual RAG, and Streamlit cockpit.</p>
+                        <a href="day_24.html" class="ref-link">View Module &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Section: Full Syllabus Directory -->
+                <h2 id="syllabus-section">5. Complete 24-Day Course Directory</h2>
+                <p>
+                    Select any lesson below to begin. Each daily module contains comprehensive theoretical foundations, production Python implementations with copy buttons, operational failure mode playbooks, 10 interactive quiz questions, and 5 hands-on assignments.
+                </p>
+
+                <div style="margin: 2rem 0; display: grid; gap: 0.75rem;">
+                    <!-- Week 1 Links -->
+                    <div style="font-weight: 700; color: #3b82f6; font-size: 1.1rem; margin-top: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem;">
+                        Week 1: Foundations & Agentic Primitives
+                    </div>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <a href="day_01.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 1:</strong> The AI Landscape: From Basic ML to LLMs</span>
+                            <span class="plan-badge plan-badge-secondary">Session 1.0</span>
+                        </a>
+                        <a href="day_02.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 2:</strong> Python Fundamentals for Agentic Workflows</span>
+                            <span class="plan-badge plan-badge-secondary">Session 1.1</span>
+                        </a>
+                        <a href="day_03.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 3:</strong> What is an LLM Actually Doing Under the Hood?</span>
+                            <span class="plan-badge plan-badge-secondary">Session 1.2</span>
+                        </a>
+                        <a href="day_04.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 4:</strong> Prompt Engineering as Latent Programming</span>
+                            <span class="plan-badge plan-badge-secondary">Session 1.3</span>
+                        </a>
+                        <a href="day_05.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 5:</strong> Turning LLMs into Specialists: System Prompts & Schemas</span>
+                            <span class="plan-badge plan-badge-secondary">Session 1.4</span>
+                        </a>
+                        <a href="day_06.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 6:</strong> Executing Code & External Tools</span>
+                            <span class="plan-badge plan-badge-secondary">Session 1.5</span>
+                        </a>
+                        <a href="day_07.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 7:</strong> Deterministic Loops & Compound Reliability</span>
+                            <span class="plan-badge plan-badge-secondary">Session 1.6</span>
+                        </a>
+                        <a href="day_08.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--accent-light); border: 1px solid var(--accent); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 8:</strong> Capstone: Autonomous Problem Solver CLI</span>
+                            <span class="plan-badge plan-badge-primary">Capstone 1</span>
+                        </a>
+                    </div>
+
+                    <!-- Week 2 Links -->
+                    <div style="font-weight: 700; color: #10b981; font-size: 1.1rem; margin-top: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem;">
+                        Week 2: Autonomous Loops, Vector RAG & Workflow Engines
+                    </div>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <a href="day_09.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 9:</strong> The Agentic Mindset: Autonomous Reasoning Loops (ReAct)</span>
+                            <span class="plan-badge plan-badge-secondary">Session 2.0</span>
+                        </a>
+                        <a href="day_10.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 10:</strong> Dynamic Tool Selection & Semantic Registries</span>
+                            <span class="plan-badge plan-badge-secondary">Session 2.1</span>
+                        </a>
+                        <a href="day_11.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 11:</strong> Introduction to Vector RAG Pipelines</span>
+                            <span class="plan-badge plan-badge-secondary">Session 2.2</span>
+                        </a>
+                        <a href="day_12.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 12:</strong> Improving Retrieval Quality: BM25 & Hybrid Search</span>
+                            <span class="plan-badge plan-badge-secondary">Session 2.3</span>
+                        </a>
+                        <a href="day_13.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 13:</strong> Framework Abstractions: LangChain Core & LCEL</span>
+                            <span class="plan-badge plan-badge-secondary">Session 2.4</span>
+                        </a>
+                        <a href="day_14.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 14:</strong> Visual Agentic Workflows with n8n</span>
+                            <span class="plan-badge plan-badge-secondary">Session 2.5</span>
+                        </a>
+                        <a href="day_15.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 15:</strong> Agentic RAG: Self-Correction & Multi-Hop Reasoning</span>
+                            <span class="plan-badge plan-badge-secondary">Session 2.6</span>
+                        </a>
+                        <a href="day_16.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--accent-light); border: 1px solid var(--accent); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 16:</strong> Capstone: Multi-Silo Enterprise Knowledge Agent</span>
+                            <span class="plan-badge plan-badge-primary">Capstone 2</span>
+                        </a>
+                    </div>
+
+                    <!-- Week 3 Links -->
+                    <div style="font-weight: 700; color: #f59e0b; font-size: 1.1rem; margin-top: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem;">
+                        Week 3: Multi-Agent Systems, LangGraph & Productionization
+                    </div>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <a href="day_17.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 17:</strong> LangGraph Fundamentals: State & Cyclic Graphs</span>
+                            <span class="plan-badge plan-badge-secondary">Session 3.0</span>
+                        </a>
+                        <a href="day_18.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 18:</strong> Agent Persistence, Memory & State Management</span>
+                            <span class="plan-badge plan-badge-secondary">Session 3.1</span>
+                        </a>
+                        <a href="day_19.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 19:</strong> Multi-Agent Systems & Swarm Architectures</span>
+                            <span class="plan-badge plan-badge-secondary">Session 3.2</span>
+                        </a>
+                        <a href="day_20.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 20:</strong> Security, Guardrails & Defensive Engineering</span>
+                            <span class="plan-badge plan-badge-secondary">Session 3.3</span>
+                        </a>
+                        <a href="day_21.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 21:</strong> UI & Productionization: Streaming & Webhooks</span>
+                            <span class="plan-badge plan-badge-secondary">Session 3.4</span>
+                        </a>
+                        <a href="day_22.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 22:</strong> Shipping Real Agents: Testing, Eval & CI/CD</span>
+                            <span class="plan-badge plan-badge-secondary">Session 3.5</span>
+                        </a>
+                        <a href="day_23.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 23:</strong> Milestone Project: Self-Recovering Distributed Agent</span>
+                            <span class="plan-badge" style="background-color: #10b981; color: #fff;">Milestone</span>
+                        </a>
+                        <a href="day_24.html" style="text-decoration: none; padding: 0.75rem 1rem; background-color: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; color: var(--text-color);">
+                            <span><strong>Day 24:</strong> Grand Capstone: Cyber-Physical Automotive Diagnostic Assistant</span>
+                            <span class="plan-badge" style="background-color: #ef4444; color: #fff;">Grand Capstone</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Section: Reference Standards & Links -->
+                <div class="references-section">
+                    <h2>Seminal Literature, Standards & Resources</h2>
+                    <p class="references-intro">
+                        This textbook-grade curriculum is built upon peer-reviewed research, industry protocol specifications, and open-source standards:
+                    </p>
+
+                    <div class="reference-grid">
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2210.03629</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">NeurIPS 2022</span>
+                            </div>
+                            <h4>ReAct: Synergizing Reasoning and Acting</h4>
+                            <p>Yao et al.'s seminal paper establishing interleaved Thought, Action, and Observation execution loops in language models.</p>
+                            <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener noreferrer" class="ref-link">Read arXiv Paper &rarr;</a>
+                        </div>
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangChain Org</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Official Docs</span>
+                            </div>
+                            <h4>LangGraph Architecture & Checkpointing</h4>
+                            <p>Official technical specifications for LangGraph cyclic state graphs, checkpoint savers, and multi-agent coordination patterns.</p>
+                            <a href="https://langchain-ai.github.io/langgraph/" target="_blank" rel="noopener noreferrer" class="ref-link">Explore LangGraph Docs &rarr;</a>
+                        </div>
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2203.15556</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">DeepMind</span>
+                            </div>
+                            <h4>Training Compute-Optimal Large Language Models</h4>
+                            <p>Hoffmann et al.'s Chinchilla scaling law paper proving the equal scaling relationship between model parameters and training tokens.</p>
+                            <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener noreferrer" class="ref-link">Read Chinchilla Paper &rarr;</a>
+                        </div>
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">SAE International</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">SAE J1979 / ISO 15031</span>
+                            </div>
+                            <h4>E/E Diagnostic Test Modes & OBD-II Standards</h4>
+                            <p>International engineering specifications for On-Board Diagnostics PID encoding, freeze frames, and Diagnostic Trouble Codes.</p>
+                            <a href="https://www.sae.org/standards/content/j1979_201702/" target="_blank" rel="noopener noreferrer" class="ref-link">Visit SAE Standards &rarr;</a>
+                        </div>
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">OWASP Foundation</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Security Standard</span>
+                            </div>
+                            <h4>OWASP Top 10 for Large Language Model Applications</h4>
+                            <p>Definitive vulnerability classifications including Prompt Injection (LLM01), Insecure Output Handling (LLM02), and Excessive Agency (LLM08).</p>
+                            <a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/" target="_blank" rel="noopener noreferrer" class="ref-link">Review OWASP Standard &rarr;</a>
+                        </div>
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">GitHub</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Open Source</span>
+                            </div>
+                            <h4>Agentic AI Book Official GitHub Repository</h4>
+                            <p>Clone the complete executable Python codebase, Jupyter notebooks, test suites, Dockerfiles, and datasets for this course.</p>
+                            <a href="https://github.com/kamallearner123/AgenticAIBook" target="_blank" rel="noopener noreferrer" class="ref-link">Visit Repository &rarr;</a>
+                        </div>
+                    </div>
+                </div>
             </article>
 
             <footer class="page-navigation">
                 <a href="#" class="nav-button prev disabled" tabindex="-1">
                     <span class="nav-label">Previous</span>
-                    <span class="nav-title">Start of Book</span>
+                    <span class="nav-title">Start of Curriculum</span>
                 </a>
                 
                 <a href="day_01.html" class="nav-button next">
-                    <span class="nav-label">Next</span>
+                    <span class="nav-label">Next Lesson</span>
                     <span class="nav-title">Day 1: The AI Landscape</span>
                 </a>
             </footer>

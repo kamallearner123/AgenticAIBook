@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 3: LLMs Under the Hood</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li class="active"><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <!-- Left Nav (Hamburger) -->
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Right Nav Actions -->
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>13%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 3.0</span>
+                <h1>Day 3: What is an LLM Actually Doing Under the Hood?</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> You ask an AI a question, but it hallucinates, wanders off-topic, or fails at basic counting. Why doesn't it "think" the way a human engineer thinks, and how does it actually generate its responses? Understanding the mechanical reality of LLMs helps you write robust agentic prompts, manage context windows efficiently, and set realistic architectural expectations.
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 1.2</span>
+                            <span class="plan-badge plan-badge-secondary">Week 1</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Deconstruct the mechanical reality of tokenization: why LLMs struggle with character manipulation and spelling.</li><li>Calculate exact GPU VRAM footprints for Transformer KV Caches across varying sequence lengths and batch sizes.</li><li>Simulate and mitigate 'Lost in the Middle' context degradation in long-horizon agent reasoning chains.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Byte Pair Encoding (BPE) iterative frequency merging algorithms and vocabulary construction.</li><li>KV Cache memory sizing formulation: $	ext{Bytes} = 2 	imes b 	imes s 	imes l 	imes h 	imes p$.</li><li>U-shaped attention distribution curves and contextual attention decay over long context windows.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 3.1: Pure Python Byte Pair Encoding (BPE) Tokenizer from Scratch.</li><li>Program 3.2: Enterprise KV Cache VRAM Sizing & Headroom Profiler.</li><li>Program 3.3: 'Lost in the Middle' Contextual Retrieval Degradation Simulator.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Token Fragmentation Trap: Assuming 1 word = 1 token, leading to silent prompt truncation in non-English texts.</li><li>KV Cache OOM Catastrophe: Underestimating VRAM requirements during multi-turn agent conversations, crashing worker pods.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Pure Python BPE Tokenizer & VRAM Sizer • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Mechanical Reality: Next-Token Prediction</h2>
+                <p>Despite appearances of conscious thought, a Large Language Model (LLM) is fundamentally a <strong>statistical next-token prediction engine</strong>. When you input a prompt, the model does not consult an internal philosophical compass or "reason" about right versus wrong. Instead, it evaluates the mathematical probability distribution across its entire vocabulary of tokens and selects the most probable next token given everything that came before.</p>
+
+                <p>This process is autoregressive: once token $N+1$ is selected, it is appended to the input sequence, and the entire enlarged sequence is fed back into the transformer to predict token $N+2$. The model repeats this prediction cycle hundreds or thousands of times until it produces an explicit <code>&lt;|endoftext|&gt;</code> stop token or reaches its maximum output limit.</p>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Real World Example:</strong> Think of the predictive keyboard on your smartphone. As you type "I am on my...", the phone suggests "way" (70%), "break" (15%), or "phone" (5%). An LLM operates on the exact same fundamental principle, but scaled up from a few dozen rules to hundreds of billions of numerical weights trained across trillions of words from the public internet, books, and codebases.
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Tokens vs. Words: The Anatomy of Subword Tokenization</h2>
+                <p>Computers cannot read characters or words directly. Before text enters a neural network, it is sliced into discrete units called <strong>tokens</strong>. Modern LLMs use an algorithm known as <strong>Byte Pair Encoding (BPE)</strong>. BPE iteratively merges frequently occurring character pairs into reusable subword units.</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 6px; display: inline-block; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 1rem; border: 1px solid var(--border-color);">
+                        <span style="background: #2563eb; color: #fff; padding: 0.3rem 0.5rem; border-radius: 4px; margin: 0 2px;">Under</span>
+                        <span style="background: #059669; color: #fff; padding: 0.3rem 0.5rem; border-radius: 4px; margin: 0 2px;">standing</span>
+                        <span style="background: #d97706; color: #fff; padding: 0.3rem 0.5rem; border-radius: 4px; margin: 0 2px;"> LL</span>
+                        <span style="background: #dc2626; color: #fff; padding: 0.3rem 0.5rem; border-radius: 4px; margin: 0 2px;">Ms</span>
+                        <br><br>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Token IDs: [14246, 2382, 30438, 3217]</span>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-1: Byte Pair Encoding (BPE) Tokenization into Subwords</div>
+                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <strong>Figure Parameters Explained:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li><strong>Subword Chunking:</strong> Common words (like "the" or "run") are single tokens. Uncommon or compound words are split (e.g., "Understanding" $\rightarrow$ "Under" + "standing").</li>
+                        <li><strong>Whitespace Sensitivity:</strong> Notice the leading space in <code>" LL"</code>. In BPE tokenizers, spaces are part of the token itself (represented as <code>Ġ</code> or hex).</li>
+                        <li><strong>Token IDs:</strong> Each subword maps to a fixed integer ID within the model's vocabulary table (e.g., OpenAI's <code>cl100k_base</code> has 100,277 distinct tokens).</li>
+                    </ul>
+                </div>
+
+                <p>Because tokens are subwords, a rule of thumb for English text is that <strong>100 tokens $\approx$ 75 words</strong>. However, for non-Latin languages (e.g., Hindi, Japanese, Arabic) or complex programming languages, tokenization fragmentation increases significantly, often consuming 2x to 4x more tokens for the exact same conceptual meaning.</p>
+
+                <pre><code class="language-python">
+# Program 3.0-1: Token Counting & Inspection with tiktoken
+import tiktoken
+
+text = "Understanding how LLMs work under the hood is essential for prompt engineering."
+
+# Load OpenAI's standard GPT-4 tokenizer
+encoder = tiktoken.get_encoding("cl100k_base")
+token_ids = encoder.encode(text)
+
+print(f"Original Text: {text}")
+print(f"Character length: {len(text)}")
+print(f"Token count: {len(token_ids)}")
+print(f"Token IDs: {token_ids}\n")
+
+# Display each token chunk individually
+print("Individual Token Fragments:")
+for tid in token_ids:
+    token_bytes = encoder.decode_single_token_bytes(tid)
+    print(f"  ID {tid:<6} -> {token_bytes}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-1: Inspecting Subword Token Fragmentation</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Embeddings: Giving Geometry to Meaning</h2>
+                <p>Once text is converted into token IDs, how does the model know that "cat" is related to "kitten", or that "Paris" relates to "France" the same way "Tokyo" relates to "Japan"? The answer lies in <strong>Dense Vector Embeddings</strong>.</p>
+
+                <p>An embedding converts an integer token ID into a vector of floating-point numbers in a high-dimensional continuous space (e.g., 1,536 dimensions in OpenAI <code>text-embedding-3-small</code>, or 4,096 in LLaMA-3). Tokens with similar semantic meanings or grammatical functions are placed close to one another in this high-dimensional space.</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 6px; display: inline-block; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.95rem; border: 1px solid var(--border-color);">
+                        <div>Vector("King")   - Vector("Man") + Vector("Woman") &approx; Vector("Queen")</div>
+                        <div style="color: var(--accent); margin-top: 0.5rem;">Cosine Distance("king", "queen") = 0.89 (Very Close)</div>
+                        <div style="color: #ef4444;">Cosine Distance("king", "airplane") = 0.12 (Distant)</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-2: Semantic Vector Arithmetic in High-Dimensional Embedding Space</div>
+                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <strong>Figure Parameters Explained:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li><strong>Geometric Relationships:</strong> Relationships like gender, tense, capital cities, and synonyms are encoded as geometric direction vectors across dimensions.</li>
+                        <li><strong>Cosine Similarity:</strong> Measures the cosine of the angle between two multi-dimensional vectors. A score of <code>1.0</code> represents identical direction, while <code>0.0</code> represents complete orthogonality (no semantic correlation).</li>
+                    </ul>
+                </div>
+
+                <pre><code class="language-python">
+# Program 3.0-2: Vector Cosine Similarity Implementation
+import numpy as np
+
+# Simplified 4-dimensional embeddings demonstrating semantic clustering
+embeddings = {
+    "king":       np.array([0.91, 0.82, 0.74, 0.05]),
+    "queen":      np.array([0.88, 0.85, 0.71, 0.08]),
+    "apple":      np.array([0.12, 0.04, 0.08, 0.95]),
+    "banana":     np.array([0.15, 0.02, 0.11, 0.92]),
+    "car":        np.array([0.05, 0.89, 0.12, 0.02])
+}
+
+def cosine_similarity(v1: np.ndarray, v2: np.ndarray) -> float:
+    dot_product = np.dot(v1, v2)
+    norm_v1 = np.linalg.norm(v1)
+    norm_v2 = np.linalg.norm(v2)
+    return dot_product / (norm_v1 * norm_v2)
+
+print("Semantic Similarity Comparisons:")
+print(f"  king vs queen:   {cosine_similarity(embeddings['king'], embeddings['queen']):.4f} (High Royalty Match)")
+print(f"  apple vs banana: {cosine_similarity(embeddings['apple'], embeddings['banana']):.4f} (High Fruit Match)")
+print(f"  king vs apple:   {cosine_similarity(embeddings['king'], embeddings['apple']):.4f} (Unrelated Concepts)")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-2: Calculating Cosine Similarity Between Dense Vectors</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Context Windows & The Attention Bottleneck</h2>
+                <p>Every language model is bound by a <strong>Context Window</strong> (e.g., 8k, 32k, 128k, or 1M tokens). The context window is the maximum number of tokens the model can "see" at any single moment, including both your input prompt and the output it is currently generating.</p>
+
+                <p>Inside the transformer, the <strong>Self-Attention Mechanism</strong> allows every token in the context window to attend to (look at) every other token to compute contextual relevance. However, this comes with computational trade-offs:</p>
+                <ul>
+                    <li><strong>$O(N^2)$ Complexity:</strong> Standard naive attention scales quadratically with sequence length $N$. Doubling the context window quadruples the memory and computation required for the attention matrix.</li>
+                    <li><strong>Lost in the Middle Phenomenon:</strong> Research has proven that models retrieve information located at the very beginning or the very end of a context window with high precision, but frequently ignore or miss crucial instructions placed in the middle of long prompts (80k+ tokens).</li>
+                </ul>
+
+                <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <summary style="font-weight: 600; font-size: 1.1rem; outline: none; color: #f44336;">View Buggy/Legacy Code: Unchecked Prompt Concatenation</summary>
+                    <pre><code class="language-python">
+# Legacy / Dangerous Pattern: Naive list appending leads to silent context window crashes
+conversation_history = []
+
+def chat_naive(user_message: str):
+    # DANGER: Appending indefinitely without checking token limits
+    conversation_history.append({"role": "user", "content": user_message})
+    
+    # When conversation_history exceeds model context (e.g., 128k tokens),
+    # the API throws a 400 ContextWindowExceeded error and halts the entire agent!
+    response = call_llm(conversation_history)
+    conversation_history.append({"role": "assistant", "content": response})
+    return response
+                    </code></pre>
+                    <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-3A: Dangerous Infinite Context Accumulation</div>
+                </details>
+
+                <pre><code class="language-python">
+# Program 3.0-3: Temperature Sampling & Softmax Distribution
+import numpy as np
+
+def sample_next_token(logits: dict, temperature: float = 1.0) -> str:
+    """
+    Simulates how an LLM applies Temperature scaling to raw logits (scores)
+    before calculating probabilities with Softmax.
+    """
+    words = list(logits.keys())
+    raw_scores = np.array(list(logits.values()), dtype=float)
+    
+    # Scale logits by temperature (preventing divide-by-zero)
+    scaled_scores = raw_scores / max(temperature, 1e-5)
+    
+    # Apply Softmax to convert scores to probabilities that sum to 1.0
+    exp_scores = np.exp(scaled_scores - np.max(scaled_scores))
+    probabilities = exp_scores / np.sum(exp_scores)
+    
+    # Sample from the resulting probability distribution
+    chosen_word = np.random.choice(words, p=probabilities)
+    return chosen_word, dict(zip(words, probabilities.round(4)))
+
+# Example model output scores for the next word after: "The sky is..."
+raw_logits = {"blue": 8.0, "clear": 6.5, "dark": 5.0, "green": 0.5}
+
+print("--- Temperature 0.1 (Deterministic / Low Entropy) ---")
+word, probs = sample_next_token(raw_logits, temperature=0.1)
+print(f"Probabilities: {probs}")
+print(f"Selected: '{word}'\n")
+
+print("--- Temperature 1.2 (Creative / High Entropy) ---")
+word, probs = sample_next_token(raw_logits, temperature=1.2)
+print(f"Probabilities: {probs}")
+print(f"Selected: '{word}'")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-3: Temperature and Softmax Probability Sampling</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Temperature and Hyperparameters Reference Guide</h2>
+                <p>When engineering autonomous agents, choosing the correct inference hyperparameters determines whether your agent executes deterministic tool calls or hallucinates invalid arguments.</p>
+
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Hyperparameter</th>
+                            <th style="padding: 12px; text-align: left;">Typical Range</th>
+                            <th style="padding: 12px; text-align: left;">Mechanism</th>
+                            <th style="padding: 12px; text-align: left;">Best Used For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Temperature</td>
+                            <td style="padding: 12px;">0.0 – 1.5</td>
+                            <td style="padding: 12px;">Divides raw logits before Softmax. Lower values flatten rare tokens to zero.</td>
+                            <td style="padding: 12px;"><code>0.0</code> for JSON extraction & SQL generation; <code>0.7</code> for open-ended conversation.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Top-P (Nucleus)</td>
+                            <td style="padding: 12px;">0.1 – 1.0</td>
+                            <td style="padding: 12px;">Cuts off sampling to the smallest pool of tokens whose cumulative probability exceeds P.</td>
+                            <td style="padding: 12px;">Alternative to temperature; controls vocabulary diversity without flattening peaks.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Max Tokens</td>
+                            <td style="padding: 12px;">1 – 16,384</td>
+                            <td style="padding: 12px;">Hard ceiling on generated output tokens. Halts generation regardless of stop tokens.</td>
+                            <td style="padding: 12px;">Preventing runaway reasoning loops and managing API token costs.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Stop Sequences</td>
+                            <td style="padding: 12px;">List of strings</td>
+                            <td style="padding: 12px;">Tells the generation loop to stop emitting tokens as soon as a marker appears.</td>
+                            <td style="padding: 12px;">ReAct patterns (e.g. <code>["Observation:", "\nUser:"]</code>) to hand control back to code.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Tokenization Mechanics: Byte Pair Encoding (BPE) from Scratch</h2>
+                <p>LLMs cannot read characters directly; they operate on numerical token IDs. The dominant tokenization algorithm across GPT-4, Llama 3, and Claude is <strong>Byte Pair Encoding (BPE)</strong>. BPE operates at the subword level, finding the optimal balance between character-level vocabularies (which require too many tokens per sentence) and word-level vocabularies (which suffer from Out-Of-Vocabulary errors on rare words and code identifiers).</p>
+
+                <div class="code-header">
+                    <span>bpe_tokenizer_from_scratch.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 3.0-5: Byte Pair Encoding (BPE) Tokenizer from Scratch
+from collections import defaultdict
+from typing import List, Dict, Tuple
+
+class SimpleBPETokenizer:
+    """Implements core subword Byte Pair Encoding merge algorithm."""
+    
+    def __init__(self, vocab_size: int = 300):
+        self.target_vocab_size = vocab_size
+        self.merges: Dict[Tuple[str, str], str] = {}
+        self.vocab: Dict[int, str] = {}
+        self.inverse_vocab: Dict[str, int] = {}
+        
+    def _get_stats(self, words: List[List[str]]) -> Dict[Tuple[str, str], int]:
+        """Count frequencies of adjacent symbol pairs."""
+        pairs = defaultdict(int)
+        for word in words:
+            for i in range(len(word) - 1):
+                pairs[(word[i], word[i + 1])] += 1
+        return pairs
+
+    def _merge_pair(self, pair: Tuple[str, str], words: List[List[str]]) -> List[List[str]]:
+        """Replaces occurrences of pair with merged token."""
+        new_words = []
+        bigram = list(pair)
+        merged_token = "".join(pair)
+        for word in words:
+            new_word = []
+            i = 0
+            while i < len(word):
+                if i < len(word) - 1 and word[i] == bigram[0] and word[i + 1] == bigram[1]:
+                    new_word.append(merged_token)
+                    i += 2
+                else:
+                    new_word.append(word[i])
+                    i += 1
+            new_words.append(new_word)
+        return new_words
+
+    def train(self, corpus: str, num_merges: int = 15):
+        """Learns subword merge rules from raw training text."""
+        # Initialize base character tokens
+        words = [list(word) + ["</w>"] for word in corpus.split()]
+        
+        print(f"Initial Corpus Words: {words[:3]}")
+        for step in range(num_merges):
+            pairs = self._get_stats(words)
+            if not pairs:
+                break
+            best_pair = max(pairs, key=pairs.get)
+            self.merges[best_pair] = "".join(best_pair)
+            words = self._merge_pair(best_pair, words)
+            print(f"Merge #{step + 1}: Combined '{best_pair[0]}' + '{best_pair[1]}' -> '{self.merges[best_pair]}' (Count: {pairs[best_pair]})")
+
+    def encode(self, text: str) -> List[str]:
+        """Encodes incoming string into learned subword units."""
+        words = [list(word) + ["</w>"] for word in text.split()]
+        for pair, merged in self.merges.items():
+            words = self._merge_pair(pair, words)
+        flattened = [token for word in words for token in word]
+        return flattened
+
+# Demonstrate BPE training on domain text
+sample_corpus = "low lower newest widest wider lowest newer low low lower"
+tokenizer = SimpleBPETokenizer()
+print("=== TRAINING SUBWORD BPE TOKENIZER ===")
+tokenizer.train(sample_corpus, num_merges=6)
+
+test_sentence = "lowest newer"
+encoded_tokens = tokenizer.encode(test_sentence)
+print(f"\nEncoding test sentence '{test_sentence}':")
+print(f"Tokens: {encoded_tokens}")
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-5: Byte Pair Encoding (BPE) Subword Tokenizer from Scratch</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. GPU Hardware Physics: The Key-Value (KV) Cache Mathematical Sizing</h2>
+                <p>When an agent runs a long multi-turn dialogue with 10 documents in context, the primary memory bottleneck on GPUs is <strong>not the model weights</strong>—it is the <strong>KV Cache</strong>. In standard autoregressive generation, past Key and Value attention matrices are cached in GPU VRAM so earlier tokens are not redundantly recomputed.</p>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>KV Cache VRAM Footprint Equation:</strong>
+                    <div style="font-family: 'Fira Code', monospace; margin: 0.75rem 0; font-size: 1.05rem; color: var(--text-color);">
+                        KV_bytes = 2 (K & V) × 2 (FP16 bytes) × n_layers × n_heads × d_head × seq_len × batch_size
+                    </div>
+                    <em>Example:</em> For a 70B model with 80 layers, 64 attention heads, head dimension 128, processing a 32,768 context window across 16 concurrent users:
+                    <div style="font-family: 'Fira Code', monospace; margin: 0.5rem 0; font-size: 0.95rem;">
+                        KV_bytes = 4 × 80 × 64 × 128 × 32,768 × 16 ≈ 1,374,389,534,720 bytes ≈ 1,374 GB of pure VRAM!
+                    </div>
+                    This is why Grouped-Query Attention (GQA) and vLLM PagedAttention are essential for modern production agent serving!
+                </div>
+
+                <div class="code-header">
+                    <span>kv_cache_calculator.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 3.0-6: KV-Cache & VRAM Hardware Budget Calculator
+def calculate_agent_gpu_vram(
+    param_billions: float,
+    weight_precision_bytes: int,  # 2 for FP16, 1 for INT8, 0.5 for INT4
+    layers: int,
+    kv_heads: int,                # 8 for Llama-3 70B (Grouped-Query Attention)
+    head_dim: int,                # 128
+    context_tokens: int,
+    concurrent_sessions: int
+) -> dict:
+    """Calculates exact GPU VRAM allocation required for agent deployments."""
+    
+    # 1. Model Weights Memory
+    model_weight_gb = (param_billions * 1e9 * weight_precision_bytes) / (1024 ** 3)
+    
+    # 2. KV Cache Memory (Key + Value matrices in FP16 = 4 bytes per element)
+    kv_bytes_per_token_session = 2 * 2 * layers * kv_heads * head_dim
+    total_kv_bytes = kv_bytes_per_token_session * context_tokens * concurrent_sessions
+    kv_cache_gb = total_kv_bytes / (1024 ** 3)
+    
+    # 3. CUDA runtime & activation overhead buffer (~20%)
+    activation_overhead_gb = (model_weight_gb + kv_cache_gb) * 0.20
+    
+    total_vram_required = model_weight_gb + kv_cache_gb + activation_overhead_gb
+    h100_gpus_needed = -(-int(total_vram_required) // 80)  # Ceiling division for 80GB H100s
+    
+    return {
+        "model_weights_gb": round(model_weight_gb, 2),
+        "kv_cache_gb": round(kv_cache_gb, 2),
+        "total_vram_gb": round(total_vram_required, 2),
+        "80GB_GPUs_required": h100_gpus_needed
+    }
+
+# Benchmark: Llama-3 70B (GQA: 8 KV heads) serving 50 concurrent agents at 16k context
+stats = calculate_agent_gpu_vram(
+    param_billions=70.0,
+    weight_precision_bytes=2,  # FP16
+    layers=80,
+    kv_heads=8,
+    head_dim=128,
+    context_tokens=16384,
+    concurrent_sessions=50
+)
+
+print("=== AGENT CLUSTER VRAM SIZING REPORT ===")
+for k, v in stats.items():
+    print(f"  {k.ljust(25)}: {v}")
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-6: GPU VRAM & KV-Cache Sizing Calculator</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>8. Context Window Attention Physics: The "Lost in the Middle" Trap</h2>
+                <p>Stanford researchers (Liu et al., 2023) proved that LLM performance follows a U-shaped retrieval curve: models recall information placed at the <strong>very beginning (primacy effect)</strong> or the <strong>very end (recency effect)</strong> of a prompt with near 100% accuracy. When critical facts are placed in the middle 50% of an 80,000-token prompt, retrieval accuracy degrades by up to <strong>40%</strong>!</p>
+
+                <div class="code-header">
+                    <span>lost_in_the_middle_profiler.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 3.0-7: Lost in the Middle Needle-in-a-Haystack Simulator
+from typing import List
+
+def build_needle_prompt(distractor_count: int, needle_position_ratio: float) -> str:
+    """
+    Constructs an adversarial benchmark placing a critical secret at a specific depth.
+    needle_position_ratio: 0.0 (top), 0.5 (dead center), 1.0 (bottom)
+    """
+    distractor_text = "The quick brown fox jumps over the lazy dog. Standard boilerplate context clause."
+    needle = "CRITICAL FACT: The server root SSH port is 8222 and API secret is OMEGA-99."
+    
+    docs = [f"Doc #{i}: {distractor_text}" for i in range(distractor_count)]
+    
+    # Calculate index to inject the needle
+    target_idx = int(distractor_count * needle_position_ratio)
+    docs.insert(target_idx, f"*** {needle} ***")
+    
+    prompt = f"""You are a security auditor. Analyze the following {len(docs)} system log documents:
+
+Context:
+{"\n".join(docs)}
+
+Question: What is the server root SSH port and API secret?"""
+    return prompt
+
+# Test generation
+prompt_top = build_needle_prompt(distractor_count=20, needle_position_ratio=0.0)
+prompt_middle = build_needle_prompt(distractor_count=20, needle_position_ratio=0.5)
+
+print("=== NEEDLE-IN-A-HAYSTACK PROMPT CONSTRUCTED ===")
+print(f"Top-positioned prompt length: {len(prompt_top)} characters")
+print(f"Center-positioned prompt length: {len(prompt_middle)} characters")
+print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so the most relevant chunk is either at the VERY TOP or VERY BOTTOM of the context window!")
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-7: Lost-in-the-Middle Needle Placement Profiler</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>9. Production Debugging Playbook: Solving 5 Core LLM Failure Modes</h2>
+                <ol>
+                    <li><strong>Hallucination of Non-Existent APIs:</strong> Cause: High temperature and unconstrained next-token sampling. <em>Fix:</em> Set temperature to <code>0.0</code> and bind tools to strict Pydantic JSON schemas.</li>
+                    <li><strong>Runaway Verbosity & Repetition Loops:</strong> Cause: Token transition probabilities loop on common n-grams. <em>Fix:</em> Set <code>frequency_penalty=0.5</code> and define explicit stop sequences (<code>["\n\nUser:", "Observation:"]</code>).</li>
+                    <li><strong>Ignoring Crucial System Directives:</strong> Cause: Massive user input pushes system prompt tokens out of the model's high-attention window. <em>Fix:</em> Place key constraints at BOTH the beginning of the system prompt and the very end of the user prompt.</li>
+                    <li><strong>Random JSON Parse Failures:</strong> Cause: Model emits preamble commentary before emitting JSON. <em>Fix:</em> Use OpenAI <code>response_format={"type": "json_object"}</code> or Hugging Face grammar-guided decoders (Outlines).</li>
+                    <li><strong>Stalling and Timeouts on Large Prompts:</strong> Cause: Prefill phase quadratic attention bottleneck on dense contexts. <em>Fix:</em> Implement semantic chunk pruning and prompt caching.</li>
+                </ol>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. What is an LLM fundamentally doing when generating text?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Querying an internal SQL database of factual human knowledge.</li>
+                        <li class="mcq-option" data-correct="true">Predicting the probability distribution of the next token given prior tokens.</li>
+                        <li class="mcq-option" data-correct="false">Executing compiled Python bytecode in a sandboxed runtime.</li>
+                        <li class="mcq-option" data-correct="false">Translating user prompts into formal symbolic logic proofs.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. In Byte Pair Encoding (BPE), what is a token?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Always an entire complete English word.</li>
+                        <li class="mcq-option" data-correct="false">Strictly a single character.</li>
+                        <li class="mcq-option" data-correct="true">A subword chunk representing frequently co-occurring byte or character sequences.</li>
+                        <li class="mcq-option" data-correct="false">An encrypted cryptographic hash representing an API user session.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. What does setting Temperature to 0.0 achieve during model inference?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The model generates entirely random tokens across its entire vocabulary.</li>
+                        <li class="mcq-option" data-correct="true">Greedy sampling: the model always picks the single token with the highest probability.</li>
+                        <li class="mcq-option" data-correct="false">The model halves its token generation speed to save GPU power.</li>
+                        <li class="mcq-option" data-correct="false">The model ignores the system prompt entirely.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. Why are dense vector embeddings used instead of raw text characters?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because floating-point numbers compress text to take up zero hard drive space.</li>
+                        <li class="mcq-option" data-correct="true">Because high-dimensional coordinates capture semantic relationships geometrically.</li>
+                        <li class="mcq-option" data-correct="false">Because GPUs are incapable of multiplying matrices.</li>
+                        <li class="mcq-option" data-correct="false">Because embeddings prevent any prompt injection attacks.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. What is the "Lost in the Middle" phenomenon in long context windows?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The middle layers of a neural network being pruned away during fine-tuning.</li>
+                        <li class="mcq-option" data-correct="true">Models tending to ignore or poorly recall information placed in the middle of a large prompt.</li>
+                        <li class="mcq-option" data-correct="false">When the user stops typing midway through a sentence.</li>
+                        <li class="mcq-option" data-correct="false">The loss of floating-point precision during 8-bit quantization.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. If you need an agent to output strictly valid JSON matching a database schema, what temperature should you choose?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">1.5</li>
+                        <li class="mcq-option" data-correct="false">0.8</li>
+                        <li class="mcq-option" data-correct="true">0.0</li>
+                        <li class="mcq-option" data-correct="false">2.0</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. What metric is commonly used to measure the semantic similarity between two embedding vectors?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">Cosine Similarity.</li>
+                        <li class="mcq-option" data-correct="false">Hamming Distance on ASCII bytes.</li>
+                        <li class="mcq-option" data-correct="false">MD5 Checksum difference.</li>
+                        <li class="mcq-option" data-correct="false">Levenshtein Edit Distance.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What happens when an input prompt plus generated output exceeds the model's context window limit?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The model automatically upgrades itself to a bigger model.</li>
+                        <li class="mcq-option" data-correct="true">The API throws a context length exceeded error or silently drops earlier tokens.</li>
+                        <li class="mcq-option" data-correct="false">The prompt is cached permanently on disk.</li>
+                        <li class="mcq-option" data-correct="false">The output is automatically summarized into 10 tokens.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. Approximately how many words does 100 English tokens represent?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Around 20 words.</li>
+                        <li class="mcq-option" data-correct="true">Around 75 words.</li>
+                        <li class="mcq-option" data-correct="false">Around 300 words.</li>
+                        <li class="mcq-option" data-correct="false">Exactly 100 words in all languages.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. In an agentic ReAct loop, why are stop sequences used?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To shut down the computer when an error occurs.</li>
+                        <li class="mcq-option" data-correct="true">To stop generation immediately when the LLM outputs a tool call marker so code can execute it.</li>
+                        <li class="mcq-option" data-correct="false">To delete previous user inputs from memory.</li>
+                        <li class="mcq-option" data-correct="false">To prevent the model from using GPU memory.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master token mechanics and model control parameters.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Tokenizer Fragmentation Inspector</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Install <code>tiktoken</code>. Write a Python script that takes three inputs: 1) Standard English text, 2) A snippet of Python code with indentation, and 3) A non-English sentence (e.g., Hindi, Spanish, or German). Compare the ratio of characters to tokens for all three. Which input exhibits the highest token fragmentation?</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Sliding Window Token Trimmer</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a Python function <code>trim_messages_to_budget(messages: list[dict], max_tokens: int)</code>. The function should calculate the token count of a chat message list and drop the oldest non-system messages first until the total token count is below <code>max_tokens</code>.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: 3D Vector Geometry Simulator</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Using NumPy, define 3D vectors for: "doctor", "hospital", "nurse", "guitar", and "piano". Write a function that calculates the pairwise cosine distance matrix and proves that musical terms cluster together and medical terms cluster together.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Temperature Sensitivity Experiment</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Run Program 3.0-3 with 5 different temperature values: <code>[0.01, 0.3, 0.7, 1.0, 1.8]</code>. Run each simulation 100 times and plot or print a frequency histogram showing how often the least probable word ("green") gets chosen under each temperature.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Stop Sequence Interceptor</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a small simulation loop in Python that generates text token-by-token from a predefined list of words. Configure a stop sequence <code>"PAUSE"</code>. When the loop encounters that token, it must halt generation, print an observation prompt, and simulate passing control back to an external agent.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:1508.07909</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">ACL 2016</span>
+                            </div>
+                            <h4>Neural Machine Translation of Rare Words with Subword Units (BPE)</h4>
+                            <p>Sennrich et al. introduce Byte Pair Encoding for NLP, solving out-of-vocabulary challenges via subword units.</p>
+                            <a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2307.03172</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Stanford / TACL</span>
+                            </div>
+                            <h4>Lost in the Middle: How Language Models Use Long Contexts</h4>
+                            <p>Liu et al. demonstrate that LLM retrieval accuracy degrades drastically when critical information is placed in the middle.</p>
+                            <a href="https://arxiv.org/abs/2307.03172" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2309.06180</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">SOSP 2023</span>
+                            </div>
+                            <h4>Efficient Memory Management for Large Language Model Serving with PagedAttention</h4>
+                            <p>Kwon et al. introduce vLLM and PagedAttention, resolving KV cache fragmentation and enabling 2-4x higher throughput.</p>
+                            <a href="https://arxiv.org/abs/2309.06180" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Tiktoken</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI</span>
+                            </div>
+                            <h4>Tiktoken BPE Tokenizer Implementation</h4>
+                            <p>Fast Byte Pair Encoding tokenizer library used across GPT models with cl100k_base and o200k_base encodings.</p>
+                            <a href="https://github.com/openai/tiktoken" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_02.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 02: Python Fundamentals</span>
+                </a>
+                <a href="day_04.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 04: Prompt Engineering</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981'; // green
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444'; // red
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

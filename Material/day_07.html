@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 7: Building Repeatable, Multi-Step Workflows</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li class="active"><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>29%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 7.0</span>
+                <h1>Day 7: Building Repeatable, Multi-Step Workflows</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> You need an AI system to reliably execute a complex multi-stage pipeline: <code>Ingest &rarr; Classify &rarr; Extract Entities &rarr; Verify Policy &rarr; Calculate &rarr; Respond</code>. If you attempt this in a single monolithic prompt, the AI skips instructions, hallucinates intermediate variables, or fails JSON parsing. How do we engineer deterministic, repeatable pipelines with programmatic validation gates and targeted self-correction?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 1.6</span>
+                            <span class="plan-badge plan-badge-secondary">Week 1</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Model the mathematical reliability of multi-step agent chains to defeat compound error cascades.</li><li>Implement sequential prompt chaining with self-reflection and quality grading gates.</li><li>Build an asynchronous fan-out/fan-in risk analyzer with resilient state snapshotting.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Compound Reliability Mathematics: $P_{	ext{chain}} = \prod_{i=1}^k p_i$ vs. retry-boosted reliability.</li><li>Asynchronous Fan-out/Fan-in orchestration using `asyncio.gather` with isolated failure boundaries.</li><li>Mealy/Moore state machine formalisms for deterministic multi-stage agent workflows.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 7.1: Sequential Prompt Chain with Self-Reflection and Quality Score Gates.</li><li>Program 7.2: Parallel Asynchronous Fan-Out/Fan-In Financial Risk Aggregator.</li><li>Program 7.3: Resilient State Machine Engine with JSON State Snapshots and Recovery.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>The Monolithic Single-Prompt Trap: Forcing an LLM to solve 5 complex tasks in one prompt, yielding sub-60% accuracy.</li><li>Silent Cascade Failure: Allowing an unvalidated output from Node 1 to pollute Node 2, corrupting the entire chain.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Financial Risk Chain & Resilient State Machine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Monolithic Mega-Prompt Fallacy & Compound Reliability</h2>
+                <p>When novice developers build AI systems, they often write a 2,000-word "mega-prompt" commanding the model to ingest an email, classify the sentiment, extract order numbers, query a database mentally, verify warranty dates, and draft a response adhering to 10 specific business rules. In enterprise production, this pattern collapses under the <strong>Law of Compound Reliability</strong>.</p>
+
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">The Mathematics of Compound Probability in AI Pipelines</h3>
+                    <p>Suppose a complex business workflow requires $k$ distinct cognitive tasks (classification, entity extraction, policy verification, math, synthesis). Let $p_i$ be the probability that the LLM successfully satisfies task $i$ without hallucination or schema violation.</p>
+                    <p>In a <strong>Monolithic Single-Shot Prompt</strong>, all $k$ steps run simultaneously inside a single generation pass. Assuming approximate independence between sub-tasks:</p>
+                    <div style="text-align: center; font-size: 1.2rem; font-family: 'Fira Code', monospace; margin: 1rem 0; color: #ef4444;">
+                        P(Success_monolithic) = &prod;<sub>i=1</sub><sup>k</sup> p<sub>i</sub>
+                    </div>
+                    <p>If each sub-task has a high individual accuracy of $p_i = 0.90$ (90%), for a 5-step monolithic task:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); margin-bottom: 1rem;">
+                        P(Success_monolithic) = 0.90 &times; 0.90 &times; 0.90 &times; 0.90 &times; 0.90 = (0.90)<sup>5</sup> &approx; 0.5905 (59.0%)
+                    </div>
+                    <p><strong>Over 40% of customer queries fail in production!</strong> Even worse: because the prompt was monolithic, you cannot determine which step failed, and recovering requires re-running the entire expensive generation from scratch.</p>
+
+                    <h4 style="color: #10b981; margin-top: 1.2rem;">The Modular Pipeline with Validation Gates</h4>
+                    <p>By decomposing the problem into $k$ isolated nodes, each protected by an automated validation gate with up to $r$ targeted retry attempts, the probability of failure at node $i$ drops exponentially:</p>
+                    <div style="text-align: center; font-size: 1.1rem; font-family: 'Fira Code', monospace; margin: 1rem 0; color: #10b981;">
+                        P(Fail_node) = (1 - p<sub>i</sub>)<sup>r + 1</sup> &implies; P(Success_node) = 1 - (1 - p<sub>i</sub>)<sup>r + 1</sup>
+                    </div>
+                    <p>With just $r = 2$ retries fed with targeted validation errors:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); margin-bottom: 1rem;">
+                        P(Success_node) = 1 - (1 - 0.90)<sup>3</sup> = 1 - 0.001 = 0.999 (99.9%)
+                    </div>
+                    <p>Total system reliability across all 5 nodes becomes:</p>
+                    <div style="text-align: center; font-size: 1.2rem; font-family: 'Fira Code', monospace; color: #10b981; font-weight: bold;">
+                        P(Success_modular) = (0.999)<sup>5</sup> &approx; 0.995 (99.5%)
+                    </div>
+                    <p style="margin-bottom: 0;">By decoupling cognitive stages, we elevate system success from <strong>59.0% to 99.5%</strong> without needing a more expensive foundation model!</p>
+                </div>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Industrial Analogy:</strong> In an automobile assembly line, a single robot doesn't stamp the sheet metal, paint the chassis, mount the transmission, and install the wiring harness all at once. Instead, discrete robotic stations perform single tasks sequentially, separated by automated computer-vision quality inspection gates. <strong>Prompt Chaining</strong> is the factory assembly line for cognitive AI applications.
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Architectural Patterns for Agentic Workflows</h2>
+                <p>Enterprise AI engineering utilizes five primary architectural topologies depending on task complexity, parallelism, and human oversight requirements:</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; margin: 1.5rem 0;">
+                    <div style="background: var(--sidebar-bg); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <h4 style="margin-top: 0; color: #3b82f6;">1. Sequential Prompt Chain</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Linear Directed Acyclic Graph (DAG) where output of Step $N$ forms validated input of Step $N+1$.</p>
+                        <span style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Best For: Triage, Document ETL</span>
+                    </div>
+
+                    <div style="background: var(--sidebar-bg); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <h4 style="margin-top: 0; color: #10b981;">2. Routing / Branching</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Classifier node routes input payload into distinct specialized sub-graphs based on intent or priority.</p>
+                        <span style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Best For: Customer Support, IT Helpdesk</span>
+                    </div>
+
+                    <div style="background: var(--sidebar-bg); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <h4 style="margin-top: 0; color: #f59e0b;">3. Parallel Fan-Out / Fan-In</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Single input splits concurrently across multiple specialist workers, aggregated by a synthesis node.</p>
+                        <span style="font-size: 0.8rem; background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Best For: Multi-Factor Due Diligence</span>
+                    </div>
+
+                    <div style="background: var(--sidebar-bg); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <h4 style="margin-top: 0; color: #8b5cf6;">4. Orchestrator-Workers</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Central planner LLM dynamically defines sub-tasks and delegates them to worker agents on the fly.</p>
+                        <span style="font-size: 0.8rem; background: rgba(139, 92, 246, 0.15); color: #8b5cf6; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Best For: Coding Agents, Research Reports</span>
+                    </div>
+
+                    <div style="background: var(--sidebar-bg); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <h4 style="margin-top: 0; color: #ec4899;">5. Evaluator-Optimizer (Self-Correction)</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Generator node produces draft; Critic node reviews against rubric; loops until threshold or max retries reached.</p>
+                        <span style="font-size: 0.8rem; background: rgba(236, 72, 153, 0.15); color: #ec4899; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Best For: Code Generation, Policy Writing</span>
+                    </div>
+                </div>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6; font-weight: bold;">[INPUT] Raw Unstructured Customer Ticket</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">&darr;</div>
+                        <div style="color: #6366f1; font-weight: bold;">[STEP 1: TRIAGE CLASSIFIER] &rarr; Output: Category & Urgency</div>
+                        <div style="margin-left: 1rem; color: #10b981;">&check; GATE 1: Pydantic Validation: category &isin; Enum, urgency &isin; Enum</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">&darr;</div>
+                        <div style="color: #f59e0b; font-weight: bold;">[STEP 2: SPECIALIZED ENTITY EXTRACTOR] &rarr; Output: OrderID & Amount</div>
+                        <div style="margin-left: 1rem; color: #10b981;">&check; GATE 2: Regex Assertion: re.match(r"^ORD-\d{5}$", order_id)</div>
+                        <div style="margin-left: 1rem; color: #ef4444; font-size: 0.85rem;">&orarr; RETRY LOOP: If Gate 2 fails, reflect error to LLM with 2 max attempts</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">&darr;</div>
+                        <div style="color: #ec4899; font-weight: bold;">[STEP 3: SYNTHESIZER & AUDITOR] &rarr; Final Resolution Letter</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 7.0-1: Sequential Pipeline with Deterministic Validation Gates and Self-Correction</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: Sequential Prompt Chain with Validation Gates & Self-Correction</h2>
+                <p>The code below demonstrates an industrial-strength prompt chain. Notice how the validation gate detects regex non-compliance and programmatically invokes a targeted self-correction pass before downstream steps can be contaminated:</p>
+
+                <div class="code-header">
+                    <span>program_7_1_sequential_chain.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 7.0-1: Sequential Prompt Chain with Validation Gates & Reflection
+from typing import Literal, Optional, List, Dict, Any
+from pydantic import BaseModel, Field, field_validator
+from openai import OpenAI
+import re
+import json
+
+client = OpenAI()
+
+# --- STEP 1: SCHEMAS & CLASSIFIER ---
+class TriageClassification(BaseModel):
+    category: Literal["billing", "technical", "shipping", "general"]
+    urgency: Literal["low", "medium", "critical"]
+    confidence_score: float = Field(ge=0.0, le=1.0)
+
+def step1_triage_classifier(raw_text: str) -> TriageClassification:
+    """Classifies user intent using a lightweight, fast model."""
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a customer triage classifier. Accurately assign category, urgency, and confidence."},
+            {"role": "user", "content": raw_text}
+        ],
+        response_format=TriageClassification,
+        temperature=0.0
+    )
+    return completion.choices[0].message.parsed
+
+# --- STEP 2: SCHEMAS & ENTITY EXTRACTOR WITH REFLECTION ---
+class OrderEntities(BaseModel):
+    order_id: Optional[str] = Field(None, description="Format must match ORD-XXXXX where X are 5 digits")
+    claimed_amount_inr: Optional[float] = Field(None, ge=0.0, description="Disputed amount in INR")
+    item_name: Optional[str] = Field(None, description="Specific item discussed")
+
+    @field_validator("order_id")
+    @classmethod
+    def validate_order_format(cls, v: Optional[str]) -> Optional[str]:
+        if v and not re.match(r"^ORD-\d{5}$", v):
+            raise ValueError(f"Invalid Order ID '{v}'. Must match regular expression '^ORD-\\d{{5}}$' (e.g., ORD-12345).")
+        return v
+
+def step2_extract_entities_with_retry(raw_text: str, category: str, max_retries: int = 2) -> OrderEntities:
+    """Extracts entities and performs isolated self-correction retries if validation fails."""
+    system_prompt = f"You are a specialist entity extraction agent for '{category}' customer inquiries. Return structured fields."
+    messages: List[Dict[str, str]] = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": raw_text}
+    ]
+
+    for attempt in range(1, max_retries + 2):
+        try:
+            completion = client.beta.chat.completions.parse(
+                model="gpt-4o-mini",
+                messages=messages,
+                response_format=OrderEntities,
+                temperature=0.1 * (attempt - 1)
+            )
+            parsed: OrderEntities = completion.choices[0].message.parsed
+            print(f"  [Step 2] Extraction passed on attempt {attempt}: {parsed.model_dump()}")
+            return parsed
+        except Exception as err:
+            print(f"  [Step 2 GATE FAILURE] Attempt {attempt}/{max_retries + 1} failed validation: {err}")
+            if attempt > max_retries:
+                print("  [Step 2] Max retries exhausted. Falling back to default empty entities.")
+                return OrderEntities(order_id=None, claimed_amount_inr=None, item_name=None)
+            
+            # Feed targeted error back to the LLM for self-correction
+            messages.append({"role": "assistant", "content": "Attempted extraction failed validation."})
+            messages.append({
+                "role": "user", 
+                "content": f"Your previous output violated validation rules: {err}. Please re-read the input and correct the formatting."
+            })
+
+    return OrderEntities()
+
+# --- STEP 3: RESPONSE SYNTHESIZER ---
+def step3_synthesize_response(query: str, triage: TriageClassification, entities: OrderEntities) -> str:
+    """Drafts executive resolution grounded in validated intermediate parameters."""
+    prompt = f"""
+    You are a Senior Customer Relations Director. Compose a professional, empathetic resolution email.
+    
+    Verified Parameters:
+    - Inquiry Category: {triage.category}
+    - Urgency Level: {triage.urgency}
+    - Order Identifier: {entities.order_id or 'NOT_SUPPLIED'}
+    - Disputed Amount: {f'₹{entities.claimed_amount_inr:,.2f}' if entities.claimed_amount_inr else 'None'}
+    - Target Item: {entities.item_name or 'General Order'}
+    
+    Original User Query:
+    "{query}"
+    
+    Mandatory Rules:
+    1. If Order ID was not supplied or invalid, explicitly instruct the customer how to locate it on their receipt.
+    2. If amount is > ₹5,000, state that an account supervisor has been assigned.
+    3. Keep response under 150 words.
+    """
+    res = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3
+    )
+    return res.choices[0].message.content
+
+# --- PIPELINE ORCHESTRATOR ---
+def run_support_chain(customer_ticket: str) -> Dict[str, Any]:
+    print("=" * 60)
+    print(f"INGESTING TICKET: '{customer_ticket}'")
+    print("=" * 60)
+    
+    # Stage 1
+    print("\n--> [Stage 1] Executing Triage Classification...")
+    triage = step1_triage_classifier(customer_ticket)
+    print(f"    Classified: {triage.category.upper()} | Urgency: {triage.urgency.upper()} (Conf: {triage.confidence_score:.2f})")
+    
+    # Stage 2
+    print("\n--> [Stage 2] Executing Entity Extraction with Validation Gate...")
+    entities = step2_extract_entities_with_retry(customer_ticket, triage.category)
+    
+    # Stage 3
+    print("\n--> [Stage 3] Synthesizing Resolution Email...")
+    final_email = step3_synthesize_response(customer_ticket, triage, entities)
+    
+    return {
+        "triage": triage.model_dump(),
+        "entities": entities.model_dump(),
+        "final_email": final_email
+    }
+
+if __name__ == "__main__":
+    test_ticket = "URGENT: Order ord-88319 was charged 14,999 INR for the wireless headset, but price showed 9,999. Refund the difference!"
+    result = run_support_chain(test_ticket)
+    print("\n" + "=" * 30 + " FINAL GENERATED RESOLUTION " + "=" * 30)
+    print(result["final_email"])
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 7.0-1: Sequential Pipeline with Field Validation and Targeted Reflection</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: Parallel Fan-Out / Fan-In Async Aggregator</h2>
+                <p>Sequential chains accumulate wall-clock latency ($T_{\text{total}} = \sum t_i$). When different aspects of a document can be analyzed independently, the <strong>Parallel Fan-Out / Fan-In</strong> pattern executes $N$ specialist LLM workers concurrently using <code>asyncio.gather</code>, then collapses their findings into a single unified synthesis report:</p>
+
+                <div class="code-header">
+                    <span>program_7_2_parallel_fanout.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 7.0-2: Async Fan-Out / Fan-In Multi-Specialist Risk Assessment
+import asyncio
+import time
+from typing import List, Literal
+from pydantic import BaseModel, Field
+from openai import AsyncOpenAI
+
+client = AsyncOpenAI()
+
+# --- SPECIALIST SCHEMAS ---
+class LegalRiskAssessment(BaseModel):
+    compliance_passed: bool
+    identified_liabilities: List[str]
+    indemnity_risk: Literal["low", "medium", "high", "critical"]
+
+class FinancialRiskAssessment(BaseModel):
+    cashflow_impact_inr: float
+    roi_horizon_months: int
+    solvency_risk: Literal["low", "medium", "high", "critical"]
+
+class TechnicalFeasibilityAssessment(BaseModel):
+    tech_stack_viable: bool
+    estimated_sprint_weeks: int
+    technical_debt_risk: Literal["low", "medium", "high", "critical"]
+
+class ExecutiveDossier(BaseModel):
+    verdict: Literal["APPROVED", "REJECTED", "CONDITIONAL_APPROVAL"]
+    summary_of_findings: str
+    actionable_remediations: List[str]
+
+# --- PARALLEL WORKER COROUTINES ---
+async def worker_legal_audit(contract_text: str) -> LegalRiskAssessment:
+    """Asynchronously audits contract text for legal & indemnity risks."""
+    completion = await client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a Corporate Legal Counsel. Audit the proposal strictly for legal liabilities."},
+            {"role": "user", "content": contract_text}
+        ],
+        response_format=LegalRiskAssessment,
+        temperature=0.0
+    )
+    return completion.choices[0].message.parsed
+
+async def worker_financial_audit(contract_text: str) -> FinancialRiskAssessment:
+    """Asynchronously audits pricing, milestones, and financial exposure."""
+    completion = await client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a Chief Financial Officer. Quantify cashflow impacts and financial solvency risks."},
+            {"role": "user", "content": contract_text}
+        ],
+        response_format=FinancialRiskAssessment,
+        temperature=0.0
+    )
+    return completion.choices[0].message.parsed
+
+async def worker_technical_audit(contract_text: str) -> TechnicalFeasibilityAssessment:
+    """Asynchronously evaluates architectural feasibility and delivery timeline."""
+    completion = await client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a Principal Software Architect. Assess engineering complexity, timelines, and technical debt."},
+            {"role": "user", "content": contract_text}
+        ],
+        response_format=TechnicalFeasibilityAssessment,
+        temperature=0.0
+    )
+    return completion.choices[0].message.parsed
+
+# --- FAN-IN SYNTHESIS AGGREGATOR ---
+async def synthesize_dossier(
+    proposal: str,
+    legal: LegalRiskAssessment,
+    finance: FinancialRiskAssessment,
+    tech: TechnicalFeasibilityAssessment
+) -> ExecutiveDossier:
+    """Aggregates parallel audit reports into a final investment committee dossier."""
+    prompt = f"""
+    You are the Executive Investment Committee Chair. Review the three independent specialist audits:
+    
+    [1. LEGAL AUDIT]: Passed: {legal.compliance_passed}, Risk: {legal.indemnity_risk}
+    Liabilities: {legal.identified_liabilities}
+    
+    [2. FINANCIAL AUDIT]: Impact: ₹{finance.cashflow_impact_inr:,.2f}, Horizon: {finance.roi_horizon_months} mos, Risk: {finance.solvency_risk}
+    
+    [3. TECHNICAL AUDIT]: Viable: {tech.tech_stack_viable}, Sprints: {tech.estimated_sprint_weeks} weeks, Debt: {tech.technical_debt_risk}
+    
+    Determine the final verdict (APPROVED, REJECTED, CONDITIONAL_APPROVAL) and outline concrete remediations.
+    """
+    completion = await client.beta.chat.completions.parse(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": prompt}],
+        response_format=ExecutiveDossier,
+        temperature=0.1
+    )
+    return completion.choices[0].message.parsed
+
+# --- ORCHESTRATOR ---
+async def evaluate_vendor_proposal(proposal: str) -> ExecutiveDossier:
+    start_time = time.perf_counter()
+    print("Starting Parallel Fan-Out Evaluation...")
+
+    # Fan-Out: Execute all 3 specialized audits concurrently
+    legal_task = asyncio.create_task(worker_legal_audit(proposal))
+    financial_task = asyncio.create_task(worker_financial_audit(proposal))
+    tech_task = asyncio.create_task(worker_technical_audit(proposal))
+
+    legal_res, financial_res, tech_res = await asyncio.gather(legal_task, financial_task, tech_task)
+    fanout_time = time.perf_counter() - start_time
+    print(f"--> Parallel Fan-Out completed in {fanout_time:.2f}s (vs ~{fanout_time*3:.2f}s sequential)!")
+
+    # Fan-In: Synthesize aggregated findings
+    print("--> Fan-In: Synthesizing final Executive Dossier...")
+    dossier = await synthesize_dossier(proposal, legal_res, financial_res, tech_res)
+    total_time = time.perf_counter() - start_time
+    print(f"--> Total Pipeline Elapsed: {total_time:.2f}s")
+    return dossier
+
+if __name__ == "__main__":
+    sample_proposal = """
+    Vendor Proposal: Migrate legacy core banking database to an offshore cloud provider within 6 weeks.
+    Price: ₹45,00,000 INR fixed price with zero indemnification for data breach or downtime.
+    Technology: Proprietary closed-source fork of PostgreSQL maintained solely by vendor.
+    """
+    result = asyncio.run(evaluate_vendor_proposal(sample_proposal))
+    print("\n" + "=" * 25 + " EXECUTIVE DOSSIER " + "=" * 25)
+    print(f"VERDICT: {result.verdict}")
+    print(f"SUMMARY: {result.summary_of_findings}")
+    print("ACTIONABLE REMEDIATIONS:")
+    for r in result.actionable_remediations:
+        print(f" - {r}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 7.0-2: Async Fan-Out / Fan-In Architecture with Concurrency Optimization</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: Resilient State Machine with Checkpointing & Audit Trail</h2>
+                <p>In enterprise banking, healthcare, and mission-critical workflows, failure midway through a multi-step chain must not corrupt data. The <strong>State Machine with Checkpointing</strong> pattern guarantees full auditability, rollback capability, and conditional branch routing:</p>
+
+                <div class="code-header">
+                    <span>program_7_3_state_machine.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 7.0-3: Deterministic State Machine Engine with JSON Snapshots & Branching
+import json
+import time
+from typing import Dict, Any, List, Optional, Callable
+from dataclasses import dataclass, field, asdict
+
+@dataclass
+class WorkflowState:
+    run_id: str
+    current_step: str
+    is_completed: bool = False
+    error: Optional[str] = None
+    data: Dict[str, Any] = field(default_factory=dict)
+    history: List[Dict[str, Any]] = field(default_factory=list)
+
+class StateMachineEngine:
+    def __init__(self, run_id: str, initial_data: Dict[str, Any]):
+        self.state = WorkflowState(run_id=run_id, current_step="INITIALIZE", data=initial_data)
+        self.handlers: Dict[str, Callable[[WorkflowState], str]] = {}
+        self.save_checkpoint()
+
+    def register_step(self, step_name: str, handler: Callable[[WorkflowState], str]):
+        """Registers a transition handler returning the next step name or 'END'."""
+        self.handlers[step_name] = handler
+
+    def save_checkpoint(self):
+        """Persists state snapshot for recovery and enterprise audit compliance."""
+        snapshot = asdict(self.state)
+        snapshot["checkpoint_timestamp"] = time.time()
+        self.state.history.append({"step": self.state.current_step, "timestamp": time.time()})
+        with open(f"checkpoint_{self.state.run_id}.json", "w") as f:
+            json.dump(snapshot, f, indent=2)
+
+    def run(self, start_step: str) -> WorkflowState:
+        """Executes state transitions until an terminal state or error is reached."""
+        self.state.current_step = start_step
+        max_transitions = 20
+        transitions = 0
+
+        while self.state.current_step != "END" and not self.state.is_completed:
+            transitions += 1
+            if transitions > max_transitions:
+                self.state.error = "Cycle limit exceeded: possible infinite state transition loop."
+                break
+
+            current = self.state.current_step
+            handler = self.handlers.get(current)
+            if not handler:
+                self.state.error = f"No handler registered for step: {current}"
+                break
+
+            print(f"[State Machine] Executing Node: {current} (Cycle {transitions})")
+            try:
+                next_step = handler(self.state)
+                self.state.current_step = next_step
+                self.save_checkpoint()
+            except Exception as e:
+                self.state.error = f"Exception in node {current}: {str(e)}"
+                print(f"  [ERROR] {self.state.error}")
+                self.save_checkpoint()
+                break
+
+        if self.state.current_step == "END":
+            self.state.is_completed = True
+            print("[State Machine] Workflow reached terminal 'END' state successfully.")
+        
+        return self.state
+
+# --- STEP IMPLEMENTATIONS (MOCKING REAL WORLD LOGIC) ---
+def node_validate_identity(state: WorkflowState) -> str:
+    user_id = state.data.get("user_id")
+    if not user_id or not user_id.startswith("USR-"):
+        state.data["rejection_reason"] = "Invalid User Identification token."
+        return "ROUTE_REJECT"
+    state.data["identity_verified"] = True
+    return "NODE_CREDIT_CHECK"
+
+def node_credit_check(state: WorkflowState) -> str:
+    requested_amount = state.data.get("loan_amount_inr", 0)
+    score = state.data.get("cibil_score", 650)
+    
+    if score < 600:
+        state.data["rejection_reason"] = f"Credit score {score} is below minimum threshold 600."
+        return "ROUTE_REJECT"
+    elif requested_amount > 1_000_000:
+        # High value loan requires secondary human underwriter review
+        state.data["requires_human_review"] = True
+        return "ROUTE_UNDERWRITER_QUEUE"
+    else:
+        state.data["approval_rate"] = 0.095 # 9.5%
+        return "ROUTE_APPROVE"
+
+def node_approve(state: WorkflowState) -> str:
+    state.data["status"] = "APPROVED"
+    state.data["notification"] = f"Loan of ₹{state.data['loan_amount_inr']:,} approved at {state.data['approval_rate']*100}%."
+    return "END"
+
+def node_reject(state: WorkflowState) -> str:
+    state.data["status"] = "REJECTED"
+    state.data["notification"] = f"Application rejected: {state.data.get('rejection_reason')}"
+    return "END"
+
+def node_underwriter(state: WorkflowState) -> str:
+    state.data["status"] = "PENDING_UNDERWRITER_REVIEW"
+    state.data["notification"] = "Application held in senior underwriter review queue."
+    return "END"
+
+if __name__ == "__main__":
+    # Test Run: Standard approved application
+    app_data = {"user_id": "USR-40912", "loan_amount_inr": 450000, "cibil_score": 760}
+    engine = StateMachineEngine(run_id="APP-9981", initial_data=app_data)
+    
+    engine.register_step("NODE_VALIDATE_IDENTITY", node_validate_identity)
+    engine.register_step("NODE_CREDIT_CHECK", node_credit_check)
+    engine.register_step("ROUTE_APPROVE", node_approve)
+    engine.register_step("ROUTE_REJECT", node_reject)
+    engine.register_step("ROUTE_UNDERWRITER_QUEUE", node_underwriter)
+
+    final_state = engine.run(start_step="NODE_VALIDATE_IDENTITY")
+    print(f"\nFinal State Result: Status={final_state.data['status']}, Notif='{final_state.data['notification']}'")
+    print(f"Checkpoints Saved: {len(final_state.history)} states recorded.")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 7.0-3: Resilient State Machine Engine with JSON Snapshots and Rollback Checkpointing</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Cascading State Pollution (Context Bloat):</strong> Passing the entire raw cumulative output of all preceding nodes into every downstream prompt exhausts the context window and triggers the "Lost in the Middle" attention degradation. <em>Mitigation:</em> Transform and project intermediate state into minimal, strictly typed schemas. Downstream nodes should receive only the specific variables they need.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Infinite Ping-Pong Reflection Loops:</strong> In Evaluator-Optimizer or self-correction loops, an LLM generator and an LLM critic can get locked in an endless argument where the critic repeatedly flags minor stylistic nuances. <em>Mitigation:</em> Impose a hard deterministic boundary (<code>max_retries = 2</code> or <code>3</code>). If the threshold is exceeded, route to a fallback deterministic safe state or escalate to human review.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Sequential Latency Accumulation:</strong> If each step in a 5-step chain takes 1.5 seconds, user-facing latency becomes 7.5 seconds, degrading user experience. <em>Mitigation:</em> Identify independent nodes and execute them concurrently with <code>asyncio.gather</code> (Fan-out/Fan-in). Use speculative execution or stream intermediate partial tokens to the UI.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Lack of Idempotency:</strong> If a network failure occurs during step 4 of an e-commerce refund chain, re-running the entire pipeline could charge or refund the customer twice. <em>Mitigation:</em> Assign a deterministic <code>run_id</code> and store unique transaction keys in an idempotency cache (Redis or SQLite) to prevent duplicate execution of side-effects.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Monolithic Mega-Prompt vs. Chained Pipeline Comparison</h2>
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Architecture Factor</th>
+                            <th style="padding: 12px; text-align: left;">Monolithic Mega-Prompt</th>
+                            <th style="padding: 12px; text-align: left;">Modular Chained Pipeline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Debuggability</td>
+                            <td style="padding: 12px;">Black box. Impossible to pinpoint which instruction failed.</td>
+                            <td style="padding: 12px;">Clear visibility into each step's exact input and output payload.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Error Recovery</td>
+                            <td style="padding: 12px;">Must re-run the entire costly generation from scratch.</td>
+                            <td style="padding: 12px;">Re-run only the isolated step that failed the validation gate.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Model Flexibility</td>
+                            <td style="padding: 12px;">Forced to use large, expensive models (GPT-4) for every part.</td>
+                            <td style="padding: 12px;">Use fast, inexpensive models (GPT-4o-mini) for extraction and large models only for synthesis.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Deterministic Guarantees</td>
+                            <td style="padding: 12px;">Low (&lt;70% adherence to all rules on edge cases).</td>
+                            <td style="padding: 12px;">High (&gt;99.5% adherence via code validation assertions).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. Under the Law of Compound Reliability, if a 5-step monolithic prompt has a 90% success probability at each sub-task, what is the expected overall success rate?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">90.0%</li>
+                        <li class="mcq-option" data-correct="true">Approximately 59.0% (0.90^5), meaning >40% of queries fail.</li>
+                        <li class="mcq-option" data-correct="false">100.0%</li>
+                        <li class="mcq-option" data-correct="false">75.0%</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. What is a "Validation Gate" in prompt chaining?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">A physical firewall on the server rack.</li>
+                        <li class="mcq-option" data-correct="true">Deterministic programmatic checks (assertions, schemas, regex) executed on intermediate outputs before invoking the next step.</li>
+                        <li class="mcq-option" data-correct="false">A captcha puzzle shown to the user.</li>
+                        <li class="mcq-option" data-correct="false">A database password prompt.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. How does prompt chaining optimize API token costs?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">You can route lightweight sub-tasks (classification, extraction) to fast, inexpensive models, reserving premium models only for complex synthesis.</li>
+                        <li class="mcq-option" data-correct="false">It compresses all English words into single letters.</li>
+                        <li class="mcq-option" data-correct="false">It eliminates the need for an internet connection.</li>
+                        <li class="mcq-option" data-correct="false">API providers give 90% discounts on prompts containing the word 'chain'.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. What should happen if an intermediate step fails a validation gate?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Crash the server immediately with an uncaught exception.</li>
+                        <li class="mcq-option" data-correct="true">Retry only the failed step with targeted error feedback, or route to a human reviewer.</li>
+                        <li class="mcq-option" data-correct="false">Proceed to the next step and ignore the invalid data.</li>
+                        <li class="mcq-option" data-correct="false">Reboot the operating system.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. Why is JSON Schema validation preferred over raw string parsing between chain links?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because JSON strings take up fewer bytes than plain text.</li>
+                        <li class="mcq-option" data-correct="true">It guarantees type safety and prevents unexpected parsing crashes downstream.</li>
+                        <li class="mcq-option" data-correct="false">JSON enables models to reason twice as fast.</li>
+                        <li class="mcq-option" data-correct="false">It disables temperature sampling.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. In a customer support pipeline, what is the role of the Classifier step?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">Determining user intent and routing the query into the appropriate specialized downstream workflow.</li>
+                        <li class="mcq-option" data-correct="false">Charging the user's credit card.</li>
+                        <li class="mcq-option" data-correct="false">Sending a WhatsApp ping to the CEO.</li>
+                        <li class="mcq-option" data-correct="false">Compressing image attachments.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. What is "Human-in-the-Loop" (HITL) in the context of multi-step processes?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Having a human type every prompt character by hand.</li>
+                        <li class="mcq-option" data-correct="true">Pausing the automated chain at high-risk steps (e.g. wire transfers, medical advice) to obtain human confirmation before proceeding.</li>
+                        <li class="mcq-option" data-correct="false">Replacing the AI model with an outsourced call center.</li>
+                        <li class="mcq-option" data-correct="false">Using biometric fingerprint login on your phone.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What is the relationship between deterministic code and stochastic LLM outputs in prompt chaining?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">LLMs should handle 100% of the orchestration logic.</li>
+                        <li class="mcq-option" data-correct="true">Deterministic code provides the structural backbone and validation, while LLMs handle semantic understanding at discrete nodes.</li>
+                        <li class="mcq-option" data-correct="false">Deterministic code is obsolete in modern AI architectures.</li>
+                        <li class="mcq-option" data-correct="false">Both components must run at identical temperature settings.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. If step 2 requires an Order ID, but the user forgot to provide one, how should the pipeline handle it?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Invent a random 5-digit number and continue.</li>
+                        <li class="mcq-option" data-correct="true">Detect the missing field at the validation gate and generate a clarification prompt asking the user for their Order ID.</li>
+                        <li class="mcq-option" data-correct="false">Terminate the user's account.</li>
+                        <li class="mcq-option" data-correct="false">Retry step 2 one hundred times.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. Why is saving intermediate state essential for enterprise compliance?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">It creates an immutable audit trail showing exactly why a decision was reached at every sub-stage.</li>
+                        <li class="mcq-option" data-correct="false">It allows competitors to steal your company secrets.</li>
+                        <li class="mcq-option" data-correct="false">It increases hard drive latency.</li>
+                        <li class="mcq-option" data-correct="false">Compliance laws prohibit logging intermediate steps.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master pipeline composition and validation engineering.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: 3-Stage Document Summarizer Chain</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build a 3-stage chain in Python: 1) Outline Extractor (outputs key bullet points), 2) Fact Checker (verifies bullets against original text), 3) Executive Briefing Writer (synthesizes verified bullets into 150 words).</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Automated Self-Correction Loop</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write an extraction step that requires an Indian PAN card number (regex: <code>^[A-Z]{5}[0-9]{4}[A-Z]{1}$</code>). If the model extracts an invalid format, write a retry function that feeds the regex error back to the LLM for correction (maximum 3 retries).</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Intermediate State Logger</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Implement an <code>AuditLogger</code> class that records timestamp, step name, model name, input payload, and output JSON for every node in your pipeline, saving the execution run to an <code>audit_runs.json</code> file.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Conditional Branching Router</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create a router step that inspects user sentiment. If sentiment is <code>"Enraged"</code>, branch to an Escalation Handler node that drafts an urgent apology and offers an executive phone callback. If <code>"Satisfied"</code>, branch to a standard feedback survey node.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Cost & Latency Benchmark</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Run 20 customer tickets through both a Monolithic Mega-Prompt (using GPT-4) and a 3-Stage Modular Chain (using GPT-4o-mini for stages 1-2, and GPT-4 only for stage 3). Compare total token cost and latency between the two architectures.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Anthropic Research</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Engineering Guide</span>
+                            </div>
+                            <h4>Building Effective Agents: Workflows vs. Autonomous Agents</h4>
+                            <p>Definitive architectural guide comparing Prompt Chaining, Routing, Parallelization, Orchestrator-Workers, and Evaluator-Optimizer.</p>
+                            <a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Architecture</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Martin Fowler</span>
+                            </div>
+                            <h4>Saga Pattern for Distributed Workflows</h4>
+                            <p>Pattern catalog for orchestrating multi-step distributed operations with compensating transactions and state tracking.</p>
+                            <a href="https://microservices.io/patterns/data/saga.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2308.08155</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Microsoft</span>
+                            </div>
+                            <h4>AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation</h4>
+                            <p>Wu et al. introduce conversational agent networks, structured workflow orchestration, and human-in-the-loop patterns.</p>
+                            <a href="https://arxiv.org/abs/2308.08155" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">AWS Architecture</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Step Functions</span>
+                            </div>
+                            <h4>State Machine Design Patterns for Distributed Services</h4>
+                            <p>Production patterns for branch-on-condition, parallel task execution, and automated retry backoff configurations.</p>
+                            <a href="https://docs.aws.amazon.com/step-functions/latest/dg/concepts-patterns.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_06.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 06: Tool Execution</span>
+                </a>
+                <a href="day_08.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 08: Project: AI Problem Solver</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 8: Milestone Project: Autonomous Problem Solver CLI</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li class="active"><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>33%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 8.0</span>
+                <h1>Day 8: Milestone Project: Autonomous Problem Solver CLI</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Milestone Focus:</strong> This capstone project synthesizes the core engineering foundations mastered across Week 1 (Days 1–7): Token physics & KV caches, In-Context Few-Shot Grounding, Pydantic Schema Contracts, Constrained Tool Calling, and Sequential Validation Chains with Self-Correction. You will build, test, and ship a production-ready <strong>Autonomous Problem Solver CLI Application</strong> capable of decomposing ambiguous computational and diagnostic challenges into verifiable multi-step execution graphs.
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Capstone 1</span>
+                            <span class="plan-badge plan-badge-secondary">Week 1</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 5.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Engineer Week 1 Capstone: An end-to-end Autonomous CLI Problem Solver with Rich terminal UI.</li><li>Implement Human-in-the-Loop (HITL) plan approval gates preventing unauthorized or destructive code execution.</li><li>Build a self-healing execution engine that captures Python stack traces and auto-corrects buggy code.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Hierarchical Goal Decomposition: Transforming unstructured natural language into directed acyclic task graphs.</li><li>Human-in-the-Loop (HITL) Safety Semantics: Blocking execution until explicit human cryptographic or CLI sign-off.</li><li>Automated Program Repair (APR) via stack trace reflection and AST verification.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 8.1: Full Capstone Autonomous CLI Problem Solver Engine (`problem_solver_engine.py`).</li><li>Program 8.2: Rich Interactive Terminal UI with Live Step Tables & HITL Approval Cockpit.</li><li>Program 8.3: Self-Healing Code Executor with Stack-Trace Reflection and Error Re-prompting.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Infinite Self-Healing Loops: The agent keeps modifying code indefinitely without converging, exhausting API credits.</li><li>Unsupervised Destructive Commands: Allowing the agent to run file deletion or git resets without HITL confirmation.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Autonomous CLI Problem Solver Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. Problem Solver Cognitive Architecture</h2>
+                <p>Real-world engineering challenges (e.g., enterprise cloud migration ROI modeling, complex tax reconciliations, or diagnosing distributed microservice failures) cannot be solved by single-turn LLM generation. Attempting a one-shot response inevitably leads to calculation drift, overlooked constraints, and unformatted outputs.</p>
+
+                <p>The <strong>Autonomous Problem Solver</strong> implements a rigorous 4-stage cognitive lifecycle with isolated responsibility boundaries:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 740px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6; font-weight: bold;">[STAGE 1: PLANNER & DECOMPOSER]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">&bull; Ingests ambiguous problem string.<br>&bull; Generates typed <code>SolutionPlan</code> with ordered <code>ProblemStep</code> objects, tool bindings, and expected outputs.</div>
+                        
+                        <div style="color: #10b981; font-weight: bold; margin-top: 1rem;">[STAGE 2: DISPATCHER & EXECUTION ENGINE]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">&bull; Iterates over steps in topological order.<br>&bull; Routes deterministic tasks to verified local tools (Math, Regex, Code Sandbox).<br>&bull; Routes semantic tasks to specialized LLM agents.</div>
+                        
+                        <div style="color: #f59e0b; font-weight: bold; margin-top: 1rem;">[STAGE 3: ADVERSARIAL VALIDATION GATE]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">&bull; Pydantic assertions + Adversarial Critic prompt inspect output consistency.<br>&bull; If step fails, triggers targeted reflection retry (max 3 attempts).</div>
+                        
+                        <div style="color: #8b5cf6; font-weight: bold; margin-top: 1rem;">[STAGE 4: SYNTHESIS & AUDIT EXPORTER]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">&bull; Compiles verified execution history into executive Markdown dossier.<br>&bull; Exports immutable JSON audit artifact with timestamps and token metrics.</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 8.0-1: Multi-Stage Cognitive Architecture of the Autonomous Problem Solver</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Program 1: The Core Autonomous Problem Solver Engine</h2>
+                <p>The complete, typed Python implementation below incorporates Pydantic v2 schemas, tool routing, an adversarial validation gate, and comprehensive error handling:</p>
+
+                <div class="code-header">
+                    <span>program_8_1_problem_solver_core.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 8.0-1: Autonomous Problem Solver Engine
+import json
+import math
+import re
+import time
+from typing import List, Optional, Literal, Dict, Any
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+client = OpenAI()
+
+# =====================================================================
+# 1. TYPE CONTRACTS & SCHEMAS
+# =====================================================================
+class ProblemStep(BaseModel):
+    step_number: int
+    title: str = Field(description="Short title of the sub-task")
+    description: str = Field(description="Precise, actionable instructions")
+    tool_needed: Literal["calculator", "regex_extractor", "code_executor", "none"] = Field(
+        description="Select calculator for math, regex for structured tokens, code_executor for algorithms, or none"
+    )
+
+class SolutionPlan(BaseModel):
+    problem_category: Literal["financial_analysis", "technical_troubleshooting", "data_extraction", "system_sizing", "general"]
+    complexity: Literal["low", "medium", "high"]
+    confidence: float = Field(ge=0.0, le=1.0)
+    steps: List[ProblemStep]
+
+class ValidationResult(BaseModel):
+    passed: bool
+    confidence_score: float = Field(ge=0.0, le=1.0)
+    identified_errors: List[str] = Field(default_factory=list)
+    suggested_correction: Optional[str] = None
+
+# =====================================================================
+# 2. DETERMINISTIC LOCAL TOOLS
+# =====================================================================
+def safe_calculator(expression: str) -> str:
+    """Safely evaluates algebraic expressions without code injection risk."""
+    try:
+        sanitized = re.sub(r"[^0-9\+\-\*\/\.\(\)\s\^]", "", expression).replace("^", "**")
+        allowed_names = {"sqrt": math.sqrt, "pow": math.pow, "abs": abs, "round": round}
+        val = eval(sanitized, {"__builtins__": None}, allowed_names)
+        return json.dumps({"status": "success", "result": round(float(val), 4)})
+    except Exception as e:
+        return json.dumps({"status": "error", "message": f"Calculation error: {str(e)}"})
+
+def regex_extractor(pattern: str, text: str) -> str:
+    """Extracts pattern matches deterministically."""
+    try:
+        matches = re.findall(pattern, text)
+        return json.dumps({"status": "success", "matches": matches})
+    except Exception as e:
+        return json.dumps({"status": "error", "message": f"Regex compilation error: {str(e)}"})
+
+# =====================================================================
+# 3. PIPELINE STAGE FUNCTIONS
+# =====================================================================
+def stage1_planner(problem_statement: str) -> SolutionPlan:
+    """Stage 1: Deconstructs the problem into an ordered, verified SolutionPlan."""
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a Principal Solutions Architect. Deconstruct ambiguous problems into strictly ordered, verifiable sub-steps."},
+            {"role": "user", "content": f"Deconstruct this problem statement:\n{problem_statement}"}
+        ],
+        response_format=SolutionPlan,
+        temperature=0.0
+    )
+    return completion.choices[0].message.parsed
+
+def stage2_execute_step(step: ProblemStep, accumulated_context: Dict[str, Any]) -> str:
+    """Stage 2: Dispatches the step to either a local deterministic tool or specialized LLM."""
+    if step.tool_needed == "calculator":
+        extract_prompt = f"""
+        Given the problem context: {json.dumps(accumulated_context)}
+        Extract ONLY the raw mathematical formula for: '{step.description}'.
+        Return nothing except the mathematical expression (e.g., (85000 * 0.88) * 1.18).
+        """
+        expr_res = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": extract_prompt}],
+            temperature=0.0
+        )
+        formula = expr_res.choices[0].message.content.strip().replace("`", "")
+        print(f"    [Tool: Calculator] Formula: {formula}")
+        return safe_calculator(formula)
+
+    # General reasoning specialist
+    prompt = f"""
+    Context So Far:
+    {json.dumps(accumulated_context, indent=2)}
+    
+    Current Goal:
+    {step.title}: {step.description}
+    
+    Produce a concise, factual, and direct resolution for this specific step.
+    """
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2
+    )
+    return res.choices[0].message.content
+
+def stage3_validate_step(step: ProblemStep, step_result: str, accumulated_context: Dict[str, Any]) -> ValidationResult:
+    """Stage 3: Adversarial validation gate checking for hallucinations or math inconsistencies."""
+    eval_prompt = f"""
+    You are an Adversarial Quality Assurance Inspector.
+    Audit whether the produced Step Result completely satisfies the Step Description without error.
+    
+    Step Description: {step.description}
+    Tool Used: {step.tool_needed}
+    Step Result: {step_result}
+    Context: {json.dumps(accumulated_context)}
+    
+    Flag any inconsistencies, division-by-zero risks, or numerical hallucinations.
+    """
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": eval_prompt}],
+        response_format=ValidationResult,
+        temperature=0.0
+    )
+    return completion.choices[0].message.parsed
+
+def stage4_synthesize_report(problem: str, plan: SolutionPlan, step_history: List[Dict[str, Any]]) -> str:
+    """Stage 4: Synthesizes final verified executive dossier in GitHub-flavored Markdown."""
+    prompt = f"""
+    You are an Executive Technology Director. Synthesize a final resolution report in Markdown.
+    
+    Original Problem Statement:
+    "{problem}"
+    
+    Classification: {plan.problem_category} (Complexity: {plan.complexity})
+    Verified Execution Log:
+    {json.dumps(step_history, indent=2)}
+    
+    Report Requirements:
+    1. Executive Summary
+    2. Numerical Reconciliation Table
+    3. Step-by-Step Findings
+    4. Strategic Recommendations
+    """
+    res = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2
+    )
+    return res.choices[0].message.content
+
+# =====================================================================
+# 4. ORCHESTRATOR LOOP
+# =====================================================================
+def run_autonomous_solver(problem_statement: str) -> Dict[str, Any]:
+    print("=" * 65)
+    print(f"INGESTING PROBLEM:\n'{problem_statement}'")
+    print("=" * 65)
+    
+    # 1. Plan
+    print("\n--> [Stage 1] Generating Structured Solution Plan...")
+    plan = stage1_planner(problem_statement)
+    print(f"    Category: {plan.problem_category.upper()} | Complexity: {plan.complexity.upper()} | Steps: {len(plan.steps)}")
+    
+    context: Dict[str, Any] = {"original_problem": problem_statement}
+    execution_history: List[Dict[str, Any]] = []
+    
+    # 2. Iterate Steps
+    for step in plan.steps:
+        print(f"\n--> [Step {step.step_number}/{len(plan.steps)}] {step.title} (Tool: {step.tool_needed})")
+        passed = False
+        attempts = 0
+        max_retries = 3
+        current_result = ""
+        
+        while not passed and attempts < max_retries:
+            attempts += 1
+            current_result = stage2_execute_step(step, context)
+            val = stage3_validate_step(step, current_result, context)
+            
+            if val.passed:
+                passed = True
+                print(f"    &check; Validation Passed (Attempt {attempts}) [Confidence: {val.confidence_score:.2f}]")
+            else:
+                print(f"    &cross; Gate Warning (Attempt {attempts}): {val.identified_errors}")
+                context["last_error"] = val.identified_errors
+                context["suggested_fix"] = val.suggested_correction
+        
+        context[f"step_{step.step_number}_result"] = current_result
+        execution_history.append({
+            "step": step.step_number,
+            "title": step.title,
+            "tool": step.tool_needed,
+            "result": current_result,
+            "attempts": attempts
+        })
+
+    # 3. Final Synthesis
+    print("\n--> [Stage 4] Generating Final Executive Report...")
+    final_report = stage4_synthesize_report(problem_statement, plan, execution_history)
+    
+    return {
+        "plan": plan.model_dump(),
+        "history": execution_history,
+        "final_report": final_report
+    }
+
+if __name__ == "__main__":
+    challenge = (
+        "We are migrating 14 legacy on-premise servers consuming 42,000 kWh annually at ₹9.50 per kWh. "
+        "The cloud equivalent costs $480 USD/month (exchange rate 1 USD = 83.50 INR). "
+        "Hardware maintenance on-premise costs ₹1,20,000/year. "
+        "Calculate our total annual cost for both options, net annual savings in INR, and ROI percentage."
+    )
+    result = run_autonomous_solver(challenge)
+    print("\n" + "=" * 30 + " EXECUTIVE DOSSIER " + "=" * 30)
+    print(result["final_report"])
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 8.0-1: Autonomous Problem Solver Core Execution Engine</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 2: Interactive Terminal UI with Rich & Human-in-the-Loop (HITL)</h2>
+                <p>Enterprise users require visibility, live step spinners, and the power to inspect or modify the generated execution plan before any external tools run. Below is the production CLI interface utilizing <code>rich</code> and an interactive Human-in-the-Loop approval gate:</p>
+
+                <div class="code-header">
+                    <span>program_8_2_rich_cli_hitl.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 8.0-2: Rich Interactive Terminal UI with Human-in-the-Loop Approval
+from typing import List
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.prompt import Prompt, Confirm
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+console = Console()
+client = OpenAI()
+
+class ProblemStep(BaseModel):
+    step_number: int
+    title: str
+    tool_needed: str
+    description: str
+
+class PlanModel(BaseModel):
+    summary: str
+    steps: List[ProblemStep]
+
+def render_plan_table(plan: PlanModel):
+    """Renders a beautiful Rich table displaying the generated decomposition."""
+    table = Table(title="[bold cyan]Decomposed Execution Plan[/bold cyan]", show_header=True, header_style="bold magenta")
+    table.add_column("Step", style="dim", width=6)
+    table.add_column("Title", style="bold white", width=25)
+    table.add_column("Tool", style="green", width=15)
+    table.add_column("Instruction", style="yellow")
+    
+    for s in plan.steps:
+        table.add_row(str(s.step_number), s.title, s.tool_needed, s.description)
+    
+    console.print(table)
+
+def interactive_hitl_planner(problem: str) -> PlanModel:
+    """Generates plan and pauses for Human-in-the-Loop approval or revision."""
+    with Progress(
+        SpinnerColumn(spinner_name="dots"),
+        TextColumn("[progress.description]{task.description}"),
+        transient=True
+    ) as progress:
+        progress.add_task(description="Decomposing problem statement...", total=None)
+        comp = client.beta.chat.completions.parse(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Decompose the user problem into numbered steps with appropriate tools."},
+                {"role": "user", "content": problem}
+            ],
+            response_format=PlanModel
+        )
+        plan = comp.choices[0].message.parsed
+
+    console.print(Panel(f"[bold green]Problem Statement:[/bold green] {problem}", title="Ingestion"))
+    render_plan_table(plan)
+
+    # Human-in-the-Loop Approval Gate
+    approved = Confirm.ask("\n[bold yellow]Do you approve this execution plan?[/bold yellow]", default=True)
+    
+    if not approved:
+        feedback = Prompt.ask("[bold red]Enter your instructions for plan revision[/bold red]")
+        console.print("[cyan]Regenerating plan with human feedback...[/cyan]")
+        comp = client.beta.chat.completions.parse(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "Revise the plan strictly incorporating user feedback."},
+                {"role": "user", "content": f"Problem: {problem}\nPrior Plan: {plan.model_dump_json()}\nUser Feedback: {feedback}"}
+            ],
+            response_format=PlanModel
+        )
+        plan = comp.choices[0].message.parsed
+        console.print("[bold green]&check; Plan revised successfully![/bold green]")
+        render_plan_table(plan)
+        
+    return plan
+
+if __name__ == "__main__":
+    console.clear()
+    sample_query = "Calculate annual depreciation of a 25 Lakh INR manufacturing robot over 7 years using Straight-Line and WDV (15%) methods."
+    final_approved_plan = interactive_hitl_planner(sample_query)
+    console.print("[bold green]Execution authorized. Handing off to dynamic dispatcher...[/bold green]")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 8.0-2: Rich CLI UI with Human-in-the-Loop Plan Review & Revision Gate</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 3: Sandboxed Code Runner with Self-Healing Error Loop</h2>
+                <p>Certain problem steps require running custom Python scripts to parse complex datasets or calculate multi-variable formulas. The sandboxed code runner executes code in an isolated sub-process with memory and timeout constraints, capturing <code>stderr</code> and invoking self-healing reflection if runtime errors occur:</p>
+
+                <div class="code-header">
+                    <span>program_8_3_sandboxed_executor.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 8.0-3: Sandboxed Code Runner with Autonomous Self-Healing Reflection Loop
+import subprocess
+import tempfile
+import os
+import sys
+from typing import Dict, Any
+from openai import OpenAI
+
+client = OpenAI()
+
+def execute_sandboxed_python(code: str, timeout_seconds: int = 5) -> Dict[str, Any]:
+    """Executes Python code in an isolated subprocess with timeout constraints."""
+    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
+        f.write(code)
+        temp_path = f.name
+
+    try:
+        proc = subprocess.run(
+            [sys.executable, temp_path],
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds
+        )
+        return {
+            "success": proc.returncode == 0,
+            "stdout": proc.stdout.strip(),
+            "stderr": proc.stderr.strip(),
+            "returncode": proc.returncode
+        }
+    except subprocess.TimeoutExpired:
+        return {
+            "success": False,
+            "stdout": "",
+            "stderr": f"Execution timed out after {timeout_seconds}s (infinite loop guard triggered).",
+            "returncode": -1
+        }
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
+def generate_and_execute_with_self_healing(task_description: str, max_healing_attempts: int = 3) -> str:
+    """Generates Python code to solve a task, automatically healing runtime bugs."""
+    messages = [
+        {"role": "system", "content": "You are an expert Python engineer. Write standalone, executable Python script that prints the final answer."},
+        {"role": "user", "content": f"Task: {task_description}"}
+    ]
+
+    for attempt in range(1, max_healing_attempts + 1):
+        print(f"--> [Self-Healing Sandbox] Generation Attempt {attempt}/{max_healing_attempts}...")
+        res = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            temperature=0.0
+        )
+        raw_code = res.choices[0].message.content
+        
+        # Clean markdown code fences
+        clean_code = raw_code.replace("```python", "").replace("```", "").strip()
+        
+        # Execute in sandbox
+        exec_res = execute_sandboxed_python(clean_code)
+        
+        if exec_res["success"]:
+            print(f"    &check; Execution succeeded on attempt {attempt}!")
+            return exec_res["stdout"]
+        else:
+            print(f"    &cross; Runtime Error encountered on attempt {attempt}:")
+            print(f"       {exec_res['stderr'][:150]}...")
+            
+            # Feed the exact stack trace back into LLM context for self-correction
+            messages.append({"role": "assistant", "content": raw_code})
+            messages.append({
+                "role": "user",
+                "content": f"Code execution failed with error:\n{exec_res['stderr']}\nPlease fix the bug and return only the corrected script."
+            })
+
+    raise RuntimeError(f"Failed to execute code successfully after {max_healing_attempts} self-healing iterations.")
+
+if __name__ == "__main__":
+    test_task = (
+        "Generate 10,000 synthetic numbers from a normal distribution with mean 100 and stddev 15. "
+        "Calculate the 99th percentile and print only the result rounded to 2 decimal places."
+    )
+    result = generate_and_execute_with_self_healing(test_task)
+    print(f"\nFinal Verified Sandboxed Output:\n{result}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 8.0-3: Sandboxed Subprocess Code Runner with Autonomous Self-Healing Stack-Trace Reflection</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Production Failure Modes & Hardening Playbooks</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Subprocess Code Injection & Escape:</strong> Allowing the LLM to write arbitrary code executed via <code>subprocess</code> or <code>eval</code> can allow malicious prompts to delete local files or leak environment secrets. <em>Hardening:</em> Run user-generated code inside unprivileged Docker containers or gVisor/Firecracker microVMs without network access, using dedicated read-only filesystem mounts.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Decomposition Hallucination:</strong> Planners may decompose a simple task into 25 unnecessary steps, ballooning token costs and latency. <em>Hardening:</em> Enforce Pydantic <code>Field(max_length=8)</code> on the step list, constraining the planner to 8 discrete steps maximum.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Partial Step State Desynchronization:</strong> If step 3 relies on a variable named <code>total_tax</code> from step 2, but step 2's output named it <code>tax_amount</code>, step 3 fails. <em>Hardening:</em> Standardize intermediate state keys through strict Pydantic dictionaries rather than relying on ungrounded text parsing.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Silent Validation Leniency:</strong> If the validation prompt is too agreeable (a common LLM bias), it will approve flawed results. <em>Hardening:</em> Frame the validator adversarially ("You are an Auditor penalized for approving flawed calculations. Actively seek discrepancies.") and use temperature 0.0.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. What is the primary role of the Planner component in the Autonomous Problem Solver?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To render an HTML page in the browser.</li>
+                        <li class="mcq-option" data-correct="true">To decompose an ambiguous user challenge into an ordered, typed sequence of actionable steps with designated tool bindings.</li>
+                        <li class="mcq-option" data-correct="false">To calculate math without using tools.</li>
+                        <li class="mcq-option" data-correct="false">To reboot the database cluster.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. In Program 8.0-1, why is safe_calculator used instead of letting the LLM calculate numbers directly?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because the LLM refuses to write numbers.</li>
+                        <li class="mcq-option" data-correct="true">Because LLMs are probabilistic token predictors that frequently hallucinate floating-point arithmetic.</li>
+                        <li class="mcq-option" data-correct="false">Because Python calculator code runs on the GPU.</li>
+                        <li class="mcq-option" data-correct="false">Because OpenAI charges extra for addition operations.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. What data structure passes information between sequential steps in the problem solver?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">An encrypted binary cookie.</li>
+                        <li class="mcq-option" data-correct="true">An accumulated context dictionary (e.g. <code>context['step_1_result']</code>).</li>
+                        <li class="mcq-option" data-correct="false">A temporary CSV file saved to the desktop.</li>
+                        <li class="mcq-option" data-correct="false">Raw string audio bytes.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. What happens when a step fails the Validation Gate in the AI Problem Solver?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The application crashes immediately.</li>
+                        <li class="mcq-option" data-correct="true">The step is retried (up to max_retries) with the specific validation error appended to the context.</li>
+                        <li class="mcq-option" data-correct="false">The entire problem plan is deleted.</li>
+                        <li class="mcq-option" data-correct="false">The computer's audio announces an alert.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. Which Pydantic model in the project guarantees that the Planner outputs valid step objects?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false"><code>ValidationResult</code></li>
+                        <li class="mcq-option" data-correct="true"><code>SolutionPlan</code></li>
+                        <li class="mcq-option" data-correct="false"><code>BaseModel</code></li>
+                        <li class="mcq-option" data-correct="false"><code>OpenAIClient</code></li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. What is the role of the final Synthesizer step?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">Compiling verified step results into a polished, human-readable executive resolution report.</li>
+                        <li class="mcq-option" data-correct="false">Encrypting the code repository.</li>
+                        <li class="mcq-option" data-correct="false">Posting the results to Twitter automatically.</li>
+                        <li class="mcq-option" data-correct="false">Deleting the OpenAI API key.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. Why is complexity labeled ('low', 'medium', 'high') in the SolutionPlan schema?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To make the console output look colorful.</li>
+                        <li class="mcq-option" data-correct="true">It allows the orchestrator to dynamically allocate token budgets and choose appropriate models (mini vs frontier).</li>
+                        <li class="mcq-option" data-correct="false">It dictates the user's internet speed.</li>
+                        <li class="mcq-option" data-correct="false">It is ignored by the system.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What security sanitization is applied inside the safe_calculator tool?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Hashing the string with SHA-256.</li>
+                        <li class="mcq-option" data-correct="true">Stripping all characters except digits, standard math operators, and parentheticals to prevent arbitrary code execution.</li>
+                        <li class="mcq-option" data-correct="false">Changing the variable names to Spanish.</li>
+                        <li class="mcq-option" data-correct="false">Compressing the expression using zip.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. How does the architecture prevent infinite retry loops on stubborn errors?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">By turning off the computer.</li>
+                        <li class="mcq-option" data-correct="true">Using an explicit attempts counter bounded by a hard limit (e.g. <code>attempts &lt; 3</code>).</li>
+                        <li class="mcq-option" data-correct="false">By removing all while loops from Python.</li>
+                        <li class="mcq-option" data-correct="false">By multiplying the temperature by 10.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. Why is this project considered the capstone milestone of Week 1?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because it contains over 100,000 lines of code.</li>
+                        <li class="mcq-option" data-correct="true">It unifies token limits, prompt engineering, specialist roles, deterministic tool calling, and structured validation into an autonomous system.</li>
+                        <li class="mcq-option" data-correct="false">Because it requires writing a new compiler from scratch.</li>
+                        <li class="mcq-option" data-correct="false">It marks the end of the entire course.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 milestone assignments to customize and expand your Autonomous Problem Solver.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Database Lookup Tool Integration</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Add a 4th tool option to <code>ProblemStep</code>: <code>"database_query"</code>. Create a local mock dictionary of customer accounts. If the problem asks for customer status, ensure the planner selects this tool and injects the retrieved account record into the step context.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Interactive Terminal UI with Rich</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Install the <code>rich</code> Python library. Enhance the CLI with colored progress spinners, visual tables showing the planned steps, and green/red checkmarks for validation gate results.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Human-in-the-Loop Plan Approval</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Modify <code>run_autonomous_solver</code> to print the generated <code>SolutionPlan</code> to the user and prompt: <code>"Do you approve this execution plan? (Y/n/edit)"</code>. If the user types 'n', prompt them for feedback and regenerate the plan.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: JSON Audit Exporter</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Save the complete execution artifact (problem statement, parsed plan, validation attempts, timestamps, and final markdown report) to a timestamped file in a local <code>/problem_runs/</code> directory.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Complex Tax & Surcharge Stress Test</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Test your problem solver with a 4-step financial challenge: "We have 3 contractors in Bangalore working 40 hours each at 1,500 INR/hr. Add 18% GST, then deduct 10% TDS (tax deducted at source), and compute the net payable amount." Verify that the validator catches any mathematical discrepancies.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Rich Org</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Terminal UI</span>
+                            </div>
+                            <h4>Rich & Textual: Modern Terminal User Interfaces for Python</h4>
+                            <p>Official developer documentation for rich tables, live spinners, console color palettes, and interactive prompts.</p>
+                            <a href="https://rich.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">OWASP</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Security Standard</span>
+                            </div>
+                            <h4>OWASP Top 10 for LLM: LLM08 Excessive Agency</h4>
+                            <p>Vulnerability analysis on granting LLMs unbounded autonomy without human oversight or strict permission boundaries.</p>
+                            <a href="https://genai.owasp.org/llmrisk/llm08-excessive-agency/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Python Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Python 3.12</span>
+                            </div>
+                            <h4>Abstract Syntax Trees (ast Module) in Python</h4>
+                            <p>Official documentation on inspecting, validating, and mutating Python syntax trees prior to execution.</p>
+                            <a href="https://docs.python.org/3/library/ast.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2303.11366</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">NeurIPS 2023</span>
+                            </div>
+                            <h4>Reflexion: Language Agents with Verbal Reinforcement Learning</h4>
+                            <p>Shinn et al. show that agents can self-correct code and reasoning by maintaining reflective memory of prior errors.</p>
+                            <a href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_07.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 07: Repeatable Processes</span>
+                </a>
+                <a href="day_09.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 09: Agentic Mindset</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

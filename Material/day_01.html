@@ -110,6 +110,52 @@
                     <strong>Problem Statement:</strong> We constantly hear buzzwords like Machine Learning, Deep Learning, Transformers, and Large Language Models. Without understanding the foundational differences between them, it is impossible to engineer systems that utilize them effectively. How do they connect, and why are LLMs structurally different from what came before?
                 </div>
 
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 1.0</span>
+                            <span class="plan-badge plan-badge-secondary">Week 1</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 3.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Demystify the operational and structural differences between Classical ML, Deep Learning, and Generative Transformers.</li><li>Establish the engineering rationale for transitioning from single-prompt LLMs to autonomous, closed-loop Agentic Systems.</li><li>Profile real-world latency dynamics (TTFT vs. TPOT) to design cost-effective production architectures.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Chinchilla compute-optimal scaling laws ($6ND$ total training FLOPs vs. $2N$ forward inference FLOPs).</li><li>The 5 Levels of AI Autonomy: from Rule-based automation to full Context-Aware Multi-Agent Swarms.</li><li>Logit probability distributions, temperature sampling, and cumulative token cost thermodynamics.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 1.1: Multi-Model Architecture Classifier (Classical vs. Deep Learning vs. Transformer).</li><li>Program 1.2: Production TTFT vs. TPOT Latency & Inter-Token Jitter Profiler.</li><li>Program 1.3: Enterprise Model Selection & Total Cost of Ownership (TCO) Calculator.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>The 'LLM-for-Everything' Anti-Pattern: Using a 70B LLM for deterministic tabular math or rule checks.</li><li>Unbounded Token Cost Explosion: Forgetting rate limits and context expansion guards in enterprise pipelines.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Complete Latency & TCO Profiler Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
                 <h2>1. Traditional Programming vs. Machine Learning</h2>
                 <p>To understand AI, we must first look at how software was historically built. In <strong>Traditional Programming</strong>, a human developer analyzes a problem and writes explicit, step-by-step instructions (rules or algorithms) for the computer to follow. The computer takes the <em>Data</em> and the <em>Rules</em> to produce an <em>Output</em>.</p>
                 
@@ -507,9 +553,312 @@ print("- It introduced factory-based manufacturing.")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
+                <h2>6. Mathematical Foundations: Scaling Laws & Compute Dynamics</h2>
+                <p>Modern Large Language Models are not magic—they are governed by rigorous empirical mathematical relationships known as <strong>Neural Scaling Laws</strong>. Understanding these laws separates script-level prompt tweakers from serious AI systems architects.</p>
+
+                <h3>6.1 The Chinchilla Compute-Optimal Frontier</h3>
+                <p>In 2020, Kaplan et al. (OpenAI) suggested that model parameter count ($N$) mattered far more than training token volume ($D$). In 2022, Hoffmann et al. (Google DeepMind) published the seminal <em>Chinchilla</em> study, proving that earlier models (like GPT-3 with 175B parameters trained on 300B tokens) were severely <strong>under-trained</strong> relative to their compute budget.</p>
+
                 <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>Outcome:</strong> You now possess a detailed, ground-up understanding of the AI landscape. You know the exact definitions of Supervised, Unsupervised, and Reinforcement learning. You understand that Deep Learning automates feature extraction, that Transformers solved the sequencing problem using Self-Attention, and that LLMs are simply massive Transformers performing iterative next-token prediction.
+                    <strong>The Chinchilla Loss Equation:</strong>
+                    <div style="font-family: 'Fira Code', monospace; margin: 0.75rem 0; font-size: 1.05rem; color: var(--text-color);">
+                        L(N, D) = E + A / N^α + B / D^β
+                    </div>
+                    Where:
+                    <ul style="margin-top: 0.5rem;">
+                        <li><strong>L(N, D):</strong> Cross-entropy loss (the lower the loss, the better the model's predictive accuracy).</li>
+                        <li><strong>E:</strong> Theoretical minimum irreducible loss of natural language (entropy of human thought, ~1.69).</li>
+                        <li><strong>N:</strong> Number of model parameters (non-embedding weights).</li>
+                        <li><strong>D:</strong> Number of training dataset tokens.</li>
+                        <li><strong>A, B, α, β:</strong> Empirical constants measured across hundreds of training runs (α ≈ 0.34, β ≈ 0.28).</li>
+                    </ul>
                 </div>
+
+                <p><strong>The Core Takeaway for Engineers:</strong> For optimal compute allocation, <em>parameters and tokens should scale in approximately equal proportions: $D \approx 20 \times N$</em>. This is why modern open weights models like Meta's Llama-3 8B (trained on over 15 Trillion tokens) dramatically outperform older 70B parameter models trained on only 1 Trillion tokens while consuming 1/10th the GPU VRAM at inference time!</p>
+
+                <h3>6.2 Training vs. Inference Compute Arithmetic</h3>
+                <p>To architect enterprise agent budgets, you must be able to calculate raw floating-point operations (FLOPs):</p>
+                <ul>
+                    <li><strong>Training FLOPs:</strong> To pre-train an autoregressive dense model, each token requires approximately <strong>2 FLOPs per parameter on the forward pass</strong> and <strong>4 FLOPs per parameter on the backward pass</strong>:
+                        <div style="font-family: 'Fira Code', monospace; padding: 0.5rem; background: var(--code-bg); border-radius: 4px; margin: 0.5rem 0;">
+                            FLOPs_training ≈ 6 × N × D
+                        </div>
+                        <em>Example:</em> Training a 70 Billion parameter model on 15 Trillion tokens requires $6 \times (70 \times 10^9) \times (15 \times 10^{12}) \approx 6.3 \times 10^{24}$ FLOPs, representing months of cluster compute across thousands of NVIDIA H100 GPUs.
+                    </li>
+                    <li><strong>Inference FLOPs:</strong> Generating each output token during inference only executes the forward pass:
+                        <div style="font-family: 'Fira Code', monospace; padding: 0.5rem; background: var(--code-bg); border-radius: 4px; margin: 0.5rem 0;">
+                            FLOPs_inference ≈ 2 × N per token
+                        </div>
+                    </li>
+                </ul>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. The Autonomy Spectrum: From Chatbots to Agent Swarms</h2>
+                <p>Software engineering is undergoing an architectural shift. Just as computing evolved from monolithic mainframes to microservices, AI interaction is transitioning across five distinct stages of autonomy:</p>
+
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background-color: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background-color: var(--accent); color: white; text-align: left;">
+                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Level</th>
+                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomy Class</th>
+                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Execution Model</th>
+                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Tool Access</th>
+                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Industry Archetype</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 0</strong></td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Deterministic Rules</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Explicit <code>if/else</code> branches</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Hardcoded functions</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Legacy decision trees, regex scrapers</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 1</strong></td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Passive Assistant</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Single-turn text-in / text-out</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">None (Pure generation)</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">ChatGPT conversational interface</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 2</strong></td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Prompt Chaining (Workflows)</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Linear DAG (Directed Acyclic Graph)</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Pre-wired sequential API calls</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">LangChain sequential chains, n8n workflows</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 3</strong></td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomous Agent (ReAct)</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Dynamic loop: Reason &rarr; Act &rarr; Observe</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Dynamic tool selection at runtime</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomous code debugger, SQL research agent</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 4</strong></td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Multi-Agent Supervisor Teams</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Hierarchical delegation & QA validation</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Specialized sandboxed toolkits</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">LangGraph supervisor graphs, Devin, CrewAI</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 5</strong></td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Self-Evolving Swarms</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomous goal generation & self-healing</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Dynamically synthesized tools & code</td>
+                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomous enterprise engineering departments</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>8. Deep-Dive Code Implementations</h2>
+                <p>To master the foundations of agentic systems, you must understand the underlying token mathematics and operational benchmarking techniques in Python.</p>
+
+                <h3>Program 1.0-6: Autoregressive Logit Sampling Engine from Scratch</h3>
+                <p>This program implements the mathematical heart of an LLM: converting raw logit values into a probability distribution via Softmax with temperature scaling, and applying Nucleus (Top-P) and Top-K filtering.</p>
+
+                <div class="code-header">
+                    <span>logit_sampling_engine.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python">import math
+import random
+from typing import List, Tuple
+
+def softmax_with_temperature(logits: List[float], temperature: float = 1.0) -> List[float]:
+    """
+    Computes numerically stable Softmax with temperature scaling:
+    P(x_i) = exp(z_i / T) / sum(exp(z_j / T))
+    """
+    # Prevent divide by zero
+    t = max(temperature, 1e-5)
+    
+    # Temperature scaling
+    scaled_logits = [z / t for z in logits]
+    
+    # Subtract max for numerical stability (avoids overflow)
+    max_logit = max(scaled_logits)
+    exp_logits = [math.exp(z - max_logit) for z in scaled_logits]
+    sum_exp = sum(exp_logits)
+    
+    return [e / sum_exp for e in exp_logits]
+
+def sample_token(vocab: List[str], probs: List[float], top_p: float = 0.9) -> Tuple[str, float]:
+    """
+    Applies Top-P (Nucleus) sampling and draws a token from the distribution.
+    """
+    # Sort tokens by probability descending
+    sorted_pairs = sorted(zip(vocab, probs), key=lambda x: x[1], reverse=True)
+    
+    # Cumulative probability filter (Top-P)
+    filtered_pairs = []
+    cumulative = 0.0
+    for token, p in sorted_pairs:
+        filtered_pairs.append((token, p))
+        cumulative += p
+        if cumulative >= top_p:
+            break
+            
+    # Renormalize
+    total_p = sum(p for _, p in filtered_pairs)
+    normalized_probs = [p / total_p for _, p in filtered_pairs]
+    tokens = [t for t, _ in filtered_pairs]
+    
+    # Sample from multinomial distribution
+    chosen_token = random.choices(tokens, weights=normalized_probs, k=1)[0]
+    token_prob = dict(filtered_pairs)[chosen_token]
+    return chosen_token, token_prob
+
+# Simulation Vocabulary & Raw Model Logits for the next token after "Agentic AI is"
+vocabulary = ["revolutionary", "autonomous", "a", "overhyped", "complex", "predictable"]
+raw_logits = [8.4, 8.9, 7.2, 3.1, 6.8, 1.2]
+
+print("=== TOKEN PROBABILITY DISTRIBUTION UNDER DIFFERENT TEMPERATURES ===")
+for temp in [0.1, 0.7, 1.5]:
+    probabilities = softmax_with_temperature(raw_logits, temperature=temp)
+    print(f"\nTemperature: {temp}")
+    for token, p in zip(vocabulary, probabilities):
+        bar = "█" * int(p * 30)
+        print(f"  {token.ljust(15)} | Prob: {p:.4f} {bar}")
+</code></pre>
+
+                <h3>Program 1.0-7: Model Latency & Token Velocity Profiler</h3>
+                <p>When engineering agents, latency directly dictates user experience. This harness benchmarks Time to First Token (TTFT) and Time per Output Token (TPOT).</p>
+
+                <div class="code-header">
+                    <span>latency_benchmark.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python">import time
+import statistics
+from typing import List, Dict
+
+class LatencyProfiler:
+    """Measures key production metrics: TTFT, TPOT, and Tokens Per Second."""
+    
+    def __init__(self, model_name: str):
+        self.model_name = model_name
+        self.records: List[Dict[str, float]] = []
+        
+    def record_run(self, prompt_tokens: int, completion_tokens: int, ttft_seconds: float, total_duration: float):
+        generation_time = total_duration - ttft_seconds
+        tpot_seconds = generation_time / max(completion_tokens - 1, 1)
+        tokens_per_sec = completion_tokens / max(total_duration, 0.001)
+        
+        self.records.append({
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "ttft_ms": ttft_seconds * 1000.0,
+            "tpot_ms": tpot_seconds * 1000.0,
+            "tokens_per_sec": tokens_per_sec,
+            "total_ms": total_duration * 1000.0
+        })
+
+    def generate_report(self) -> str:
+        avg_ttft = statistics.mean(r["ttft_ms"] for r in self.records)
+        avg_tpot = statistics.mean(r["tpot_ms"] for r in self.records)
+        avg_speed = statistics.mean(r["tokens_per_sec"] for r in self.records)
+        
+        return f"""
++-------------------------------------------------------------+
+| LATENCY PROFILE: {self.model_name.ljust(41)} |
++-------------------------------------------------------------+
+| Average Time to First Token (TTFT): {avg_ttft:8.2f} ms             |
+| Average Time per Output Token (TPOT): {avg_tpot:6.2f} ms             |
+| Generation Throughput:              {avg_speed:8.2f} tokens/sec    |
+| Benchmark Iterations:               {len(self.records):8d} runs          |
++-------------------------------------------------------------+"""
+
+# Simulated test benchmark
+profiler = LatencyProfiler("gpt-4o-mini-benchmark")
+simulated_trials = [
+    (128, 45, 0.28, 1.42),
+    (256, 80, 0.31, 2.15),
+    (512, 120, 0.35, 3.10),
+    (1024, 210, 0.44, 4.85)
+]
+
+for p_tok, c_tok, ttft, tot in simulated_trials:
+    profiler.record_run(p_tok, c_tok, ttft, tot)
+
+print(profiler.generate_report())
+</code></pre>
+
+                <h3>Program 1.0-8: Enterprise Agent TCO & Token Budget Calculator</h3>
+                <p>Calculate enterprise operational expenses across input tokens, output tokens, cached context, and hardware sizing.</p>
+
+                <div class="code-header">
+                    <span>agent_tco_calculator.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python">def calculate_monthly_agent_budget(
+    daily_active_users: int,
+    tasks_per_user_day: int,
+    avg_turns_per_task: int,
+    avg_input_tokens_per_turn: int,
+    avg_output_tokens_per_turn: int,
+    input_price_per_million: float,
+    output_price_per_million: float,
+    cache_read_discount_pct: float = 0.50
+) -> dict:
+    """Calculates operational economics for enterprise autonomous agents."""
+    
+    days_per_month = 30
+    total_turns_per_month = daily_active_users * tasks_per_user_day * avg_turns_per_task * days_per_month
+    
+    total_input_tokens = total_turns_per_month * avg_input_tokens_per_turn
+    total_output_tokens = total_turns_per_month * avg_output_tokens_per_turn
+    
+    # Estimate 60% of input tokens are cached system prompts / RAG docs
+    cached_input_tokens = total_input_tokens * 0.60
+    uncached_input_tokens = total_input_tokens * 0.40
+    
+    cost_uncached = (uncached_input_tokens / 1_000_000) * input_price_per_million
+    cost_cached = (cached_input_tokens / 1_000_000) * (input_price_per_million * (1 - cache_read_discount_pct))
+    cost_output = (total_output_tokens / 1_000_000) * output_price_per_million
+    
+    total_cost = cost_uncached + cost_cached + cost_output
+    cost_per_task = total_cost / (daily_active_users * tasks_per_user_day * days_per_month)
+    
+    return {
+        "monthly_turns": total_turns_per_month,
+        "total_input_tokens": total_input_tokens,
+        "total_output_tokens": total_output_tokens,
+        "gross_cost_usd": round(total_cost, 2),
+        "cost_per_task_usd": round(cost_per_task, 4)
+    }
+
+# Example Enterprise Scenario: 500 Customer Support Reps using an automated triage agent
+budget = calculate_monthly_agent_budget(
+    daily_active_users=500,
+    tasks_per_user_day=15,
+    avg_turns_per_task=4,
+    avg_input_tokens_per_turn=2500,  # Context includes RAG documents & chat history
+    avg_output_tokens_per_turn=400,
+    input_price_per_million=0.150,   # e.g., GPT-4o-mini pricing ($0.15 / 1M input)
+    output_price_per_million=0.600    # ($0.60 / 1M output)
+)
+
+print("\n=== ENTERPRISE AGENT TCO PROJECTION ===")
+for key, val in budget.items():
+    print(f"  {key.ljust(25)}: {val}")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>9. Why AI Systems Fail in Production: The 5 Anti-Patterns</h2>
+                <p>Deploying AI agents into real-world business workflows is fundamentally different from demo prototyping. Here are the five most common traps and their engineering remedies:</p>
+                <ol>
+                    <li><strong>The Non-Determinism Trap:</strong> Expecting stochastic next-token predictors to execute mission-critical arithmetic or adhere to boolean logic 100% of the time. <em>Remedy:</em> Delegate all math, dates, and strict rules to deterministic Python code tools.</li>
+                    <li><strong>Runaway Context Dilution:</strong> Ingesting massive chunks of unranked documentation into prompt context, triggering the "Lost in the Middle" phenomenon where the model overlooks vital facts. <em>Remedy:</em> Implement cross-encoder re-ranking and concise chunking.</li>
+                    <li><strong>Tool Call Hallucination & Argument Drift:</strong> Presenting an agent with dozens of tools, leading the model to hallucinate non-existent tool names or invalid parameter keys. <em>Remedy:</em> Enforce Pydantic v2 strict schemas and partition tools into specialized multi-agent subgraphs.</li>
+                    <li><strong>The Cascading Error Amplification Loop:</strong> In multi-step pipelines, an error in Step 1 compounds in Step 2, resulting in complete hallucination by Step 5. <em>Remedy:</em> Place verification gates and programmatic validation asserts between every node.</li>
+                    <li><strong>Denial of Wallet (Unbounded Cyclic Invocations):</strong> A ReAct agent failing to reach a termination condition loops endlessly, burning hundreds of dollars in API tokens. <em>Remedy:</em> Implement hard iteration counters and cost circuit breakers.</li>
+                </ol>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
@@ -663,6 +1012,56 @@ print("- It introduced factory-based manufacturing.")
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
                     <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Generative Prompting Variations</h3>
                     <p style="margin-bottom: 0;"><strong>Task:</strong> Use a free LLM (like ChatGPT). Write a prompt asking: "Explain Machine Learning." Then, write a new prompt: "Explain Machine Learning to a 5-year-old using an analogy about toys." Observe how forcing a persona completely changes the probability of the "next-token prediction" engine.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2203.15556</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">DeepMind</span>
+                            </div>
+                            <h4>Training Compute-Optimal Large Language Models (Chinchilla)</h4>
+                            <p>Hoffmann et al. establish the foundational empirical scaling law proving parameters and tokens must scale in equal proportion.</p>
+                            <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2001.08361</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI</span>
+                            </div>
+                            <h4>Scaling Laws for Neural Language Models</h4>
+                            <p>Kaplan et al.'s original power-law formulation relating model performance to compute budget, dataset size, and parameter count.</p>
+                            <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:1706.03762</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Google Research</span>
+                            </div>
+                            <h4>Attention Is All You Need</h4>
+                            <p>Vaswani et al. introduce the Transformer architecture, multi-head self-attention mechanisms, and feed-forward token routing.</p>
+                            <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Official Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI API</span>
+                            </div>
+                            <h4>Tokenization & Rate Limits Architecture Guide</h4>
+                            <p>Official developer guidance on token budgeting, TPM/RPM limits, and latency optimization for production endpoints.</p>
+                            <a href="https://platform.openai.com/docs/guides/rate-limits" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
                 </div>
 
             </article>

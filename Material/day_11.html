@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 11: Introduction to RAG: Ingestion, Chunking & Vector Search</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li class="active"><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>46%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 11.0</span>
+                <h1>Day 11: Introduction to RAG: Ingestion, Chunking & Vector Search</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> Why doesn't a foundation LLM know your company's leave policies, internal Git pull requests, or private vendor contracts? Foundation models are frozen at their training cutoff and have zero knowledge of private enterprise data. Fine-tuning models on private documents is expensive, slow, and cannot guarantee factual citation. How do we build an open-book <strong>Retrieval-Augmented Generation (RAG)</strong> pipeline that extracts precise paragraphs from 10,000 PDF pages in milliseconds?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 2.2</span>
+                            <span class="plan-badge plan-badge-secondary">Week 2</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Master vector geometry, high-dimensional cosine similarity, and Euclidean distance metrics.</li><li>Understand Hierarchical Navigable Small World (HNSW) graphs and approximate nearest neighbor (ANN) search.</li><li>Build an end-to-end RAG pipeline using ChromaDB, sliding-window semantic chunking, and metadata filtering.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Vector space geometry: Cosine similarity $	ext{sim}(ec{q}, ec{d}) = rac{ec{q} \cdot ec{d}}{\|ec{q}\| \|ec{d}\|}$.</li><li>HNSW graph architecture: Multi-layer skip-list hierarchy with $\mathcal{O}(\log N)$ retrieval complexity.</li><li>Semantic text chunking: Sliding window token overlaps vs. naive fixed-character truncation.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 11.1: Production ChromaDB RAG Pipeline with Department Metadata Pre-Filtering.</li><li>Program 11.2: Pure Python Recursive Semantic Chunker with Sliding Token Overlap.</li><li>Program 11.3: Pure NumPy Vector Search Engine implementing Exact Cosine Distance.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>The Chunk Boundary Fracture: Slicing a critical sentence across chunk borders, destroying semantic meaning.</li><li>Metadata Neglect: Performing unconstrained vector search over an entire database without tenant or category filtering.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> ChromaDB RAG Pipeline & Semantic Chunker • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The RAG Paradigm: Open-Book Grounding</h2>
+                <p><strong>Retrieval-Augmented Generation (RAG)</strong> decouples knowledge storage from the LLM's static parameter weights. Instead of memorizing all enterprise facts inside neural network weights, documents are indexed in a high-dimensional vector database. When a user asks a question, the system queries the vector store, retrieves the Top-$k$ most relevant text chunks, and injects them as verified reference material into the prompt:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6; font-weight: bold;">[OFFLINE INGESTION PIPELINE]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">Raw Document &rarr; Text Extraction &rarr; Semantic Chunking &rarr; Dense Embedding &rarr; HNSW Vector Index</div>
+                        <br>
+                        <div style="color: #10b981; font-weight: bold;">[ONLINE RETRIEVAL & GENERATION]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">User Query &rarr; Query Embedding &rarr; Cosine Similarity Search &rarr; Top-k Chunks &rarr; Augmented Prompt &rarr; Grounded Answer with Citations</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 11.0-1: The End-to-End RAG Architecture (Offline Ingestion & Online Retrieval)</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Mathematical Foundation: Vector Geometry & HNSW Graph Indexing</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">High-Dimensional Embedding Space & Cosine Similarity</h3>
+                    <p>An embedding model maps a text snippet $t$ into a dense vector $\vec{v} \in \mathbb{R}^d$, where $d = 1,536$ (for <code>text-embedding-3-small</code>) or $d = 3,072$ (for <code>text-embedding-3-large</code>). Semantic similarity between query vector $\vec{q}$ and document vector $\vec{d}$ is defined by the <strong>Cosine Similarity</strong>:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.15rem; color: #10b981; margin: 1rem 0;">
+                        \cos(\theta) = \frac{\vec{q} \cdot \vec{d}}{\|\vec{q}\|_2 \|\vec{d}\|_2} = \frac{\sum_{i=1}^d q_i d_i}{\sqrt{\sum_{i=1}^d q_i^2} \sqrt{\sum_{i=1}^d d_i^2}}
+                    </div>
+                    <p>When vectors are pre-normalized to unit length ($\|\vec{q}\|_2 = \|\vec{d}\|_2 = 1$), cosine similarity simplifies directly to the inner product: $\cos(\theta) = \vec{q} \cdot \vec{d}$, and squared Euclidean distance relates directly via:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); margin-bottom: 1rem;">
+                        \|\vec{q} - \vec{d}\|_2^2 = 2 - 2(\vec{q} \cdot \vec{d})
+                    </div>
+
+                    <h4 style="color: #f59e0b; margin-top: 1.2rem;">Exact Search vs. HNSW Approximate Nearest Neighbors (ANN)</h4>
+                    <p>Exhaustive Brute-Force $K$-Nearest Neighbor search requires computing distance against every vector in the corpus. For $N$ documents in $d$ dimensions, query complexity is $\mathcal{O}(N \cdot d)$. At $N = 1,000,000$, brute force requires billions of floating-point operations per query, resulting in 500ms+ latencies.</p>
+                    <p>Modern vector databases (ChromaDB, Milvus, Qdrant) utilize <strong>Hierarchical Navigable Small World (HNSW)</strong> graphs. HNSW constructs a multi-layer graph where upper layers have long-range edges (like express highway lanes) and bottom layers have short-range local connections (local city streets). Query complexity drops from linear to logarithmic:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #f59e0b; margin: 0.5rem 0;">
+                        \text{HNSW Query Latency} = \mathcal{O}(\log N)
+                    </div>
+                    <p style="margin-bottom: 0;">This enables sub-5-millisecond similarity retrieval over millions of chunks with $>98\%$ recall accuracy.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: Production ChromaDB RAG Pipeline with Metadata Filtering</h2>
+                <p>The code below implements an end-to-end RAG pipeline using ChromaDB, demonstrating chunk ingestion, metadata filtering (restricting search to specific departments and fiscal years), and grounded generation with strict provenance citations:</p>
+
+                <div class="code-header">
+                    <span>program_11_1_chromadb_rag.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 11.0-1: Production RAG Pipeline with ChromaDB & Metadata Filtering
+import chromadb
+from typing import List, Dict, Any
+from openai import OpenAI
+
+client = OpenAI()
+
+# Initialize ChromaDB in-memory client
+chroma_client = chromadb.Client()
+collection = chroma_client.get_or_create_collection(name="enterprise_policies")
+
+# 1. Corpus of enterprise documents with rich metadata
+documents_corpus = [
+    {
+        "id": "hr_pol_01",
+        "text": "Full-time Indian employees receive 24 privilege leaves annually. Paternity leave is 15 consecutive calendar days fully paid, usable within 6 months of childbirth.",
+        "metadata": {"dept": "HR", "country": "IN", "year": 2026, "confidential": False}
+    },
+    {
+        "id": "hr_pol_02",
+        "text": "Maternity leave is 26 weeks paid leave for up to two surviving children. Additional work-from-home flexibility up to 3 months can be requested upon medical approval.",
+        "metadata": {"dept": "HR", "country": "IN", "year": 2026, "confidential": False}
+    },
+    {
+        "id": "fin_pol_01",
+        "text": "Domestic air travel must be booked in Economy class at least 14 days in advance. Daily meal allowance in Tier-1 cities (Bengaluru, Mumbai, Delhi) is capped at ₹1,500 INR.",
+        "metadata": {"dept": "Finance", "country": "IN", "year": 2026, "confidential": False}
+    },
+    {
+        "id": "it_sec_01",
+        "text": "All laptops must run CrowdStrike Falcon endpoint agent and have BitLocker 256-bit encryption enabled. SSH keys must be rotated every 90 days via HashiCorp Vault.",
+        "metadata": {"dept": "IT_Security", "country": "GLOBAL", "year": 2026, "confidential": True}
+    }
+]
+
+# 2. Ingestion into Vector Store
+def ingest_documents(docs: List[Dict[str, Any]]):
+    texts = [d["text"] for d in docs]
+    metadatas = [d["metadata"] for d in docs]
+    ids = [d["id"] for d in docs]
+    
+    collection.add(
+        documents=texts,
+        metadatas=metadatas,
+        ids=ids
+    )
+    print(f"Successfully indexed {collection.count()} document chunks into ChromaDB.")
+
+# 3. Metadata-Filtered Semantic Retrieval
+def query_vector_store(query_text: str, dept_filter: str, top_k: int = 2) -> Dict[str, Any]:
+    """Retrieves top-k chunks strictly filtered by department metadata."""
+    results = collection.query(
+        query_texts=[query_text],
+        n_results=top_k,
+        where={"dept": dept_filter}  # Deterministic metadata filtering
+    )
+    return results
+
+# 4. Grounded Generation with Citations
+def ask_policy_agent(query: str, target_department: str) -> str:
+    search_results = query_vector_store(query, dept_filter=target_department, top_k=2)
+    
+    retrieved_docs = search_results["documents"][0]
+    retrieved_ids = search_results["ids"][0]
+    
+    if not retrieved_docs:
+        return "No relevant policies found matching the specified department criteria."
+        
+    context_blocks = []
+    for doc_id, text in zip(retrieved_ids, retrieved_docs):
+        context_blocks.append(f"[SOURCE: {doc_id}]\n{text}")
+    
+    combined_context = "\n\n".join(context_blocks)
+    print(f"\n--> Retrieved Context Blocks for '{query}':\n{combined_context}\n")
+    
+    prompt = f"""
+    You are an Enterprise Policy Auditor. Answer the user's question strictly using the provided context blocks.
+    You MUST cite the source ID (e.g. [SOURCE: hr_pol_01]) for every fact stated.
+    If the fact is not in the context, explicitly say: 'Information not found in approved policy docs.'
+    
+    CONTEXT:
+    {combined_context}
+    
+    USER QUESTION:
+    {query}
+    
+    ANSWER:
+    """
+    
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.0
+    )
+    return res.choices[0].message.content
+
+if __name__ == "__main__":
+    ingest_documents(documents_corpus)
+    
+    q1 = "What is our company's paternity leave entitlement and usage window?"
+    print("Agent Response:\n", ask_policy_agent(q1, target_department="HR"))
+    
+    q2 = "What is the daily meal allowance for travel in Bengaluru?"
+    print("\nAgent Response:\n", ask_policy_agent(q2, target_department="Finance"))
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 11.0-1: ChromaDB RAG Pipeline with Metadata Filtering and Provenance Citations</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: Pure Python Recursive Semantic Chunking Engine</h2>
+                <p>Naive character chunking splits words and code blocks in half. The recursive chunker below splits text hierarchically: first on double newlines (paragraphs), then single newlines, then sentence periods, ensuring natural grammatical boundaries are preserved with sliding overlap:</p>
+
+                <div class="code-header">
+                    <span>program_11_2_recursive_chunker.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 11.0-2: Pure Python Recursive Text Chunking with Overlap & Metadata
+import re
+from typing import List, Dict, Any
+
+class RecursiveSemanticChunker:
+    def __init__(self, target_chunk_size: int = 150, overlap_size: int = 30, separators: List[str] = None):
+        self.target_chunk_size = target_chunk_size
+        self.overlap_size = overlap_size
+        self.separators = separators or ["\n\n", "\n", ". ", " "]
+
+    def _split_text(self, text: str, separator: str) -> List[str]:
+        if separator == "":
+            return list(text)
+        return text.split(separator)
+
+    def chunk_document(self, text: str, metadata: Dict[str, Any]) -> List[Dict[str, Any]]:
+        raw_paragraphs = self._split_text(text, self.separators[0])
+        chunks = []
+        current_chunk = []
+        current_length = 0
+
+        for para in raw_paragraphs:
+            para = para.strip()
+            if not para:
+                continue
+            
+            para_word_count = len(para.split())
+            
+            if current_length + para_word_count <= self.target_chunk_size:
+                current_chunk.append(para)
+                current_length += para_word_count
+            else:
+                if current_chunk:
+                    chunk_text = "\n\n".join(current_chunk)
+                    chunks.append(chunk_text)
+                    # Slide window with overlap: keep last elements up to overlap_size
+                    overlap_words = 0
+                    new_start = []
+                    for p in reversed(current_chunk):
+                        p_len = len(p.split())
+                        if overlap_words + p_len <= self.overlap_size:
+                            new_start.insert(0, p)
+                            overlap_words += p_len
+                        else:
+                            break
+                    current_chunk = new_start
+                    current_length = overlap_words
+                current_chunk.append(para)
+                current_length += para_word_count
+
+        if current_chunk:
+            chunks.append("\n\n".join(current_chunk))
+
+        # Attach chunk indexing and provenance metadata
+        result_chunks = []
+        for idx, c in enumerate(chunks):
+            result_chunks.append({
+                "chunk_id": f"{metadata.get('doc_id', 'doc')}_chk_{idx+1}",
+                "text": c,
+                "word_count": len(c.split()),
+                "metadata": {**metadata, "chunk_index": idx + 1, "total_chunks": len(chunks)}
+            })
+        return result_chunks
+
+if __name__ == "__main__":
+    sample_spec = """
+    # Tata Curvv EV Technical Architecture
+    The Tata Curvv EV is built on the Acti.ev generation-2 platform.
+    It houses a 55 kWh liquid-cooled lithium-ion battery pack with prismatic cells.
+    The rated range under ARAI MIDC testing is 585 kilometers on a full charge.
+
+    Charging specifications support 70 kW DC fast charging via CCS2.
+    A 10% to 80% charge is completed in 40 minutes at peak ambient conditions.
+    AC home charging supports 7.2 kW single-phase wallbox installations requiring 7.9 hours.
+
+    The electric motor delivers peak power output of 123 kW (167 PS) and 215 Nm torque.
+    Acceleration from 0 to 100 km/h is achieved in 8.6 seconds with top speed governed at 160 km/h.
+    """
+    chunker = RecursiveSemanticChunker(target_chunk_size=45, overlap_size=15)
+    output_chunks = chunker.chunk_document(sample_spec, {"doc_id": "curvv_ev_spec"})
+    
+    print(f"Generated {len(output_chunks)} Chunks:")
+    for chk in output_chunks:
+        print(f"\n--- [{chk['chunk_id']}] ({chk['word_count']} words) ---")
+        print(chk["text"])
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 11.0-2: Pure Python Recursive Semantic Text Chunker with Sliding Overlap</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: NumPy Vector Search Engine (Cosine Similarity from Scratch)</h2>
+                <p>Understanding how vector databases calculate similarity under the hood is essential for debugging retrieval anomalies. Below is a complete, vector-math implementation of cosine similarity search implemented in pure NumPy:</p>
+
+                <div class="code-header">
+                    <span>program_11_3_numpy_vector_search.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 11.0-3: Pure NumPy High-Dimensional Cosine Vector Search Engine
+import numpy as np
+import time
+from typing import List, Tuple
+
+class DenseVectorStore:
+    def __init__(self, dimension: int = 1536):
+        self.dimension = dimension
+        self.vectors: np.ndarray = np.empty((0, dimension), dtype=np.float32)
+        self.doc_ids: List[str] = []
+
+    def add_vectors(self, ids: List[str], vectors_list: List[List[float]]):
+        """Adds and normalizes vectors to unit length for fast dot product."""
+        arr = np.array(vectors_list, dtype=np.float32)
+        # Normalize: L2 norm = 1.0
+        norms = np.linalg.norm(arr, axis=1, keepdims=True)
+        normalized_arr = arr / np.maximum(norms, 1e-12)
+        
+        self.vectors = np.vstack([self.vectors, normalized_arr])
+        self.doc_ids.extend(ids)
+
+    def search(self, query_vector: List[float], top_k: int = 3) -> List[Tuple[str, float]]:
+        """Calculates inner product across all rows in parallel using vectorized matrix multiply."""
+        q = np.array(query_vector, dtype=np.float32)
+        q_norm = q / max(np.linalg.norm(q), 1e-12)
+        
+        # Matrix-vector multiplication: (N, d) dot (d,) -> (N,)
+        similarities = np.dot(self.vectors, q_norm)
+        
+        # Top-k indices using argpartition for fast partial sort
+        if len(similarities) <= top_k:
+            top_indices = np.argsort(-similarities)
+        else:
+            top_indices = np.argpartition(-similarities, top_k)[:top_k]
+            top_indices = top_indices[np.argsort(-similarities[top_indices])]
+            
+        results = [(self.doc_ids[idx], float(similarities[idx])) for idx in top_indices]
+        return results
+
+if __name__ == "__main__":
+    np.random.seed(42)
+    dim = 1536
+    store = DenseVectorStore(dimension=dim)
+    
+    # Simulate 5,000 synthetic 1536-dimensional document embeddings
+    num_docs = 5000
+    mock_embeddings = np.random.randn(num_docs, dim).tolist()
+    ids = [f"doc_{i:04d}" for i in range(num_docs)]
+    
+    store.add_vectors(ids, mock_embeddings)
+    
+    # Query vector
+    mock_query = np.random.randn(dim).tolist()
+    
+    start_t = time.perf_counter()
+    matches = store.search(mock_query, top_k=3)
+    elapsed_ms = (time.perf_counter() - start_t) * 1000
+    
+    print(f"Searched {num_docs} vectors in {elapsed_ms:.2f} ms:")
+    for doc_id, score in matches:
+        print(f" -> {doc_id} | Cosine Similarity: {score:.4f}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 11.0-3: NumPy High-Dimensional Cosine Similarity Matrix Search Engine</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Out-of-Vocabulary Acronym Blindness:</strong> Dense vector embeddings represent words in continuous semantic space. Specialized internal company acronyms (e.g. <code>"Project CHETAK"</code> or <code>"KB-8921"</code>) often map to random unrelated embedding regions, resulting in zero recall. <em>Mitigation:</em> Hybrid search combining sparse BM25 keyword matching with dense vector search (covered in Day 12).
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Chunk Boundary Severance:</strong> If a customer discount table is split in half by a fixed 500-token boundary, the header row ends up in Chunk 1 and the numerical tier ends up in Chunk 2. When Chunk 2 is retrieved, the LLM has no idea what the numbers represent! <em>Mitigation:</em> Use Markdown Table-aware chunkers or prepend document title/section headers to every chunk text.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Stale Document Ghosts:</strong> Deleting a file from your file system does not automatically remove its embedding from the vector database. Stale policy documents remain in the index and mislead users. <em>Mitigation:</em> Store document hash (SHA-256) in vector metadata; run automated reconciliation sweeps to delete orphaned chunks.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Hallucinated Extrapolations:</strong> Even with retrieved context, models may attempt to "helpfully" extrapolate answers when the context is incomplete. <em>Mitigation:</em> Apply strict negative constraints in the system prompt: <em>"If the answer cannot be directly proven by the text, say 'Not found in provided documents'."</em>
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Chunking Strategy Comparison Matrix</h2>
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Chunking Method</th>
+                            <th style="padding: 12px; text-align: left;">Chunk Size / Overlap</th>
+                            <th style="padding: 12px; text-align: left;">Strengths</th>
+                            <th style="padding: 12px; text-align: left;">Vulnerabilities / Gotchas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Fixed Character / Word</td>
+                            <td style="padding: 12px;">500 chars / 50 overlap</td>
+                            <td style="padding: 12px;">Extremely fast, trivial to implement, language-agnostic.</td>
+                            <td style="padding: 12px;">Splits words, sentences, and table rows down the middle, destroying semantic meaning.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Recursive Character</td>
+                            <td style="padding: 12px;">500 tokens / 50 overlap</td>
+                            <td style="padding: 12px;">Splits on paragraphs (<code>\n\n</code>), then lines (<code>\n</code>), then periods (<code>.</code>), preserving grammar.</td>
+                            <td style="padding: 12px;">Variable chunk sizes; requires specialized handling for markdown tables and source code.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Document Hierarchy (Markdown/AST)</td>
+                            <td style="padding: 12px;">Headers (<code>#</code>, <code>##</code>, <code>###</code>)</td>
+                            <td style="padding: 12px;">Preserves exact section provenance; ideal for engineering manuals and legal contracts.</td>
+                            <td style="padding: 12px;">Oversized sections (e.g., 5,000 words under one header) require recursive secondary chunking.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. Why is RAG preferred over model fine-tuning for enterprise private documents?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because fine-tuning requires 1,000 GPUs.</li>
+                        <li class="mcq-option" data-correct="true">RAG provides verifiable citations, updates instantly when documents change, and eliminates hallucinations without costly retraining.</li>
+                        <li class="mcq-option" data-correct="false">Fine-tuned models cannot speak English.</li>
+                        <li class="mcq-option" data-correct="false">RAG eliminates the need for an LLM.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. What is the mathematical formulation of Cosine Similarity between vectors u and v?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">u + v / 2</li>
+                        <li class="mcq-option" data-correct="true">(u &bull; v) / (||u|| * ||v||)</li>
+                        <li class="mcq-option" data-correct="false">u * v^2</li>
+                        <li class="mcq-option" data-correct="false">sqrt(u^2 + v^2)</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. What is the primary advantage of HNSW graph indexing over brute-force KNN vector search?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">HNSW reduces vector dimensions to 1.</li>
+                        <li class="mcq-option" data-correct="true">It reduces query latency from O(N) linear to O(log N) logarithmic, enabling millisecond retrieval across millions of vectors.</li>
+                        <li class="mcq-option" data-correct="false">HNSW runs on mobile CPUs without RAM.</li>
+                        <li class="mcq-option" data-correct="false">It eliminates the need for document chunking.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. Why is chunk overlap (e.g. 10-15%) necessary when chunking documents?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To make the vector database file larger.</li>
+                        <li class="mcq-option" data-correct="true">To prevent critical semantic context or sentences from being severed across arbitrary boundary splits.</li>
+                        <li class="mcq-option" data-correct="false">It is required by the OpenAI API spec.</li>
+                        <li class="mcq-option" data-correct="false">Overlap allows the LLM to run twice as fast.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. What is the embedding dimension of OpenAI's text-embedding-3-small?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">512</li>
+                        <li class="mcq-option" data-correct="true">1536</li>
+                        <li class="mcq-option" data-correct="false">4096</li>
+                        <li class="mcq-option" data-correct="false">3072</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. In Program 11.0-1, what is the role of where={'dept': dept_filter} in ChromaDB?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">Deterministic metadata pre-filtering: restricts vector search strictly to chunks matching the specified department.</li>
+                        <li class="mcq-option" data-correct="false">Deletes all chunks belonging to that department.</li>
+                        <li class="mcq-option" data-correct="false">Changes the embedding model temperature.</li>
+                        <li class="mcq-option" data-correct="false">Converts text into uppercase.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. What is a major vulnerability of dense embeddings when searching specialized enterprise catalogs?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">They fail on common English words.</li>
+                        <li class="mcq-option" data-correct="true">They suffer from Out-of-Vocabulary blind spots on internal part numbers, error codes, and proprietary acronyms.</li>
+                        <li class="mcq-option" data-correct="false">They only work on Windows operating systems.</li>
+                        <li class="mcq-option" data-correct="false">Vectors cannot be saved to disk.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What happens if chunk size is configured too large (e.g. 3,000 tokens)?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The vector store throws a division by zero error.</li>
+                        <li class="mcq-option" data-correct="true">Irrelevant noise dilutes retrieval precision and triggers 'Lost in the Middle' attention degradation in the LLM.</li>
+                        <li class="mcq-option" data-correct="false">The document is automatically translated to French.</li>
+                        <li class="mcq-option" data-correct="false">The embedding becomes zero.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. In vector geometry, if two vectors are pre-normalized to unit length, how is cosine similarity computed?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">By computing the determinant.</li>
+                        <li class="mcq-option" data-correct="true">As a simple dot product (inner product) u &bull; v.</li>
+                        <li class="mcq-option" data-correct="false">By calculating the cross product.</li>
+                        <li class="mcq-option" data-correct="false">By dividing the norms.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. What is 'Provenance Citation' in an enterprise RAG system?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Signing the code with an SSL certificate.</li>
+                        <li class="mcq-option" data-correct="true">Requiring the LLM to explicitly cite the exact chunk ID and document source for every claim in its answer.</li>
+                        <li class="mcq-option" data-correct="false">Adding a copyright watermark to images.</li>
+                        <li class="mcq-option" data-correct="false">Printing the user's IP address.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master RAG pipeline engineering and indexing.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Markdown AST Header Chunker</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build a custom chunker that parses Markdown headings (<code>#</code>, <code>##</code>, <code>###</code>). Each chunk must include its full hierarchical breadcrumb in metadata (e.g. <code>{"section": "Tata EV > Battery > Thermal Management"}</code>).</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Persistent ChromaDB Disk Storage</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Modify <code>Program 11.0-1</code> to use <code>chromadb.PersistentClient(path="./enterprise_rag_db")</code>. Ingest 10 local PDF or text files, restart the Python script, and verify that vector search executes without re-ingesting.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Adversarial Un-Grounded Prompt Test</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Ask your RAG pipeline an un-answerable question: <em>"What is the company policy for flying first class on Emirates to Dubai?"</em> Verify that the model responds: <em>"Information not found in approved policy docs"</em> rather than hallucinating an answer.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Dynamic Top-K Confidence Thresholding</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Add a cosine distance threshold guard. If the highest scoring chunk has a distance $> 0.45$ (low semantic relevance), discard the retrieved chunks and inform the user that no confident documentation exists.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Chunk Size Sizing Experiment</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Index a 10-page document under three chunk sizes: 100 words, 300 words, and 800 words. Run 5 test queries against each index and measure retrieval recall, answer quality, and token cost.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:1603.09320</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">IEEE TPAMI</span>
+                            </div>
+                            <h4>Efficient and Robust Approximate Nearest Neighbor Search Using HNSW</h4>
+                            <p>Malkov and Yashunin introduce Hierarchical Navigable Small World graphs, setting the standard for vector database indexing.</p>
+                            <a href="https://arxiv.org/abs/1603.09320" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2005.11401</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">NeurIPS 2020</span>
+                            </div>
+                            <h4>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (RAG)</h4>
+                            <p>Lewis et al. introduce RAG, combining dense pre-trained retrieval with seq2seq generation to ground LLMs in external text.</p>
+                            <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Chroma Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Vector Database</span>
+                            </div>
+                            <h4>ChromaDB Technical Architecture & Metadata Filtering</h4>
+                            <p>Official developer guide for collection management, embedding functions, HNSW index configuration, and WHERE filters.</p>
+                            <a href="https://docs.trychroma.com/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Pinecone Learning</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Vector Search</span>
+                            </div>
+                            <h4>Similarity Measures in Vector Search: Cosine, Dot Product, Euclidean</h4>
+                            <p>Mathematical deep dive comparing vector distance metrics and their suitability across normalized embedding models.</p>
+                            <a href="https://www.pinecone.io/learn/vector-similarity/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_10.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 10: Tool Selection (ReAct)</span>
+                </a>
+                <a href="day_12.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 12: Improving Retrieval Quality</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

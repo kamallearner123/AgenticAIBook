@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 15: Agentic RAG: Dynamic Tool Selection with Document Retrieval</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li class="active"><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>63%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 15.0</span>
+                <h1>Day 15: Agentic RAG: Dynamic Tool Selection with Document Retrieval</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> Traditional RAG is blind and rigid: every incoming user query triggers a costly vector database retrieval, even if the user is asking a basic conversational greeting or a pure mathematical calculation. Furthermore, when a user asks: <em>"According to our enterprise SLA, what is the downtime penalty formula, and how much credit do we owe customer CUST-8812 for their 4.5-hour outage last Tuesday?"</em>, traditional RAG retrieves the contract but cannot calculate the numbers or query live customer databases! How do we fuse unstructured document retrieval, relational SQL data, and deterministic tool execution into an adaptive <strong>Agentic RAG</strong> architecture?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 2.6</span>
+                            <span class="plan-badge plan-badge-secondary">Week 2</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Transition from passive RAG to active, Self-Reflective Agentic RAG.</li><li>Implement Self-RAG reflection tokens (`IsRetrieve`, `IsRel`, `IsSup`) to grade document relevance and grounding.</li><li>Build an active multi-silo query router querying ChromaDB, SQLite, and Python Calculator in parallel.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Self-RAG reflection token formulation and selective retrieval decision thresholds.</li><li>Query rewriting theory: Decomposing vague user prompts into focused, keyword-rich search queries.</li><li>Multi-hop reasoning: Chaining evidence across disjoint silos to resolve composite questions.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 15.1: Multi-Silo Agentic RAG System (ChromaDB Vector + SQLite Structured + Python Calculator).</li><li>Program 15.2: Self-Reflective Document Grader & Query Rewriter.</li><li>Program 15.3: Multi-Hop Document Reasoning Agent with Step-by-Step Evidence Gathering.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Retrieval Greediness: Querying the vector store on every turn even when the question is basic math or casual conversation.</li><li>Hallucination of Evidence: Citing retrieved documents that do not actually contain the claimed facts.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Multi-Silo Self-Reflective Agentic RAG Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Paradigm Shift: From Fixed Pipeline to Agentic Routing</h2>
+                <p>In <strong>Traditional RAG</strong>, retrieval is a fixed step in an unbending sequence: <code>Query &rarr; Vector Search &rarr; Prompt &rarr; LLM</code>. The pipeline has no mechanism to determine <em>whether</em> retrieval is actually necessary, cannot query multiple heterogeneous data silos (SQL vs Vector vs Live REST), and cannot execute follow-up computational actions based on what it reads.</p>
+
+                <p>In <strong>Agentic RAG</strong>, the Vector Database is treated as simply <strong>one specialized tool among many in the agent's toolbox</strong>. An orchestrating agent dynamically decides which tool to call, inspects retrieved excerpts, performs calculations, and self-reflects if retrieved evidence is insufficient:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6; font-weight: bold;">USER QUERY: "What is our severance formula, and what is the payout for 4 years at ₹1,20,000/month?"</div>
+                        <div style="margin-top: 0.6rem; color: #6366f1;">&rarr; THOUGHT 1: "I need to look up company severance policy rules first."</div>
+                        <div style="margin-top: 0.3rem; color: #f59e0b;">&rarr; ACTION 1: search_company_policies(query="severance formula")</div>
+                        <div style="margin-top: 0.3rem; color: #10b981;">&larr; OBSERVATION 1: "Severance = 0.5 * monthly_salary * years_of_service"</div>
+                        <div style="margin-top: 0.6rem; color: #6366f1;">&rarr; THOUGHT 2: "Formula found. Now I compute arithmetic: 0.5 * 120000 * 4 via calculator tool."</div>
+                        <div style="margin-top: 0.3rem; color: #f59e0b;">&rarr; ACTION 2: run_calculator(expression="0.5 * 120000 * 4")</div>
+                        <div style="margin-top: 0.3rem; color: #10b981;">&larr; OBSERVATION 2: {"result": 240000.0}</div>
+                        <div style="margin-top: 0.6rem; color: #22c55e; font-weight: bold;">&rarr; FINAL SYNTHESIS: "Policy provides half-month salary per year. For 4 years at ₹1,20,000/mo, total payout is ₹2,40,000 INR."</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 15.0-1: Multi-Tool Agentic RAG Interaction Lifecycle</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Theory: Self-RAG Reflection & Adaptive Routing Mathematics</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">Self-RAG Reflection Tokens (Asai et al., 2023)</h3>
+                    <p>In standard RAG, the model blindly consumes whatever the retriever returns. <strong>Self-RAG</strong> introduces programmatic reflection evaluations at each phase:</p>
+                    <ul style="padding-left: 1.2rem;">
+                        <li><strong>1. Retrieval Decision ($IsRetrieve$):</strong> Does the query require external knowledge? If conversational or pure math, $IsRetrieve = \text{False}$, eliminating vector search latency.</li>
+                        <li><strong>2. Relevance Assessment ($IsRel$):</strong> Are the retrieved documents relevant to the query?
+                            $$\text{Score}_{\text{rel}} = P(\text{Relevant} \mid Q, D)$$
+                            If $\text{Score}_{\text{rel}} < 0.60$, trigger a <strong>Query Rewrite</strong> step rather than generating hallucinated summaries.</li>
+                        <li><strong>3. Grounding Verification ($IsSup$):</strong> Does the retrieved context fully support the generated response without ungrounded extrapolation?</li>
+                    </ul>
+
+                    <h4 style="color: #f59e0b; margin-top: 1.2rem;">Expected Query Latency & Cost Modeling</h4>
+                    <p>Let $P(\text{Direct})$ be the probability of a simple query, $P(\text{Calc})$ for computational queries, and $P(\text{RAG})$ for documentation lookups. Expected system latency is:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.05rem; color: #f59e0b; margin: 1rem 0;">
+                        E[T] = P(\text{Direct}) T_{\text{LLM}} + P(\text{Calc}) (T_{\text{Tool}} + T_{\text{LLM}}) + P(\text{RAG}) (T_{\text{Embed}} + T_{\text{ANN}} + T_{\text{LLM}})
+                    </div>
+                    <p style="margin-bottom: 0;">In an enterprise customer portal where 40% of queries are conversational greetings and 25% are account calculations, Agentic RAG slashes vector database load by <strong>65%</strong> compared to traditional static RAG pipelines!</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: Production Multi-Silo Agentic RAG (Vector + SQLite + Math)</h2>
+                <p>The code below implements an enterprise Agentic RAG system that dynamically routes between an unstructured ChromaDB policy store, a structured SQLite customer database, and a local calculator tool:</p>
+
+                <div class="code-header">
+                    <span>program_15_1_multi_silo_agentic_rag.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 15.0-1: Multi-Silo Agentic RAG (ChromaDB + SQLite + Python Calculator)
+import json
+import math
+import sqlite3
+from typing import Dict, Any, List
+import chromadb
+from openai import OpenAI
+
+client = OpenAI()
+
+# 1. UNSTRUCTURED VECTOR STORE (ChromaDB)
+chroma_client = chromadb.Client()
+policy_coll = chroma_client.get_or_create_collection("service_sla_policies")
+policy_coll.add(
+    documents=[
+        "SLA Section 4B: If system availability drops below 99.9% in a calendar month, customer is entitled to a 10% invoice credit.",
+        "SLA Section 4C: If an unscheduled downtime exceeds 4 continuous hours, an additional 5% penalty credit applies.",
+        "Enterprise Plan: Base subscription rate is ₹4,50,000 INR per month for up to 5,000 active cloud instances."
+    ],
+    ids=["sla_4b", "sla_4c", "plan_enterprise"]
+)
+
+# 2. STRUCTURED RELATIONAL STORE (SQLite)
+conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+cursor.execute("""
+    CREATE TABLE customer_outages (
+        customer_id TEXT,
+        company_name TEXT,
+        downtime_hours REAL,
+        monthly_bill_inr REAL
+    )
+""")
+cursor.execute("INSERT INTO customer_outages VALUES ('CUST-8812', 'Tata Motors EV Division', 4.5, 450000.0)")
+cursor.execute("INSERT INTO customer_outages VALUES ('CUST-9901', 'Bharat Electronics', 1.8, 220000.0)")
+conn.commit()
+
+# 3. TOOL FUNCTIONS
+def search_sla_contracts(query: str) -> str:
+    """Retrieve unstructured legal clauses from enterprise SLA and contract documents."""
+    results = policy_coll.query(query_texts=[query], n_results=2)
+    return "\n---\n".join(results["documents"][0])
+
+def query_customer_incident_db(customer_id: str) -> str:
+    """Query structured SQLite records for customer outage duration and billing stats."""
+    cursor.execute("SELECT company_name, downtime_hours, monthly_bill_inr FROM customer_outages WHERE customer_id = ?", (customer_id,))
+    row = cursor.fetchone()
+    if row:
+        return json.dumps({"company": row[0], "downtime_hours": row[1], "monthly_bill_inr": row[2]})
+    return json.dumps({"error": f"Customer {customer_id} not found."})
+
+def execute_math_calculation(expression: str) -> str:
+    """Safely evaluates exact mathematical credit and penalty expressions."""
+    try:
+        allowed = {"abs": abs, "round": round}
+        val = eval(expression, {"__builtins__": None}, allowed)
+        return json.dumps({"status": "success", "result": round(float(val), 2)})
+    except Exception as e:
+        return json.dumps({"status": "error", "message": str(e)})
+
+tools_schema = [
+    {
+        "type": "function",
+        "function": {
+            "name": "search_sla_contracts",
+            "description": "Search contract terms, uptime requirements, and penalty percentages",
+            "parameters": {
+                "type": "object",
+                "properties": {"query": {"type": "string"}},
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "query_customer_incident_db",
+            "description": "Retrieve outage hours and monthly invoice bill for a customer ID",
+            "parameters": {
+                "type": "object",
+                "properties": {"customer_id": {"type": "string"}},
+                "required": ["customer_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "execute_math_calculation",
+            "description": "Calculate exact monetary values and percentages",
+            "parameters": {
+                "type": "object",
+                "properties": {"expression": {"type": "string"}},
+                "required": ["expression"]
+            }
+        }
+    }
+]
+
+# 4. ORCHESTRATOR LOOP
+def run_agentic_rag(user_goal: str, max_turns: int = 6) -> str:
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are an Autonomous Enterprise SLA Auditor. "
+                "To resolve customer claims: 1) Query the SQL database for customer incident metrics, "
+                "2) Search the SLA policy contract for applicable penalty clauses, "
+                "3) Execute deterministic calculations using the calculator tool, "
+                "and 4) Synthesize an audit resolution letter with full mathematical proof."
+            )
+        },
+        {"role": "user", "content": user_goal}
+    ]
+    
+    for turn in range(1, max_turns + 1):
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            tools=tools_schema,
+            temperature=0.0
+        )
+        msg = resp.choices[0].message
+        messages.append(msg)
+        
+        if not msg.tool_calls:
+            return msg.content
+            
+        for tc in msg.tool_calls:
+            fn = tc.function.name
+            args = json.loads(tc.function.arguments)
+            print(f"  [Turn {turn}] Action: {fn}({args})")
+            
+            if fn == "search_sla_contracts":
+                out = search_sla_contracts(args.get("query", ""))
+            elif fn == "query_customer_incident_db":
+                out = query_customer_incident_db(args.get("customer_id", ""))
+            elif fn == "execute_math_calculation":
+                out = execute_math_calculation(args.get("expression", ""))
+            else:
+                out = json.dumps({"error": "Unknown tool"})
+                
+            print(f"     Observation: {out[:90]}...")
+            messages.append({"role": "tool", "tool_call_id": tc.id, "content": out})
+            
+    return "Agent exceeded maximum turns without reaching conclusion."
+
+if __name__ == "__main__":
+    claim_query = "What total credit in INR is owed to customer CUST-8812 based on their outage last week under our SLA policy?"
+    print(f"User Query: '{claim_query}'\n")
+    final_resolution = run_agentic_rag(claim_query)
+    print("\n" + "=" * 25 + " AUDIT RESOLUTION " + "=" * 25)
+    print(final_resolution)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 15.0-1: Multi-Silo Agentic RAG combining Vector Store, SQL Database, and Calculator</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: Self-Reflective Retrieval with Automatic Query Rewriting</h2>
+                <p>When initial vector search returns irrelevant documents, static RAG produces hallucinated summaries. The Self-RAG engine below programmatically grades retrieved document relevance; if relevance falls below threshold, it rewrites the query and re-retrieves:</p>
+
+                <div class="code-header">
+                    <span>program_15_2_self_rag_rewriter.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 15.0-2: Self-Reflective Document Grader & Query Rewriter
+from typing import List, Literal
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+client = OpenAI()
+
+class DocumentRelevanceGrade(BaseModel):
+    is_relevant: bool = Field(description="True if the document contains facts directly answering the query")
+    confidence: float = Field(ge=0.0, le=1.0)
+    missing_aspects: List[str]
+
+class QueryRewrite(BaseModel):
+    optimized_query: str = Field(description="Re-formulated query removing conversational filler and adding key domain keywords")
+
+def grade_retrieved_documents(query: str, retrieved_context: str) -> DocumentRelevanceGrade:
+    """Grades whether the retrieved text actually contains the answer."""
+    prompt = f"""
+    You are an Adversarial Retrieval Grader.
+    Assess whether the following retrieved context is factually sufficient to answer the user query.
+    
+    USER QUERY: {query}
+    RETRIEVED CONTEXT:
+    {retrieved_context}
+    """
+    comp = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        response_format=DocumentRelevanceGrade,
+        temperature=0.0
+    )
+    return comp.choices[0].message.parsed
+
+def rewrite_query_for_retrieval(query: str, missing_aspects: List[str]) -> str:
+    """Rewrites the query targeting the missing semantic aspects."""
+    prompt = f"""
+    The following query failed to retrieve relevant documents: '{query}'
+    Missing information: {missing_aspects}
+    Rewrite this query into an optimized keyword search for an enterprise technical manual.
+    """
+    comp = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        response_format=QueryRewrite,
+        temperature=0.2
+    )
+    return comp.choices[0].message.parsed.optimized_query
+
+if __name__ == "__main__":
+    original_query = "What happens if our EV coolant leaks?"
+    flawed_retrieved_text = "The car infotainment screen supports wireless Apple CarPlay and Android Auto with 10 speaker audio."
+    
+    print(f"Evaluating Query: '{original_query}'")
+    grade = grade_retrieved_documents(original_query, flawed_retrieved_text)
+    print(f"Relevance Passed: {grade.is_relevant} (Confidence: {grade.confidence})")
+    print(f"Missing Aspects: {grade.missing_aspects}")
+    
+    if not grade.is_relevant:
+        better_query = rewrite_query_for_retrieval(original_query, grade.missing_aspects)
+        print(f"\n--> Self-RAG Triggered Query Rewrite: '{better_query}'")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 15.0-2: Self-RAG Retrieval Grader with Dynamic Query Rewriting</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: Multi-Hop Document Reasoning Agent</h2>
+                <p>Enterprise questions often require cross-referencing information scattered across multiple separate documents (e.g. Doc A states policy parameters, while Doc B states customer usage tiers). The multi-hop agent below executes sequential search passes, resolving intermediate facts until the complete cross-document deduction is assembled:</p>
+
+                <div class="code-header">
+                    <span>program_15_3_multihop_reasoner.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 15.0-3: Multi-Hop Document Reasoning Agent
+import json
+from openai import OpenAI
+
+client = OpenAI()
+
+mock_knowledge_base = {
+    "project chetak": "Project Chetak is the internal code name for the 2026 Commercial Electric Bus chassis.",
+    "chetak battery supplier": "Project Chetak utilizes 120 kWh LFP battery modules supplied exclusively by Exide Energy.",
+    "exide energy warranty": "Exide Energy provides an 8-year or 500,000 km warranty for commercial bus battery packs."
+}
+
+def search_internal_wiki(keyword: str) -> str:
+    """Mock document search across company wiki pages."""
+    k = keyword.lower().strip()
+    for title, content in mock_knowledge_base.items():
+        if k in title or title in k:
+            return json.dumps({"status": "found", "title": title, "content": content})
+    return json.dumps({"status": "not_found", "message": f"No wiki pages matching '{keyword}'."})
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "search_internal_wiki",
+            "description": "Search internal engineering and partnership wiki",
+            "parameters": {
+                "type": "object",
+                "properties": {"keyword": {"type": "string"}},
+                "required": ["keyword"]
+            }
+        }
+    }
+]
+
+def run_multihop_agent(complex_question: str) -> str:
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are an investigative engineering intelligence agent. "
+                "To answer multi-hop questions, identify intermediate unknowns, search for each fact sequentially, "
+                "and connect the chain of evidence before formulating your final answer."
+            )
+        },
+        {"role": "user", "content": complex_question}
+    ]
+    
+    for hop in range(1, 5):
+        resp = client.chat.completions.create(model="gpt-4o-mini", messages=messages, tools=tools, temperature=0.0)
+        msg = resp.choices[0].message
+        messages.append(msg)
+        
+        if not msg.tool_calls:
+            return msg.content
+            
+        for tc in msg.tool_calls:
+            args = json.loads(tc.function.arguments)
+            print(f"  [Hop {hop}] Sub-query: search_internal_wiki('{args['keyword']}')")
+            res = search_internal_wiki(args["keyword"])
+            messages.append({"role": "tool", "tool_call_id": tc.id, "content": res})
+            
+    return "Multi-hop budget exhausted."
+
+if __name__ == "__main__":
+    hop_question = "What is the warranty coverage on the battery pack used in Project Chetak?"
+    print(f"Multi-Hop Query: '{hop_question}'\n")
+    final_answer = run_multihop_agent(hop_question)
+    print("\nFINAL MULTI-HOP DEDUCTION:\n", final_answer)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 15.0-3: Multi-Hop Investigative Document Reasoning Agent</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Retrieval Hallucination Trap:</strong> When an agent believes that the answer <em>must</em> exist in documentation, it may query the vector store 10 times with subtle variations, ignoring external tools. <em>Mitigation:</em> Bound the retriever tool invocation limit to a maximum of 2 calls per user turn.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Mixed-Context Confusion:</strong> Passing raw SQL table results and vector document paragraphs together in the same scratchpad can confuse the model's arithmetic. <em>Mitigation:</em> Tag observations with explicit semantic source markers: <code>[SOURCE: SQL_RECORD]</code> vs <code>[SOURCE: POLICY_EXCERPT]</code>.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Query Rewrite Semantic Drift:</strong> When rewrites are performed blindly, the rewriter may replace domain terms with generic synonyms (e.g. replacing "AIS-156" with "battery safety test"), causing vector search to miss the exact standard document. <em>Mitigation:</em> Instruct the query rewriter to preserve all numbers, acronyms, and proper nouns.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Infinite Multi-Hop Recursion:</strong> In multi-hop reasoning, circular document citations (Doc A references Doc B, which references Doc A) can cause infinite loop hops. <em>Mitigation:</em> Maintain a visited entity set in the context history.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Traditional RAG vs. Agentic RAG Comparison Matrix</h2>
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Dimension</th>
+                            <th style="padding: 12px; text-align: left;">Traditional RAG</th>
+                            <th style="padding: 12px; text-align: left;">Agentic RAG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Retrieval Invocation</td>
+                            <td style="padding: 12px;">Forced unconditionally on 100% of queries.</td>
+                            <td style="padding: 12px;">Dynamic; invoked only when factual domain knowledge is required.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Mathematical Execution</td>
+                            <td style="padding: 12px;">Hallucinates numbers or guesses arithmetic in text.</td>
+                            <td style="padding: 12px;">Delegates extracted parameters to deterministic calculator tools.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Data Source Diversity</td>
+                            <td style="padding: 12px;">Limited to a single vector database index.</td>
+                            <td style="padding: 12px;">Multi-silo: fuses Vector Stores, SQL databases, and REST APIs.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Error Recovery</td>
+                            <td style="padding: 12px;">Fails silently if initial retrieval is irrelevant.</td>
+                            <td style="padding: 12px;">Self-RAG: evaluates relevance, rewrites query, and re-retrieves.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. What is the fundamental difference between Traditional RAG and Agentic RAG?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Traditional RAG uses Python; Agentic RAG uses Java.</li>
+                        <li class="mcq-option" data-correct="true">Traditional RAG executes a fixed retrieval pipeline for every query, while Agentic RAG treats the retriever as a tool and dynamically decides whether, when, and how to retrieve.</li>
+                        <li class="mcq-option" data-correct="false">Traditional RAG cannot run on Linux.</li>
+                        <li class="mcq-option" data-correct="false">Agentic RAG does not use vector embeddings.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. How does an Agentic RAG system handle a user query like 'Calculate 500 * 18%'?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Embeds the query and searches the vector store for 500 documents.</li>
+                        <li class="mcq-option" data-correct="true">Bypasses document retrieval entirely and dispatches the calculation to a deterministic calculator tool.</li>
+                        <li class="mcq-option" data-correct="false">Throws an HTTP 404 error.</li>
+                        <li class="mcq-option" data-correct="false">Crashes the server.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. What are the three reflection evaluations introduced in the Self-RAG framework?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Read, Write, Delete.</li>
+                        <li class="mcq-option" data-correct="true">IsRetrieve (decision to retrieve), IsRel (document relevance), and IsSup (answer supported by evidence).</li>
+                        <li class="mcq-option" data-correct="false">Encode, Quantize, Cluster.</li>
+                        <li class="mcq-option" data-correct="false">Fast, Normal, Slow.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. What should happen in a Self-RAG pipeline if retrieved documents are graded as irrelevant?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Hallucinate an answer anyway.</li>
+                        <li class="mcq-option" data-correct="true">Rewrite the query using domain keywords and re-execute retrieval, or inform the user that documentation is missing.</li>
+                        <li class="mcq-option" data-correct="false">Terminate the user's account.</li>
+                        <li class="mcq-option" data-correct="false">Reboot the operating system.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. In Program 15.0-1, why are both ChromaDB and SQLite used simultaneously?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because ChromaDB cannot store text.</li>
+                        <li class="mcq-option" data-correct="true">ChromaDB indexes unstructured legal SLA policy paragraphs, while SQLite stores structured customer billing numbers and outage durations.</li>
+                        <li class="mcq-option" data-correct="false">To make the program twice as large.</li>
+                        <li class="mcq-option" data-correct="false">SQLite is required by the OpenAI Python package.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. What is a 'Multi-Hop' reasoning query?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">A query that jumps across 5 network routers.</li>
+                        <li class="mcq-option" data-correct="true">A question requiring the agent to deduce an intermediate unknown from Document A before it can formulate the query to retrieve Document B.</li>
+                        <li class="mcq-option" data-correct="false">A query that switches programming languages.</li>
+                        <li class="mcq-option" data-correct="false">A query containing spelling mistakes.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. How does Agentic RAG optimize vector database infrastructure costs?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">By dynamically classifying intent and skipping vector searches for conversational, navigational, and pure arithmetic queries.</li>
+                        <li class="mcq-option" data-correct="false">By deleting old vectors automatically.</li>
+                        <li class="mcq-option" data-correct="false">By compressing numbers to 8-bit integers.</li>
+                        <li class="mcq-option" data-correct="false">Vector databases are always free.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What is the danger of the 'Retrieval Hallucination Trap'?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The vector database generates fake documents.</li>
+                        <li class="mcq-option" data-correct="true">The agent assumes the answer must be in the documents, looping continuously across search calls even when the data does not exist.</li>
+                        <li class="mcq-option" data-correct="false">The model outputs Japanese instead of English.</li>
+                        <li class="mcq-option" data-correct="false">It corrupts the SQLite database file.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. In multi-silo Agentic RAG, how should different data source observations be labeled?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">With random numbers.</li>
+                        <li class="mcq-option" data-correct="true">With explicit semantic source prefixes (e.g. [SOURCE: SQL_RECORD] vs [SOURCE: POLICY_EXCERPT]) to prevent model reasoning confusion.</li>
+                        <li class="mcq-option" data-correct="false">In uppercase hexadecimal characters.</li>
+                        <li class="mcq-option" data-correct="false">Observations should not be labeled.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. Why is a local calculator tool necessary in Agentic RAG even when using advanced LLMs like GPT-4o?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because GPT-4o cannot write numbers.</li>
+                        <li class="mcq-option" data-correct="true">LLMs are probabilistic token predictors that frequently hallucinate floating-point arithmetic and currency calculations.</li>
+                        <li class="mcq-option" data-correct="false">OpenAI bans mathematical prompt tokens.</li>
+                        <li class="mcq-option" data-correct="false">Calculators speed up GPU training.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master Agentic RAG and multi-source tool orchestration.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Intent Routing Gatekeeper</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build a lightweight classifier node before your RAG pipeline. If the user query is classified as <code>"conversational"</code>, return an instant reply without invoking ChromaDB, logging the saved latency.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Automated Self-RAG Grader Loop</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Implement the Self-RAG grader from <code>Program 15.0-2</code>. If the retrieved documents fail relevance grading (score &lt; 0.60), rewrite the search query and re-execute vector retrieval (maximum 2 retries).</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: SQL + Vector Joint Reconciliation</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Add a 3rd table to SQLite containing vendor purchase orders. Create an agent that cross-references purchase order charges against contract terms stored in ChromaDB, flagging any pricing overcharges.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Multi-Hop Hardware Compatibility Agent</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build an agent with 3 separate document collections: 1) Vehicle Models & Battery Platforms, 2) Battery Cell Chemistries, and 3) Thermal Coolant Specifications. Solve: <em>"What coolant chemical is required for the Tata Nexon EV Max?"</em></p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Latency & Cost Benchmark</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Benchmark 20 mixed queries (5 greetings, 5 math, 5 simple RAG, 5 multi-silo) across both Traditional RAG and Agentic RAG. Compare total token cost, vector search query count, and mean latency.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2310.11511</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">ICLR 2024</span>
+                            </div>
+                            <h4>Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection</h4>
+                            <p>Asai et al. introduce reflection tokens enabling models to dynamically evaluate when retrieval is needed and grade factual grounding.</p>
+                            <a href="https://arxiv.org/abs/2310.11511" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2312.10997</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Survey Paper</span>
+                            </div>
+                            <h4>Retrieval-Augmented Generation for Large Language Models: A Survey</h4>
+                            <p>Gao et al. provide the comprehensive taxonomy of Naive, Advanced, and Modular RAG architectures.</p>
+                            <a href="https://arxiv.org/abs/2312.10997" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangChain</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Tutorial</span>
+                            </div>
+                            <h4>Corrective RAG (CRAG) & Self-RAG Architecture in Python</h4>
+                            <p>Practical implementation guide for integrating document grading, web search fallbacks, and answer evaluators.</p>
+                            <a href="https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_self_rag/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">SQLite Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Database</span>
+                            </div>
+                            <h4>SQLite FTS5 (Full-Text Search) Engine</h4>
+                            <p>Official technical documentation on SQLite's native inverted index engine for structured BM25 hybrid queries.</p>
+                            <a href="https://www.sqlite.org/fts5.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_14.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 14: n8n Visual Automation</span>
+                </a>
+                <a href="day_16.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 16: Project: Company Knowledge Agent</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

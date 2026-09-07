@@ -22,58 +22,61 @@
         <!-- Sidebar Navigation -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2>Agentic AI</h2>
-                <p>Learn by Examples</p>
+                <h2>Agentic AI Course</h2>
             </div>
-            <ul class="toc">
-                <li><a href="day_01.html">Day 01: The AI Landscape</a></li>
-                <li class="active"><a href="day_02.html">Day 02: Python Fundamentals</a></li>
-                <li><a href="day_03.html">Day 03: What is an LLM actually doing?</a></li>
-                <li><a href="day_04.html">Day 04: The OpenAI API</a></li>
-                <li><a href="day_05.html">Day 05: Prompt Engineering</a></li>
-                <li><a href="day_06.html">Day 06: Zero-Shot & Few-Shot</a></li>
-                <li><a href="day_07.html">Day 07: Chain of Thought</a></li>
-                <li><a href="day_08.html">Day 08: System Prompts & Roles</a></li>
-                <li><a href="day_09.html">Day 09: Intro to LangChain</a></li>
-                <li><a href="day_10.html">Day 10: Prompts & Output Parsers</a></li>
-                <li><a href="day_11.html">Day 11: Memory & Chat History</a></li>
-                <li><a href="day_12.html">Day 12: Embeddings & Vector DBs</a></li>
-                <li><a href="day_13.html">Day 13: Retrieval Augmented Gen (RAG)</a></li>
-                <li><a href="day_14.html">Day 14: RAG Implementation</a></li>
-                <li><a href="day_15.html">Day 15: Introduction to Agents</a></li>
-                <li><a href="day_16.html">Day 16: Tools & Function Calling</a></li>
-                <li><a href="day_17.html">Day 17: Building a Simple Agent</a></li>
-                <li><a href="day_18.html">Day 18: ReAct Architecture</a></li>
-                <li><a href="day_19.html">Day 19: Evaluating Agents</a></li>
-                <li><a href="day_20.html">Day 20: Intro to Automation (n8n)</a></li>
-                <li><a href="day_21.html">Day 21: Connecting AI to APIs</a></li>
-                <li><a href="day_22.html">Day 22: Advanced Web Scraping</a></li>
-                <li><a href="day_23.html">Day 23: Multi-Agent Systems</a></li>
-                <li><a href="day_24.html">Day 24: Final Project</a></li>
-            </ul>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li class="active"><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
         </nav>
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <header class="top-nav">
+            <header class="top-nav" id="top-nav">
                 <div class="nav-left">
-                    <button class="hamburger-btn" id="sidebar-toggle" aria-label="Toggle Sidebar">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="3" y1="12" x2="21" y2="12"></line>
                             <line x1="3" y1="6" x2="21" y2="6"></line>
                             <line x1="3" y1="18" x2="21" y2="18"></line>
                         </svg>
                     </button>
                 </div>
-                <div class="nav-right">
-                    <span class="completeness-badge">0% Complete</span>
-                    <button class="icon-btn theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
-                            <circle cx="12" cy="12" r="5"></circle>
-                            <line x1="12" y1="1" x2="12" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="23"></line>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>8%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                         </svg>
                     </button>
                 </div>
@@ -82,6 +85,52 @@
             <article class="book-page">
                 <span class="chapter-number">Session 2.0</span>
                 <h1>Python Fundamentals for Agentic AI</h1>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 1.1</span>
+                            <span class="plan-badge plan-badge-secondary">Week 1</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Harden Python 3.12 primitives to create bug-free, type-safe agent state containers.</li><li>Master Pydantic v2 schema validation to eliminate ill-formed LLM JSON hallucinations before execution.</li><li>Build asynchronous concurrency pipelines with full-jitter exponential backoff to survive API outages.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Algebraic Type Systems in Python: `TypedDict`, `Annotated`, and runtime type introspection.</li><li>Pydantic v2 Rust core validation engine (`pydantic-core`) and serialization performance.</li><li>Network resilience dynamics: Full-jitter exponential backoff vs. naive linear retry storms.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 2.1: Production Type-Safe Agent State Container with `Annotated` and `TypedDict`.</li><li>Program 2.2: Pydantic v2 Automated Tool Schema Extractor with strict Field validation.</li><li>Program 2.3: Asynchronous Multi-Agent Execution Engine with Semaphores and Full-Jitter Backoff.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Silent Type Coercion: Passing unvalidated dictionaries between agent nodes causing downstream runtime crashes.</li><li>Thundering Herd Outages: Retrying failed LLM requests at fixed intervals, amplifying upstream rate-limit errors.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Async Resilient Agent Gateway Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
 
                 <p><strong>The Problem:</strong> Building an AI Agent requires connecting an LLM to the outside world. Your code must sanitize user inputs, loop through multi-step reasoning, ingest unstructured PDFs, and save state to databases. If you don't understand core Python fundamentals like classes, sets, loops, and regex, you cannot build a functional agent.</p>
                 <p><strong>The Solution:</strong> In this session, we will bypass standard Python theory. We will look at exactly <strong>11 Practical Python Programs</strong> designed specifically for Agentic workflows—covering everything from OOP Classes to Database CRUD ops.</p>
@@ -310,6 +359,167 @@ conn.close()
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
+                <h2>12. Modern Python Typing for Agent State Management</h2>
+                <p>In modern agent frameworks (like LangGraph and AutoGen), agents pass structured state dictionaries across dozens of graph nodes. Plain unstructured dictionaries lead to silent runtime `KeyError` bugs. Python 3.10+ provides robust typing primitives:</p>
+                <ul>
+                    <li><strong><code>TypedDict</code>:</strong> Defines dictionary shapes with strict compile-time key names and value types. Unlike dataclasses, TypedDicts serialize directly to JSON without overhead.</li>
+                    <li><strong><code>Annotated</code>:</strong> Attaches custom metadata or reducer functions to type annotations (fundamental to LangGraph state reducers like <code>Annotated[List[str], operator.add]</code>).</li>
+                    <li><strong><code>Optional[T]</code> / <code>Union[T, None]</code>:</strong> Signals that an agent attribute may start as <code>None</code> before being populated by a downstream node.</li>
+                </ul>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>13. Pydantic v2: Schema Enforcement & Constrained Extraction</h2>
+                <p>Large Language Models produce stochastic, unvalidated text. <strong>Pydantic v2</strong> is the industrial backbone of agent tooling. It compiles Python classes to high-speed Rust parsers, validating LLM tool arguments, coercing types, and rejecting corrupted payloads before they touch your production database.</p>
+
+                <div class="code-header">
+                    <span>pydantic_agent_schema.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 2.0-12: Pydantic v2 Schema Enforcement for Agent Tools
+from pydantic import BaseModel, Field, field_validator, ValidationError
+from typing import List, Optional
+import json
+
+class DatabaseQueryToolSchema(BaseModel):
+    """Schema validating SQL generation parameters emitted by an LLM."""
+    query: str = Field(..., description="The raw SQL SELECT statement to execute.")
+    tables: List[str] = Field(..., min_length=1, description="List of tables touched by the query.")
+    timeout_seconds: Optional[int] = Field(default=30, ge=1, le=120)
+    read_only: bool = Field(default=True, description="Enforce read-only execution.")
+
+    @field_validator("query")
+    @classmethod
+    def validate_no_mutation(cls, v: str) -> str:
+        prohibited = ["DELETE", "DROP", "UPDATE", "INSERT", "TRUNCATE", "ALTER"]
+        if any(keyword in v.upper() for keyword in prohibited):
+            raise ValueError(f"Security Alert: Destructive SQL keyword detected in read-only tool query!")
+        return v
+
+# Test 1: Valid LLM Tool Call
+valid_llm_output = '{"query": "SELECT user_id, email FROM users WHERE is_active = 1", "tables": ["users"]}'
+try:
+    validated_data = DatabaseQueryToolSchema.model_validate_json(valid_llm_output)
+    print("✓ Validated Tool Schema Successfully:")
+    print(f"  SQL: {validated_data.query}")
+    print(f"  Tables: {validated_data.tables}")
+    print(f"  Timeout: {validated_data.timeout_seconds}s")
+except ValidationError as e:
+    print(f"Validation Failed: {e}")
+
+# Test 2: Injected Destructive Query from Malicious Prompt
+malicious_output = '{"query": "DROP TABLE users; SELECT 1", "tables": ["users"]}'
+try:
+    DatabaseQueryToolSchema.model_validate_json(malicious_output)
+except ValidationError as e:
+    print("\n🚨 Guardrail Caught Malicious Tool Payload:")
+    print(e.errors()[0]["msg"])
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-12: Pydantic v2 Tool Validation & Guardrails</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>14. High-Throughput Asynchronous Concurrency with asyncio</h2>
+                <p>LLM API calls are I/O bound: your Python process spends 95% of its time waiting for remote GPUs over network sockets. Synchronous code processes documents sequentially (100 docs × 2 sec = 200 seconds). Asynchronous concurrency via <strong><code>asyncio.gather()</code></strong> and <strong><code>asyncio.Semaphore</code></strong> processes 100 documents in parallel within 5 seconds without hitting provider rate limits.</p>
+
+                <div class="code-header">
+                    <span>async_llm_batch.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 2.0-13: Async LLM Concurrent Batch Processor with Semaphore
+import asyncio
+import time
+from typing import List
+
+async def simulate_async_llm_call(doc_id: int, semaphore: asyncio.Semaphore) -> dict:
+    """Simulates an asynchronous HTTP request to an LLM provider with concurrency bounds."""
+    async with semaphore:  # Bounds concurrent requests to avoid HTTP 429 Rate Limits
+        print(f"[Worker] Starting analysis on Document #{doc_id}...")
+        start_time = time.perf_counter()
+        await asyncio.sleep(0.5)  # Simulate non-blocking network socket wait
+        elapsed = time.perf_counter() - start_time
+        print(f"  ✓ Finished Document #{doc_id} in {elapsed:.2f}s")
+        return {"doc_id": doc_id, "summary": f"Summary of doc {doc_id}", "latency_s": elapsed}
+
+async def run_batch_pipeline(total_docs: int = 10, max_concurrency: int = 4) -> List[dict]:
+    # Limit max active concurrent sockets to 4
+    sem = asyncio.Semaphore(max_concurrency)
+    tasks = [simulate_async_llm_call(i, sem) for i in range(1, total_docs + 1)]
+    results = await asyncio.gather(*tasks)
+    return results
+
+if __name__ == "__main__":
+    t0 = time.perf_counter()
+    print("=== EXECUTING ASYNCHRONOUS BATCH RAG PIPELINE ===")
+    results = asyncio.run(run_batch_pipeline(total_docs=8, max_concurrency=4))
+    total_time = time.perf_counter() - t0
+    print(f"\nCompleted {len(results)} LLM calls in {total_time:.2f} seconds total!")
+    print(f"(Synchronous serial execution would have required {0.5 * len(results):.2f} seconds)")
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-13: Asynchronous Batch Ingestion with Semaphore Rate Limiting</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>15. Fault-Tolerant Retries with Exponential Backoff & Jitter</h2>
+                <p>Enterprise AI APIs regularly throw <strong>HTTP 429 (Rate Limit Exceeded)</strong> and <strong>HTTP 503/504 (Server Overload)</strong>. Naive code crashes; naive retries hammer the server simultaneously (the <em>thundering herd problem</em>). Production agents must implement <strong>Full Jitter Exponential Backoff</strong>:</p>
+                <div style="font-family: 'Fira Code', monospace; padding: 0.75rem; background: var(--code-bg); border-radius: 4px; margin: 0.75rem 0;">
+                    sleep_interval = random.uniform(0, min(max_delay, base_delay * (2 ** attempt)))
+                </div>
+
+                <div class="code-header">
+                    <span>resilient_retry_decorator.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 2.0-14: Production Retry Decorator with Exponential Backoff & Jitter
+import functools
+import random
+import time
+from typing import Callable, Any
+
+def retry_with_exponential_backoff(
+    max_retries: int = 3,
+    base_delay: float = 0.5,
+    max_delay: float = 8.0,
+    retry_exceptions: tuple = (ConnectionError, TimeoutError)
+):
+    """Decorator granting resilient retry semantics with random jitter."""
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs) -> Any:
+            for attempt in range(max_retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except retry_exceptions as exc:
+                    if attempt == max_retries:
+                        print(f"🚨 [FATAL] Exhausted all {max_retries} retries. Raising exception: {exc}")
+                        raise
+                    # Compute exponential backoff with full jitter
+                    ceiling = min(max_delay, base_delay * (2 ** attempt))
+                    sleep_time = random.uniform(base_delay, ceiling)
+                    print(f"⚠️ [Attempt {attempt + 1}/{max_retries}] Caught {exc.__class__.__name__}. Backing off for {sleep_time:.2f}s...")
+                    time.sleep(sleep_time)
+        return wrapper
+    return decorator
+
+# Simulation demonstration
+flaky_counter = 0
+
+@retry_with_exponential_backoff(max_retries=3, base_delay=0.3, retry_exceptions=(ConnectionError,))
+def call_flaky_llm_api(prompt: str) -> str:
+    global flaky_counter
+    flaky_counter += 1
+    if flaky_counter < 3:
+        raise ConnectionError("504 Gateway Timeout: Remote GPU cluster busy")
+    return f"Success on attempt {flaky_counter}! Response to '{prompt}'"
+
+print("=== TESTING RESILIENT RETRY DECORATOR ===")
+response = call_flaky_llm_api("Analyze customer churn")
+print(f"Result: {response}")
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 2.0-14: Resilient Exponential Backoff Retry Decorator</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
                 <h2>Topic Quiz (10 Questions)</h2>
                 
                 <div class="mcq-container">
@@ -460,6 +670,56 @@ conn.close()
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
                     <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: JSON Parsing Challenge</h3>
                     <p style="margin-bottom: 0;"><strong>Task:</strong> Use <code>json.loads()</code> to parse this exact string: <code>'{"user": "Alex", "address": {"city": "Seattle", "zip": "98101"}}'</code>. After parsing it into a dictionary, write the code to extract and print only the zip code.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Python Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Python 3.12</span>
+                            </div>
+                            <h4>PEP 589 & Typing Specification</h4>
+                            <p>Formal Python standard for TypedDict, structural type checking, and generic type annotations in modern codebases.</p>
+                            <a href="https://docs.python.org/3/library/typing.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Pydantic Org</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Pydantic v2</span>
+                            </div>
+                            <h4>Pydantic v2 Core Architecture & Performance</h4>
+                            <p>Official technical documentation covering schema generation, BaseModel field constraints, and Rust-based deserialization.</p>
+                            <a href="https://docs.pydantic.dev/latest/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">AWS Architecture</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Amazon Builders' Library</span>
+                            </div>
+                            <h4>Exponential Backoff And Jitter</h4>
+                            <p>Marc Brooker's seminal analysis of network retry storms and the mathematical superiority of Decorrelated/Full Jitter.</p>
+                            <a href="https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Python Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Asyncio</span>
+                            </div>
+                            <h4>Asyncio Coroutines, Tasks & Semaphores</h4>
+                            <p>Official documentation for non-blocking I/O, event loops, and concurrency synchronization primitives in Python.</p>
+                            <a href="https://docs.python.org/3/library/asyncio.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
                 </div>
 
             </article>

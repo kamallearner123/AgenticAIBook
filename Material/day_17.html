@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 17: LangGraph Fundamentals: Nodes, Edges, Reducers & Cyclic State Machines</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li class="active"><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>71%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 17.0</span>
+                <h1>Day 17: LangGraph Fundamentals: Nodes, Edges, Reducers & Cyclic State Machines</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Production Problem Statement:</strong> Linear chains (such as LCEL pipelines or standard DAG workflow orchestrators like Airflow and Prefect) operate strictly as unidirectional pipelines: inputs enter, sequential functions execute, and terminal outputs emerge. But mission-critical enterprise AI workflows are intrinsically <em>non-linear, stateful, and cyclic</em>: code generation requires an execution-evaluation-refinement loop; loan underwriting requires multi-branch human escalations and automated document re-requests; and autonomous research requires dynamic query reformulations. If your framework forces a Directed Acyclic Graph (DAG), modeling iterative self-healing requires hacky outer <code>while</code> loops that bypass checkpointing, isolation, and observability. How do we model robust, deterministic, cyclic state machines with mathematical state reduction guarantees?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 3.0</span>
+                            <span class="plan-badge plan-badge-secondary">Week 3</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Formulate agentic execution graphs as Mealy-type Finite State Machines (FSMs) using LangGraph.</li><li>Master StateGraph channel reducers (`operator.add` vs. destructive overwrite) for collaborative multi-node state.</li><li>Build a cyclic self-refining code generation evaluator with bounded loop guards.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Mealy Finite State Machine definition: $M = (Q, \Sigma, \delta, q_0, F)$ with state transitions conditioned on outputs.</li><li>StateGraph channel reducers: How `operator.add` creates append-only message logs while preserving immutability.</li><li>Cyclic execution convergence: Guaranteeing loop termination via max-iteration bounds and monotonic progress metrics.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 17.1: Production LangGraph StateGraph with State Reducers and Message History.</li><li>Program 17.2: Cyclic Self-Refining Code Generation & Automated Test Evaluator.</li><li>Program 17.3: Multi-Branch Conditional Router with Mermaid Flowchart Export.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>The Overwrite Reducer Trap: Failing to specify `operator.add` on message lists, causing previous conversation history to be deleted.</li><li>Non-Converging Cyclic Loops: Agent cycles endlessly between code generation and syntax test failure, exhausting token budgets.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> LangGraph FSM StateGraph & Cyclic Code Evaluator • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. Theoretical Foundations: State Machines vs. Directed Acyclic Graphs</h2>
+                <p>To architect resilient agents, we must formally model their computational behavior. A standard pipeline is a <strong>Directed Acyclic Graph (DAG)</strong> $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ where the path length is bounded and $\forall v_i \in \mathcal{V}$, there exists no path $v_i \to \dots \to v_i$. Conversely, an agentic loop is an extended <strong>Mealy-type Finite State Machine (FSM)</strong> or <strong>Discrete Transition System</strong> defined as a 6-tuple:</p>
+                
+                <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
+                    $$\mathcal{M} = \langle \mathcal{S}, \mathcal{N}, \mathcal{E}_{\text{cond}}, \delta, s_0, \mathcal{F} \rangle$$
+                </div>
+
+                <ul>
+                    <li><strong>$\mathcal{S}$ (State Space):</strong> The unified typed schema (representing conversational context, scratchpad memory, token tallies, and domain artifacts).</li>
+                    <li><strong>$\mathcal{N}$ (Node Functions):</strong> Computations $f_i: \mathcal{S} \to \Delta \mathcal{S}$ that ingest the current state snapshot and output partial delta updates $\Delta \mathcal{S}$.</li>
+                    <li><strong>$\delta$ (State Reducer Function):</strong> The algebraic combiner $\delta: \mathcal{S} \times \Delta \mathcal{S} \to \mathcal{S}$ that merges the partial delta into the global state. For simple scalar fields, $\delta(s, \Delta s) = \Delta s$ (overwrite). For append-only audit trails or message histories, $\delta(s, \Delta s) = s \oplus \Delta s$ where $\oplus$ is list concatenation (monoidal addition).</li>
+                    <li><strong>$\mathcal{E}_{\text{cond}}$ (Conditional Routing Edges):</strong> Transition functions $R: \mathcal{S} \to \mathcal{N} \cup \{\mathcal{F}\}$ that evaluate the mutated state dynamically to select the subsequent node or terminate.</li>
+                    <li><strong>$s_0 \in \mathcal{S}$ (Initial State):</strong> The boundary payload fed at runtime invocation.</li>
+                    <li><strong>$\mathcal{F}$ (Terminal State / <code>END</code>):</strong> The fixed-point sink node that terminates the graph execution.</li>
+                </ul>
+
+                <p>Because cyclic graphs introduce the mathematical possibility of infinite loops ($v_1 \to v_2 \to v_1 \dots$), production graph engines require explicit <strong>Bounded Recursion Limits</strong> $\tau_{\max}$, ensuring that if step count $t > \tau_{\max}$, execution halts immediately with a <code>GraphRecursionError</code>.</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Architecture Blueprint: The LangGraph Runtime Engine</h2>
+                <p>The diagram below details the internal execution cycle of LangGraph, illustrating how state is read, updated via reducers, checkpointed, and conditionally routed across cyclic transitions:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color); font-size: 0.85rem; line-height: 1.45;">
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span> <span style="color: #3b82f6; font-weight: bold;">LANGGRAPH EXECUTION TICK CYCLE</span>                                                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>  [User Input Payload s0]                                                          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            |                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            v                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +---------------+       Read State      +----------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | Checkpointer  | --------------------&gt; | Active Node Function f_i(state)  |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | (Memory/SQL)  |                       |  - Performs LLM inference        |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +---------------+                       |  - Runs external sandbox tools   |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            ^                               +----------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            |                                                |                     <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>      Write New State                                   Emits Delta                <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            |                                                v                     <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +---------------+    delta = delta_s    +----------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | Reducer       | &lt;-------------------- | Channel Reducer Engine           |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | s_next = s+ds |                       |  - Operator.add: append to list  |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +---------------+                       |  - Overwrite: replace primitive  |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            |                               +----------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            v                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +--------------------------------------------------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | CONDITIONAL EDGE EVALUATION: route_condition(s_next)                     |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +--------------------------------------------------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>             |                                                |                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>      [Needs Revision]                                [Quality Met]                <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>             |                                                |                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>             v                                                v                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>   +--------------------+                           +-------------------+          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>   | Loop Back Node     |                           | Terminal Sink     |          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>   | (e.g. Generator)   |                           | (END)             |          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>   +--------------------+                           +-------------------+          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 17.0-1: LangGraph Execution Engine Architecture and State Reducer Flow</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. The Mechanics of State Reducers (<code>Annotated</code> & <code>operator.add</code>)</h2>
+                <p>The single greatest point of confusion for engineers migrating from LangChain LCEL to LangGraph is how state is updated. In Python's standard <code>TypedDict</code>, keys are overwritten by default:</p>
+
+                <div class="table-responsive">
+                    <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="background-color: var(--sidebar-bg); border-bottom: 2px solid var(--border-color); text-align: left;">
+                                <th style="padding: 0.75rem;">State Schema Definition</th>
+                                <th style="padding: 0.75rem;">Node Returns</th>
+                                <th style="padding: 0.75rem;">Resulting State Behavior</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">messages: list[str]</td>
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">{"messages": ["new msg"]}</td>
+                                <td style="padding: 0.75rem;"><strong style="color: #ef4444;">OVERWRITES</strong>: The entire previous conversation history is discarded, replaced by a single element list!</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">messages: Annotated[list[str], operator.add]</td>
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">{"messages": ["new msg"]}</td>
+                                <td style="padding: 0.75rem;"><strong style="color: #10b981;">APPENDS</strong>: The new message is concatenated to the end of the existing list via <code>operator.add(prev, curr)</code>.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">retry_count: int</td>
+                                <td style="padding: 0.75rem; font-family: 'Fira Code', monospace;">{"retry_count": state["retry_count"] + 1}</td>
+                                <td style="padding: 0.75rem;"><strong style="color: #3b82f6;">SCALAR OVERWRITE</strong>: Overwrites the integer counter with the new calculated scalar.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Complete Python Implementation 1: StateGraph with Reducers & Message History</h2>
+                <p>In this production-grade foundation, we build a multi-node conversation graph featuring append-only message reducers, scalar counter updates, and full execution telemetry.</p>
+
+                <div class="code-header">
+                    <span>program_17_1_stategraph_reducers.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 17.1: StateGraph Foundation with Custom Reducers & Message History
+Demonstrating TypedDict, Annotated reducers, entry points, and deterministic edges.
+"""
+
+from typing import TypedDict, Annotated, List, Dict, Any
+import operator
+from langgraph.graph import StateGraph, END
+
+# 1. State Definition with Type Annotations and Reducer Functions
+class ConversationalAgentState(TypedDict):
+    user_query: str
+    # Annotated[List[str], operator.add] ensures any returned list is APPENDED, not overwritten
+    conversation_history: Annotated[List[str], operator.add]
+    intermediate_steps: Annotated[List[str], operator.add]
+    iteration_count: int
+    sentiment: str
+    is_complete: bool
+
+# 2. Discrete Node Functions
+def intake_and_classify_node(state: ConversationalAgentState) -> Dict[str, Any]:
+    query = state["user_query"].lower()
+    print(f"\n[NODE: Intake] Ingesting query: '{state['user_query']}'")
+    
+    # Classify sentiment/intent
+    sentiment = "negative" if any(w in query for w in ["broken", "fail", "bad", "angry"]) else "neutral"
+    
+    return {
+        "conversation_history": [f"User: {state['user_query']}"],
+        "intermediate_steps": [f"Classified sentiment as '{sentiment}'"],
+        "sentiment": sentiment,
+        "iteration_count": state.get("iteration_count", 0) + 1
+    }
+
+def domain_enrichment_node(state: ConversationalAgentState) -> Dict[str, Any]:
+    print(f"[NODE: Domain Enrichment] Enriching context for sentiment: {state['sentiment']}")
+    enrichment = "VIP Escaped Queue" if state["sentiment"] == "negative" else "Standard Tier Routing"
+    
+    return {
+        "conversation_history": [f"System: Added context metadata [{enrichment}]"],
+        "intermediate_steps": [f"Enriched ticket with SLA tag: {enrichment}"]
+    }
+
+def response_synthesis_node(state: ConversationalAgentState) -> Dict[str, Any]:
+    print("[NODE: Response Synthesis] Formulating response based on accumulated history...")
+    sentiment = state["sentiment"]
+    
+    if sentiment == "negative":
+        answer = "Agent: We detect your system is reporting errors. Escalating directly to Tier-3 support immediately."
+    else:
+        answer = "Agent: Your request has been logged and queued for standard processing. Expect updates within 2 hours."
+        
+    return {
+        "conversation_history": [answer],
+        "intermediate_steps": ["Synthesized final answer"],
+        "is_complete": True
+    }
+
+# 3. Graph Assembly
+def build_basic_graph():
+    workflow = StateGraph(ConversationalAgentState)
+    
+    # Register Nodes
+    workflow.add_node("intake", intake_and_classify_node)
+    workflow.add_node("enrichment", domain_enrichment_node)
+    workflow.add_node("synthesis", response_synthesis_node)
+    
+    # Set Entry Point
+    workflow.set_entry_point("intake")
+    
+    # Connect Sequential Edges
+    workflow.add_edge("intake", "enrichment")
+    workflow.add_edge("enrichment", "synthesis")
+    workflow.add_edge("synthesis", END)
+    
+    return workflow.compile()
+
+# 4. Execution & Verification
+if __name__ == "__main__":
+    app = build_basic_graph()
+    
+    initial_payload: ConversationalAgentState = {
+        "user_query": "The production database is broken and failing queries!",
+        "conversation_history": [],
+        "intermediate_steps": [],
+        "iteration_count": 0,
+        "sentiment": "",
+        "is_complete": False
+    }
+    
+    print("=== EXECUTING LANGGRAPH REDUCER PIPELINE ===")
+    final_state = app.invoke(initial_payload)
+    
+    print("\n=== FINAL ACCUMULATED STATE ===")
+    print(f"Sentiment: {final_state['sentiment']}")
+    print(f"Iteration Count: {final_state['iteration_count']}")
+    print("\nAccumulated Conversation History (Appended via operator.add):")
+    for msg in final_state["conversation_history"]:
+        print(f"  • {msg}")
+        
+    print("\nAccumulated Intermediate Audit Trail:")
+    for step in final_state["intermediate_steps"]:
+        print(f"  -> {step}")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Complete Python Implementation 2: Cyclic Self-Refining Code Generator with Bounded Loop</h2>
+                <p>Now let's build the gold-standard agent pattern: an <strong>Evaluator-Optimizer Cycle</strong>. The generator drafts code, a tester executes static validation against test assertions, and a conditional edge dynamically decides whether to loop back for revision or finalize.</p>
+
+                <div class="code-header">
+                    <span>program_17_2_cyclic_evaluator.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 17.2: Cyclic Self-Refining Code Evaluator with Bounded Iteration
+Implements an iterative generate -> test -> critique -> fix loop in LangGraph.
+"""
+
+from typing import TypedDict, Annotated, List, Dict, Any, Literal
+import operator
+from langgraph.graph import StateGraph, END
+
+class CodeRefinementState(TypedDict):
+    task_description: str
+    current_code: str
+    test_results: str
+    error_feedback: Annotated[List[str], operator.add]
+    iteration_count: int
+    max_retries: int
+    is_passing: bool
+    final_verdict: str
+
+# Node 1: Code Generator (improves on each cycle)
+def code_generator_node(state: CodeRefinementState) -> Dict[str, Any]:
+    iter_num = state.get("iteration_count", 0) + 1
+    feedback = state.get("error_feedback", [])
+    print(f"\n[GENERATOR NODE] --- Starting Iteration #{iter_num} ---")
+    
+    if iter_num == 1:
+        # Deliberate vulnerability: ZeroDivisionError and missing typing
+        print("  -> Drafting initial naive implementation...")
+        code = "def calculate_ratio(a, b):\n    return a / b"
+    elif iter_num == 2:
+        # Deliberate partial fix: handles zero but crashes on negative values
+        print("  -> Applying critique #1: Adding zero division check...")
+        code = (
+            "def calculate_ratio(a: float, b: float) -> float:\n"
+            "    if b == 0.0:\n"
+            "        return 0.0\n"
+            "    return a / b"
+        )
+    else:
+        # Complete robust fix passing all edge cases
+        print("  -> Applying critique #2: Hardening type safety and negative boundary checks...")
+        code = (
+            "def calculate_ratio(a: float, b: float) -> float:\n"
+            "    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):\n"
+            "        raise TypeError('Inputs must be numeric.')\n"
+            "    if b == 0.0:\n"
+            "        return 0.0\n"
+            "    return round(float(a) / float(b), 4)"
+        )
+
+    return {
+        "current_code": code,
+        "iteration_count": iter_num
+    }
+
+# Node 2: Deterministic Test Runner Node
+def static_test_runner_node(state: CodeRefinementState) -> Dict[str, Any]:
+    code = state["current_code"]
+    iter_num = state["iteration_count"]
+    print(f"[TEST RUNNER NODE] Executing validation suite on code version #{iter_num}...")
+    
+    # Check 1: Zero handling
+    if "b == 0" not in code:
+        critique = f"Iter {iter_num}: Failed ZeroDivisionCheck: Must handle b == 0 gracefully."
+        print(f"  &cross; FAILED: {critique}")
+        return {"test_results": "FAIL", "is_passing": False, "error_feedback": [critique]}
+        
+    # Check 2: Type checking
+    if "isinstance" not in code:
+        critique = f"Iter {iter_num}: Failed TypeSafetyCheck: Must guard against non-numeric arguments."
+        print(f"  &cross; FAILED: {critique}")
+        return {"test_results": "FAIL", "is_passing": False, "error_feedback": [critique]}
+
+    print("  &check; ALL TESTS PASSED: ZeroDivisionCheck, TypeSafetyCheck, and PrecisionNorm.")
+    return {
+        "test_results": "PASS",
+        "is_passing": True,
+        "error_feedback": [f"Iter {iter_num}: All test specifications passed successfully."]
+    }
+
+# Node 3: Finalizer Node
+def finalize_node(state: CodeRefinementState) -> Dict[str, Any]:
+    print("\n[FINALIZE NODE] Code successfully validated. Committing to artifact store.")
+    return {"final_verdict": "APPROVED_FOR_RELEASE"}
+
+# Node 4: Circuit-Breaker Escalation Node
+def human_escalation_node(state: CodeRefinementState) -> Dict[str, Any]:
+    print("\n[ESCALATION NODE] Max iterations exhausted without achieving clean test pass.")
+    return {"final_verdict": "ESCALATED_TO_HUMAN_ENGINEER"}
+
+# Conditional Edge Router Function
+def evaluate_test_verdict(state: CodeRefinementState) -> Literal["finalize", "retry", "escalate"]:
+    if state["is_passing"]:
+        return "finalize"
+    
+    if state["iteration_count"] >= state["max_retries"]:
+        return "escalate"
+        
+    print(f"[ROUTER] Verdict: Retrying code generation loop (Attempt {state['iteration_count']}/{state['max_retries']})...")
+    return "retry"
+
+# Graph Construction
+def build_self_refining_graph():
+    workflow = StateGraph(CodeRefinementState)
+    
+    workflow.add_node("generator", code_generator_node)
+    workflow.add_node("test_runner", static_test_runner_node)
+    workflow.add_node("finalize", finalize_node)
+    workflow.add_node("escalate", human_escalation_node)
+    
+    workflow.set_entry_point("generator")
+    
+    # Static edge from generator to tester
+    workflow.add_edge("generator", "test_runner")
+    
+    # Conditional edge forming the cycle
+    workflow.add_conditional_edges(
+        "test_runner",
+        evaluate_test_verdict,
+        {
+            "finalize": "finalize",
+            "retry": "generator",      # THE CYCLIC EDGE: LOOPS BACK TO GENERATOR
+            "escalate": "escalate"
+        }
+    )
+    
+    workflow.add_edge("finalize", END)
+    workflow.add_edge("escalate", END)
+    
+    return workflow.compile()
+
+if __name__ == "__main__":
+    graph = build_self_refining_graph()
+    
+    initial_input: CodeRefinementState = {
+        "task_description": "Write a robust division function that handles zeroes and invalid types.",
+        "current_code": "",
+        "test_results": "",
+        "error_feedback": [],
+        "iteration_count": 0,
+        "max_retries": 3,
+        "is_passing": False,
+        "final_verdict": ""
+    }
+    
+    # Execute with explicit recursion limit guard
+    result = graph.invoke(initial_input, config={"recursion_limit": 25})
+    
+    print("\n" + "="*50)
+    print(f"EXECUTION COMPLETE: Verdict = {result['final_verdict']}")
+    print(f"Total Iterations: {result['iteration_count']}")
+    print("\nCritique History (Accumulated via Reducer):")
+    for fb in result["error_feedback"]:
+        print(f"  - {fb}")
+    print("\nFinal Verified Code Output:")
+    print(result["current_code"])
+    print("="*50)
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Complete Python Implementation 3: Multi-Branch Routing Graph with State Inspection</h2>
+                <p>Enterprise applications rarely follow simple single loops; they involve multi-path bifurcations (triage, fraud detection, security verification, and automated routing). Program 17.3 demonstrates dynamic multi-branch routing, graph compilation options, and programmatic visualization export.</p>
+
+                <div class="code-header">
+                    <span>program_17_3_multibranch_router.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 17.3: Enterprise Multi-Branch Conditional Routing Graph
+Features dynamic triage, fraud risk assessment, VIP routing, and Mermaid diagram export.
+"""
+
+from typing import TypedDict, Annotated, Literal, Dict, Any
+import operator
+from langgraph.graph import StateGraph, END
+
+class LoanApplicationState(TypedDict):
+    applicant_name: str
+    credit_score: int
+    requested_amount: float
+    annual_income: float
+    dti_ratio: float
+    risk_level: str
+    audit_log: Annotated[list[str], operator.add]
+    decision: str
+
+def ingest_and_audit_node(state: LoanApplicationState) -> Dict[str, Any]:
+    dti = round((state["requested_amount"] * 0.05) / (state["annual_income"] / 12), 3)
+    return {
+        "dti_ratio": dti,
+        "audit_log": [f"Application received for {state['applicant_name']}. Computed DTI: {dti}"]
+    }
+
+def risk_classifier_node(state: LoanApplicationState) -> Dict[str, Any]:
+    score = state["credit_score"]
+    dti = state["dti_ratio"]
+    
+    if score < 580 or dti > 0.45:
+        risk = "HIGH_RISK"
+    elif score >= 750 and dti < 0.25:
+        risk = "LOW_RISK"
+    else:
+        risk = "MEDIUM_RISK"
+        
+    return {
+        "risk_level": risk,
+        "audit_log": [f"Risk analysis concluded: Tier assigned = {risk} (Score: {score}, DTI: {dti})"]
+    }
+
+def auto_approval_node(state: LoanApplicationState) -> Dict[str, Any]:
+    return {
+        "decision": "INSTANT_APPROVAL",
+        "audit_log": ["Policy Rule #401 triggered: Instant auto-approval granted."]
+    }
+
+def manual_underwriting_node(state: LoanApplicationState) -> Dict[str, Any]:
+    return {
+        "decision": "QUEUED_FOR_OFFICER_REVIEW",
+        "audit_log": ["Application routed to Tier-2 senior credit committee."]
+    }
+
+def auto_rejection_node(state: LoanApplicationState) -> Dict[str, Any]:
+    return {
+        "decision": "AUTOMATIC_REJECTION",
+        "audit_log": ["Policy Rule #909 triggered: Risk metrics exceed underwriting tolerance."]
+    }
+
+def routing_condition(state: LoanApplicationState) -> Literal["approve", "review", "reject"]:
+    risk = state["risk_level"]
+    if risk == "LOW_RISK":
+        return "approve"
+    elif risk == "MEDIUM_RISK":
+        return "review"
+    else:
+        return "reject"
+
+def build_enterprise_loan_graph():
+    builder = StateGraph(LoanApplicationState)
+    
+    builder.add_node("intake", ingest_and_audit_node)
+    builder.add_node("risk_classifier", risk_classifier_node)
+    builder.add_node("auto_approve", auto_approval_node)
+    builder.add_node("manual_review", manual_underwriting_node)
+    builder.add_node("auto_reject", auto_rejection_node)
+    
+    builder.set_entry_point("intake")
+    builder.add_edge("intake", "risk_classifier")
+    
+    builder.add_conditional_edges(
+        "risk_classifier",
+        routing_condition,
+        {
+            "approve": "auto_approve",
+            "review": "manual_review",
+            "reject": "auto_reject"
+        }
+    )
+    
+    builder.add_edge("auto_approve", END)
+    builder.add_edge("manual_review", END)
+    builder.add_edge("auto_reject", END)
+    
+    return builder.compile()
+
+if __name__ == "__main__":
+    app = build_enterprise_loan_graph()
+    
+    # Test Case: Prime Applicant
+    prime_applicant: LoanApplicationState = {
+        "applicant_name": "Elena Rostova",
+        "credit_score": 790,
+        "requested_amount": 25000.0,
+        "annual_income": 140000.0,
+        "dti_ratio": 0.0,
+        "risk_level": "",
+        "audit_log": [],
+        "decision": ""
+    }
+    
+    print("=== EXECUTING LOAN UNDERWRITING WORKFLOW ===")
+    result = app.invoke(prime_applicant)
+    
+    print(f"Applicant: {result['applicant_name']}")
+    print(f"Risk Rating: {result['risk_level']}")
+    print(f"Final Decision: {result['decision']}")
+    print("Audit Log:")
+    for entry in result["audit_log"]:
+        print(f"  • {entry}")
+
+    # Programmatic Mermaid Graph Representation
+    try:
+        mermaid_syntax = app.get_graph().draw_mermaid()
+        print("\n=== MERMAID GRAPH TOPOLOGY ===")
+        print(mermaid_syntax)
+    except Exception as e:
+        print(f"(Mermaid drawing unavailable: {e})")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Production Failure Modes & Anti-Patterns</h2>
+
+                <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #ef4444; margin-top: 0;">Anti-Pattern 1: Unbounded Cyclic Recursion</h4>
+                    <p><strong>The Failure:</strong> Writing a conditional edge like <code>if not state["valid"]: return "retry_node"</code> without an incrementing iteration counter or without setting <code>{"recursion_limit": N}</code> in the invocation config. If the LLM generates syntax errors that cannot be fixed, the graph loops forever, exhausting API budgets and triggering out-of-memory container crashes.</p>
+                    <p><strong>Production Fix:</strong> Always maintain an explicit <code>iteration_count: int</code> in the state. Enforce a hard ceiling in the conditional router (e.g., <code>if state["iteration_count"] >= 5: return "escalate"</code>), and pass <code>config={"recursion_limit": 25}</code> into <code>app.invoke()</code>.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #f59e0b; margin-top: 0;">Anti-Pattern 2: In-Place State Mutation</h4>
+                    <p><strong>The Failure:</strong> Mutating mutable state structures directly inside a node function, e.g., <code>state["messages"].append(new_msg)</code> followed by returning <code>state</code>. This violates LangGraph's immutability invariant, breaks time-travel debugging, and corrupts the state rollback history in checkpointers.</p>
+                    <p><strong>Production Fix:</strong> Treat input <code>state</code> as read-only. Always return a <em>partial delta dictionary</em> containing only the changed keys (e.g., <code>return {"messages": [new_msg]}</code>). Let the declared channel reducers (e.g., <code>Annotated[list, operator.add]</code>) handle the merge mechanics.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(59, 130, 246, 0.08); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #3b82f6; margin-top: 0;">Anti-Pattern 3: Returning Undeclared State Keys</h4>
+                    <p><strong>The Failure:</strong> A node returns <code>{"temp_scratchpad": "val"}</code> when <code>temp_scratchpad</code> was not declared in the <code>TypedDict</code> state schema. In strict environments or with Pydantic state models, this triggers runtime validation errors.</p>
+                    <p><strong>Production Fix:</strong> Enforce strict schema modeling. If temporary scratchpads are needed, explicitly declare them in the state schema with default or optional types.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>8. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
+                    
+                    <!-- Question 1 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">1. What is the fundamental topological difference between a standard LangChain LCEL pipeline and a LangGraph workflow?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q1" value="A"> A) LCEL only supports Python 3.9 while LangGraph requires Python 3.12</label></li>
+                            <li><label><input type="radio" name="q1" value="B"> B) LCEL enforces Directed Acyclic Graphs (DAGs), whereas LangGraph enables cyclic state machines with loops</label></li>
+                            <li><label><input type="radio" name="q1" value="C"> C) LangGraph cannot call external LLMs</label></li>
+                            <li><label><input type="radio" name="q1" value="D"> D) LCEL maintains state across threads, while LangGraph is strictly stateless</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q1', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q1-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">2. In a LangGraph State definition, what is the effect of defining a field as <code>messages: Annotated[list, operator.add]</code>?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q2" value="A"> A) Any node returning <code>{"messages": [m]}</code> will overwrite the existing list</label></li>
+                            <li><label><input type="radio" name="q2" value="B"> B) It automatically adds all numeric integers found inside the messages</label></li>
+                            <li><label><input type="radio" name="q2" value="C"> C) It configures a reducer channel that concatenates returned message lists to existing history</label></li>
+                            <li><label><input type="radio" name="q2" value="D"> D) It converts markdown strings to uppercase</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q2', 'C', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q2-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">3. What happens if a node returns a dictionary containing a key that was already present in state, without an <code>Annotated</code> reducer?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q3" value="A"> A) The graph throws a <code>DuplicateKeyError</code></label></li>
+                            <li><label><input type="radio" name="q3" value="B"> B) The value in the state is overwritten with the new value</label></li>
+                            <li><label><input type="radio" name="q3" value="C"> C) The new value is discarded and the old value is preserved</label></li>
+                            <li><label><input type="radio" name="q3" value="D"> D) The key is duplicated in state</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q3', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q3-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">4. What is the role of the special sentinel symbol <code>END</code> in LangGraph?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q4" value="A"> A) It raises an unhandled exception to terminate the server</label></li>
+                            <li><label><input type="radio" name="q4" value="B"> B) It marks the terminal sink node where graph traversal successfully stops</label></li>
+                            <li><label><input type="radio" name="q4" value="C"> C) It reboots the virtual environment</label></li>
+                            <li><label><input type="radio" name="q4" value="D"> D) It clears all persisted checkpoints from the database</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q4', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q4-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">5. If a cyclic graph enters an infinite loop, what LangGraph mechanism prevents exhaustion of host resources?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q5" value="A"> A) An operating system SIGKILL signal</label></li>
+                            <li><label><input type="radio" name="q5" value="B"> B) Automatic GPU throttling</label></li>
+                            <li><label><input type="radio" name="q5" value="C"> C) The built-in <code>recursion_limit</code> configuration guard</label></li>
+                            <li><label><input type="radio" name="q5" value="D"> D) LangChain prompt caching</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q5', 'C', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q5-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">6. In LangGraph, what does a node function return?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q6" value="A"> A) The full entire state object including unmodified keys</label></li>
+                            <li><label><input type="radio" name="q6" value="B"> B) A partial dictionary containing only state deltas</label></li>
+                            <li><label><input type="radio" name="q6" value="C"> C) A boolean indicating whether it succeeded</label></li>
+                            <li><label><input type="radio" name="q6" value="D"> D) The string name of the next node</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q6', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q6-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">7. What determines which node executes next when leaving a node with <code>add_conditional_edges</code>?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q7" value="A"> A) A user prompt entered into stdin</label></li>
+                            <li><label><input type="radio" name="q7" value="B"> B) A routing callable that inspects the current state and returns a route key</label></li>
+                            <li><label><input type="radio" name="q7" value="C"> C) Random number generation</label></li>
+                            <li><label><input type="radio" name="q7" value="D"> D) Alphabetical sorting of node names</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q7', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q7-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 8 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">8. Why is in-place mutation of the <code>state</code> dictionary considered an anti-pattern in LangGraph?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q8" value="A"> A) It breaks state immutability, checkpointer time-travel, and reducer delta mechanics</label></li>
+                            <li><label><input type="radio" name="q8" value="B"> B) Python throws a SyntaxError on dictionary mutation</label></li>
+                            <li><label><input type="radio" name="q8" value="C"> C) It doubles the memory consumption of the process</label></li>
+                            <li><label><input type="radio" name="q8" value="D"> D) It forces all variables to become global</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q8', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q8-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 9 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">9. How do you compile a LangGraph <code>StateGraph</code> before invocation?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q9" value="A"> A) <code>workflow.run()</code></label></li>
+                            <li><label><input type="radio" name="q9" value="B"> B) <code>workflow.compile()</code></label></li>
+                            <li><label><input type="radio" name="q9" value="C"> C) <code>workflow.build_binary()</code></label></li>
+                            <li><label><input type="radio" name="q9" value="D"> D) <code>workflow.execute()</code></label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q9', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q9-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 10 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">10. In a multi-node graph, if two nodes need to run concurrently or independently before joining, how does LangGraph handle their state returns?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q10" value="A"> A) It crashes due to race conditions</label></li>
+                            <li><label><input type="radio" name="q10" value="B"> B) It executes their updates sequentially and applies declared reducers to merge state channels</label></li>
+                            <li><label><input type="radio" name="q10" value="C"> C) It requires an explicit Semaphore lock file on the filesystem</label></li>
+                            <li><label><input type="radio" name="q10" value="D"> D) It creates two duplicate databases</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q10', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q10-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>9. Hands-On Engineering Assignments</h2>
+                
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 17.1: Build an Iterative Prompt Refiner with Character Budget Reducers</h4>
+                    <p><strong>Specification:</strong> Construct a LangGraph StateGraph where a prompt optimizer takes a draft prompt and refines it. A validator checks if the prompt is under 200 characters and contains the word "context". If not, route back to the refiner with a critique delta. Enforce a maximum of 4 loops. Collect the prompt version history using <code>Annotated[list[str], operator.add]</code>.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #10b981; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 17.2: Implement a Custom Dict Merger Reducer</h4>
+                    <p><strong>Specification:</strong> Instead of simple list appending, create a custom state reducer function <code>merge_metrics(dict_a: dict, dict_b: dict) -> dict</code> that merges nested telemetry dictionaries by summing values for matching keys. Attach it to a state field via <code>Annotated[Dict[str, int], merge_metrics]</code> and verify execution across 3 sequential graph nodes.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 17.3: Dynamic Multi-Branch Ticket Dispatcher</h4>
+                    <p><strong>Specification:</strong> Build an IT Helpdesk triage graph with 4 specialized worker nodes: <code>NetworkNode</code>, <code>DatabaseNode</code>, <code>HardwareNode</code>, and <code>BillingNode</code>. Use an upstream <code>TriageRouter</code> with a conditional edge that directs customer tickets to the correct specialist, appends an audit message, and terminates at <code>END</code>.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #8b5cf6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 17.4: Circuit Breaker with Dynamic Recursion Limit</h4>
+                    <p><strong>Specification:</strong> Write a LangGraph cyclic program that deliberately triggers an infinite loop condition. Wrap the execution in a Python <code>try...except GraphRecursionError</code> block with <code>config={"recursion_limit": 10}</code>. Demonstrate clean error trapping, graceful degradation, and logging of the checkpoint state prior to crash.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #ec4899; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 17.5: Visual Graph Topography Generator</h4>
+                    <p><strong>Specification:</strong> Write an automated script that compiles a multi-node LangGraph application, extracts its raw Mermaid syntax via <code>app.get_graph().draw_mermaid()</code>, and renders an ASCII execution matrix illustrating every valid path from entry point to terminal sinks.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangGraph Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">LangChain Org</span>
+                            </div>
+                            <h4>LangGraph: Cyclical Multi-Agent StateGraph Architecture</h4>
+                            <p>Official documentation covering StateGraph, nodes, edges, conditional edges, and channel reducer mechanics.</p>
+                            <a href="https://langchain-ai.github.io/langgraph/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Classic CS</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Bell Labs</span>
+                            </div>
+                            <h4>A Method for Synthesizing Sequential Circuits (Mealy Machines)</h4>
+                            <p>George H. Mealy's foundational 1955 paper establishing state machines whose outputs depend on current state and inputs.</p>
+                            <a href="https://ieeexplore.ieee.org/document/6771694" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Mermaid JS</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Diagram Standard</span>
+                            </div>
+                            <h4>Mermaid Flowcharts & State Diagram Syntax</h4>
+                            <p>Official specification for programmatic diagram generation, enabling automated visual graph export in LangGraph.</p>
+                            <a href="https://mermaid.js.org/syntax/flowchart.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Python Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Python 3.12</span>
+                            </div>
+                            <h4>Operator Module & Functional Primitives</h4>
+                            <p>Official documentation for Python built-in operators (`operator.add`, `operator.or_`), used as LangGraph channel reducers.</p>
+                            <a href="https://docs.python.org/3/library/operator.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        // Interactive Quiz Logic
+        function checkAnswer(questionName, correctAnswer, btnElement) {
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            const feedback = document.getElementById(`${questionName}-feedback`);
+            if (!selected) {
+                feedback.style.display = "block";
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "Please select an option before checking.";
+                return;
+            }
+            feedback.style.display = "block";
+            if (selected.value === correctAnswer) {
+                feedback.style.color = "#10b981";
+                feedback.textContent = "✓ Correct! " + getExplanation(questionName);
+            } else {
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "✗ Incorrect. " + getExplanation(questionName);
+            }
+        }
+
+        function getExplanation(questionName) {
+            const explanations = {
+                "q1": "LangGraph is explicitly engineered for cyclic state machines, whereas LCEL enforces unidirectional DAG pipelines.",
+                "q2": "Annotated[list, operator.add] declares an additive reducer channel that concatenates new items into the existing list instead of overwriting.",
+                "q3": "Without an Annotated reducer, default LangGraph behavior for existing keys is simple value overwriting.",
+                "q4": "The special sentinel END symbol marks the final sink state of the graph execution.",
+                "q5": "LangGraph enforces a configurable recursion_limit (default 25) that halts runaway cyclic loops with GraphRecursionError.",
+                "q6": "Nodes emit partial dictionary deltas containing only the modified channels, which are merged by the reducer engine.",
+                "q7": "Conditional edges evaluate a user-defined routing function on state and map returned route keys to destination node names.",
+                "q8": "Direct in-place mutation breaks immutability, corrupting checkpoint rollbacks and time-travel debugging.",
+                "q9": "You compile a StateGraph instance into an executable Pregel runner via workflow.compile().",
+                "q10": "LangGraph executes concurrent nodes and applies their channel reducers deterministically to resolve state updates."
+            };
+            return explanations[questionName] || "";
+        }
+
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const code = pre.querySelector('code');
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => { button.textContent = 'Copy Code'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

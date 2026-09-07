@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 24: Grand Capstone: Enterprise Automotive Diagnostic & Engineering Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li class="active"><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>100%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 24.0</span>
+                <h1>Day 24: Grand Capstone: Enterprise Automotive Diagnostic & Engineering Assistant</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Grand Capstone Challenge:</strong> Modern vehicles are distributed cyber-physical systems operating over 80 Electronic Control Units (ECUs) interconnected via high-speed CAN and Ethernet buses running millions of lines of code. When an automotive technician attaches an OBD-II diagnostic interface, they confront cryptic Diagnostic Trouble Codes (DTCs), complex freeze-frame telemetry, voluminous OEM Technical Service Bulletins (TSBs), and life-critical safety implications. In this capstone project, you will synthesize the entire 24-day curriculum—<strong>Vector RAG, Deterministic Tool Calling, ISO 26262 ASIL Safety Classifiers, LangGraph Persistent State Machines, and Streamlit Operations Cockpits</strong>—into an enterprise automotive engineering assistant.
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Grand Capstone</span>
+                            <span class="plan-badge plan-badge-secondary">Week 3</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 6.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Engineer the Grand Capstone: A Cyber-Physical Automotive Diagnostic Assistant integrating real-time CAN bus telemetry.</li><li>Implement SAE J1979 OBD-II Mode 01 PID decoding (RPM, Speed, Coolant Temp) and Diagnostic Trouble Code (DTC) parsing.</li><li>Enforce ISO 26262 Automotive Safety Integrity Level (ASIL) risk gating with mandatory Master Technician sign-off.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>SAE J1979 Mode 01 PID decoding formula: $	ext{Engine RPM} = rac{256A + B}{4}$ and Vehicle Speed $= A	ext{ km/h}$.</li><li>ISO 26262 ASIL risk formula: $\mathcal{R}_{	ext{ASIL}} = 	ext{Severity} 	imes 	ext{Exposure} 	imes 	ext{Controllability}$ (ASIL-A to ASIL-D).</li><li>Cyber-physical safety boundary: Autonomous clearing of safety-critical braking (C-codes) or airbag faults is strictly prohibited.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 24.1: Grand Capstone Automotive Diagnostic Agent Engine (`automotive_agent_engine.py`).</li><li>Program 24.2: Synthetic 11-Bit OBD-II CAN Bus Broadcast Frame Streamer (`can_bus_streamer.py`).</li><li>Program 24.3: Streamlit Master Automotive Operations Cockpit UI (`automotive_dashboard.py`).</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Automated Clearing of ASIL-D DTCs: Allowing an autonomous agent to clear an active ABS wheel speed sensor fault without physical inspection.</li><li>Sensor Freeze-Frame Ignorance: Recommending parts replacement without checking vehicle speed and engine load freeze-frame conditions.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Cyber-Physical Automotive Diagnostic Assistant • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. Formal Foundations: Cyber-Physical Automotive Protocols & ISO 26262 ASIL Risk</h2>
+                <p>Automotive diagnostics operate under strict international standards: <strong>SAE J1979 / ISO 15031 (OBD-II)</strong> and <strong>ISO 14229 (Unified Diagnostic Services - UDS)</strong>. Real-time vehicle telematics stream across Controller Area Network (CAN) 2.0B / CAN-FD frames with 11-bit or 29-bit identifiers:</p>
+
+                <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
+                    $$\text{CAN Frame: } [ \text{ID}_{\text{CAN}} \mid \text{DLC} \mid \text{Mode} \mid \text{PID} \mid \text{Data Byte A} \mid \text{Data Byte B} \mid \dots ]$$
+                    $$\text{ISO 26262 Risk: } \mathcal{R}_{\text{ASIL}} = \text{Severity} (\mathcal{S}) \times \text{Exposure} (\mathcal{E}) \times \text{Controllability} (\mathcal{C})$$
+                </div>
+
+                <ul>
+                    <li><strong>PID Decoding Engine:</strong> Engine RPM is polled via <code>Mode 01, PID 0x0C</code> where $\text{RPM} = \frac{256A + B}{4}$. Coolant temperature is polled via <code>Mode 01, PID 0x05</code> where $T = A - 40^\circ\text{C}$.</li>
+                    <li><strong>Automotive Safety Integrity Level (ASIL):</strong> If a Diagnostic Trouble Code touches steering, braking (ABS/ESC), high-voltage EV battery contactors, or airbags, the hazard classification elevates to <strong>ASIL-C or ASIL-D</strong>. The agent must enforce a mandatory, non-bypassable <code>interrupt_before</code> gate requiring cryptographic Master Diagnostic Technician sign-off.</li>
+                </ul>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Architecture Blueprint: The End-to-End Automotive Diagnostics Pipeline</h2>
+                <p>The diagram below details the entire capstone architecture spanning vehicle ingestion, ECU CAN bus scanning, vector RAG manual retrieval, deterministic parts pricing, and human sign-off:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color); font-size: 0.85rem; line-height: 1.45;">
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span> <span style="color: #3b82f6; font-weight: bold;">AUTOMOTIVE CAPSTONE: SYSTEM TOPOLOGY &amp; WORKFLOW</span>                                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>  [Technician Ingestion: VIN="1HGCR2F83HA001009", Symptom="ABS warning lamp on"]   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            |                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            v                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    [Node 1: Parse VIN &amp; Identify Powertrain Architecture]                        <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            |                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            v                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    [Node 2: OBD-II CAN Bus Interrogation] -------------------+                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    - Reads active DTC: C0035 (Left Front Wheel Speed Sensor)  |                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    - Captures Freeze-Frame: Speed=65 km/h, RPM=2400, ABS=ON   |                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            |                                                  |                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            +-------------------------+                        |                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            v                         v                        v                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  [Node 3: OEM RAG Search]   [Node 4: Parts Costing]  [Node 5: ASIL Safety Filter]  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - OEM Bulletin 19-088      - Hub Sensor: $245.00    - Subsystem: Braking / ABS    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  - Sensor harness ohm spec  - Labor: 2.0 hrs @ $120  - Safety Critical: TRUE (ASIL)<span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            \                         |                        /                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>             +------------------------+-----------------------+                     <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                      |                                             <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                      v                                             <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    [Node 6: Synthesize Formal Technical Work Order]                                <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            |                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            v                                                                      <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +--------------------------------------------------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    | CONDITIONAL GATEWAY: Is Safety Critical?                                 |   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>    +--------------------------------------------------------------------------+   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>              /                                               \                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>       (Safety Critical)                              (Standard Maintenance)       <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>             /                                                 \                   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>            v                                                   v                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  +-------------------------------------+             +--------------------+       <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  | Node 7: Master Tech Approval Gate   |             | Node 8: Finalize   |       <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  | - Checkpoint written to SQLite      |             | - Deliver formal   |       <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  | - Halts via interrupt_before        |             |   repair quote     |       <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>  +-------------------------------------+             +--------------------+       <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 24.0-1: Automotive Capstone System Blueprint</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Complete Python Implementation 1: The Automotive Diagnostics Engine</h2>
+                <p>This module implements the complete 7-node LangGraph StateGraph, OBD-II telemetry scanner, OEM manual RAG store, flat-rate labor estimator, and safety sign-off checkpoint.</p>
+
+                <div class="code-header">
+                    <span>program_24_1_automotive_engine.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 24.1: Capstone Engine - Enterprise Automotive Diagnostic System
+Integrates OBD-II CAN bus parser, OEM RAG, pricing calculator, and ASIL safety gate.
+"""
+
+import os
+import json
+import sqlite3
+from typing import TypedDict, Annotated, List, Dict, Any, Optional
+import operator
+from langgraph.graph import StateGraph, END
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+# 1. State Definition
+class AutomotiveDiagnosticState(TypedDict):
+    vin: str
+    symptom_query: str
+    vehicle_model: str
+    dtc_code: str
+    telemetry_data: Dict[str, Any]
+    oem_manual_excerpts: List[str]
+    itemized_costs: Dict[str, Any]
+    technical_diagnosis: str
+    is_safety_critical: bool
+    is_approved: Optional[bool]
+    rejection_notes: Optional[str]
+    audit_trail: Annotated[List[str], operator.add]
+    final_work_order: str
+
+# 2. Tool 1: OBD-II CAN Bus Interrogation Simulator
+def scan_obd2_can_bus(vin: str) -> Dict[str, Any]:
+    # Deterministic simulation based on VIN pattern
+    if vin.endswith("9"):
+        return {
+            "dtc": "C0035",
+            "system": "Electronic Brake Control Module (EBCM)",
+            "description": "Left Front Wheel Speed Sensor Circuit Fault",
+            "freeze_frame": {
+                "engine_rpm": 2450,
+                "vehicle_speed_kmh": 68.0,
+                "abs_warning_lamp": "ILLUMINATED",
+                "traction_control_status": "DISABLED",
+                "ambient_temp_c": 19
+            },
+            "voltage": 13.9
+        }
+    return {
+        "dtc": "P0135",
+        "system": "Powertrain Control Module (PCM)",
+        "description": "O2 Sensor Heater Circuit Malfunction (Bank 1, Sensor 1)",
+        "freeze_frame": {
+            "engine_rpm": 820,
+            "vehicle_speed_kmh": 0.0,
+            "coolant_temp_c": 91,
+            "short_term_fuel_trim": "+12.5%",
+            "check_engine_lamp": "ILLUMINATED"
+        },
+        "voltage": 14.2
+    }
+
+# 3. Tool 2: OEM Technical Service Bulletin Vector Knowledge Store
+def query_oem_bulletins(dtc: str) -> List[str]:
+    manual_vault = {
+        "C0035": [
+            "OEM Bulletin 23-B04: DTC C0035 indicates an open or shorted circuit in the Left Front Wheel Speed Sensor harness.",
+            "ASIL-D CRITICAL SAFETY NOTICE: ABS anti-lock modulation and Electronic Stability Control (ESC) are disengaged. Dynamic braking stability degraded.",
+            "Repair Specification: Inspect tone wheel for missing teeth. Measure coil resistance across Pin 1 and Pin 2 (Target: 1.2k - 1.8k Ohms). Replace hub bearing sensor unit."
+        ],
+        "P0135": [
+            "OEM Bulletin 21-E12: DTC P0135 indicates open heater element in Bank 1 Sensor 1 Heated Oxygen Sensor (HO2S).",
+            "Emissions Notice: Vehicle operates in open-loop fueling mode during cold start, increasing hydrocarbon emissions.",
+            "Repair Specification: Check 15A EFI heater fuse. Check heater circuit resistance (Target: 11 - 16 Ohms at 20°C). Replace upstream oxygen sensor."
+        ]
+    }
+    return manual_vault.get(dtc, ["General SAE J2012 diagnostic guidelines apply."])
+
+# 4. Tool 3: Flat-Rate Labor & Parts Estimator
+def compute_repair_quotation(dtc: str) -> Dict[str, Any]:
+    catalog = {
+        "C0035": {
+            "parts": [{"part_no": "WSS-4019-LF", "name": "Left Front Wheel Speed Sensor Hub", "price": 245.00}],
+            "labor_hours": 2.2,
+            "flat_rate_per_hour": 125.00
+        },
+        "P0135": {
+            "parts": [{"part_no": "HO2S-9912-B1S1", "name": "Upstream Heated Oxygen Sensor", "price": 175.00}],
+            "labor_hours": 1.1,
+            "flat_rate_per_hour": 125.00
+        }
+    }
+    spec = catalog.get(dtc, {
+        "parts": [{"part_no": "DIAG-001", "name": "Diagnostic Bench Test", "price": 85.00}],
+        "labor_hours": 1.0,
+        "flat_rate_per_hour": 125.00
+    })
+    
+    parts_cost = sum(p["price"] for p in spec["parts"])
+    labor_cost = spec["labor_hours"] * spec["flat_rate_per_hour"]
+    total = parts_cost + labor_cost
+    
+    return {
+        "parts_list": spec["parts"],
+        "parts_cost": parts_cost,
+        "labor_hours": spec["labor_hours"],
+        "labor_cost": labor_cost,
+        "total_estimate": total
+    }
+
+# 5. Graph Nodes
+def parse_and_decode_node(state: AutomotiveDiagnosticState) -> Dict[str, Any]:
+    vin = state["vin"].strip().upper()
+    print(f"\n[NODE 1: Decoder] Ingesting VIN: {vin}")
+    return {
+        "vin": vin,
+        "vehicle_model": "2024 Apex GT Sportback (3.0L Twin-Turbo V6)",
+        "audit_trail": [f"VIN {vin} verified. Vehicle model: 2024 Apex GT Sportback."]
+    }
+
+def obd2_telemetry_node(state: AutomotiveDiagnosticState) -> Dict[str, Any]:
+    print("[NODE 2: Telemetry] Interrogating on-board CAN bus network...")
+    telemetry = scan_obd2_can_bus(state["vin"])
+    dtc = telemetry["dtc"]
+    print(f"  -> Active DTC Detected: {dtc} ({telemetry['description']})")
+    return {
+        "dtc_code": dtc,
+        "telemetry_data": telemetry,
+        "audit_trail": [f"CAN bus scanned: Identified DTC {dtc} in {telemetry['system']}."]
+    }
+
+def oem_rag_retrieval_node(state: AutomotiveDiagnosticState) -> Dict[str, Any]:
+    print("[NODE 3: RAG Retrieval] Fetching OEM service manual specifications...")
+    excerpts = query_oem_bulletins(state["dtc_code"])
+    return {
+        "oem_manual_excerpts": excerpts,
+        "audit_trail": [f"Retrieved {len(excerpts)} OEM technical manual clauses for DTC {state['dtc_code']}."]
+    }
+
+def pricing_calculator_node(state: AutomotiveDiagnosticState) -> Dict[str, Any]:
+    print("[NODE 4: Pricing Calculator] Performing deterministic labor and parts costing...")
+    quote = compute_repair_quotation(state["dtc_code"])
+    return {
+        "itemized_costs": quote,
+        "audit_trail": [f"Calculated quote: Parts=${quote['parts_cost']:.2f}, Labor=${quote['labor_cost']:.2f}, Total=${quote['total_estimate']:.2f}"]
+    }
+
+def technical_synthesis_node(state: AutomotiveDiagnosticState) -> Dict[str, Any]:
+    print("[NODE 5: Synthesis] Formulating comprehensive technical diagnostic report...")
+    dtc = state["dtc_code"]
+    telemetry = state["telemetry_data"]
+    quote = state["itemized_costs"]
+    bulletins = "\n".join(state["oem_manual_excerpts"])
+    
+    # Check ASIL Safety Criticality (Braking, Steering, Airbag, HV Battery)
+    is_safety = dtc.startswith("C") or "braking" in telemetry["system"].lower() or "ASIL-D" in bulletins
+    
+    report = (
+        f"DIAGNOSTIC WORK ORDER & ENGINEERING ASSESSMENT:\n"
+        f"Vehicle: {state['vehicle_model']} | VIN: {state['vin']}\n"
+        f"Fault Code: {dtc} - {telemetry['description']}\n"
+        f"Subsystem: {telemetry['system']} (CAN Voltage: {telemetry['voltage']}V)\n\n"
+        f"OEM Technical Procedures:\n{bulletins}\n\n"
+        f"Itemized Repair Quote:\n"
+        f"  • Parts: ${quote['parts_cost']:.2f} ({quote['parts_list'][0]['name']})\n"
+        f"  • Labor: {quote['labor_hours']} hrs @ $125/hr = ${quote['labor_cost']:.2f}\n"
+        f"  • Total Estimated Repair: ${quote['total_estimate']:.2f}\n"
+        f"Safety Classification: {'⚠️ ASIL-D SAFETY CRITICAL (Requires Master Tech Sign-Off)' if is_safety else 'Standard Maintenance'}"
+    )
+    
+    return {
+        "technical_diagnosis": report,
+        "is_safety_critical": is_safety,
+        "audit_trail": [f"Synthesized diagnostic work order. Safety-critical: {is_safety}"]
+    }
+
+def master_tech_approval_node(state: AutomotiveDiagnosticState) -> Dict[str, Any]:
+    print("\n[NODE 6: Master Tech Gate] Evaluating certified technician authorization...")
+    return {
+        "audit_trail": [f"Master Technician decision evaluated: Approved={state.get('is_approved')}"]
+    }
+
+def finalize_work_order_node(state: AutomotiveDiagnosticState) -> Dict[str, Any]:
+    print("\n[NODE 7: Finalize] Compiling certified repair document...")
+    if state["is_safety_critical"] and not state.get("is_approved"):
+        summary = (
+            f"🛑 WORK ORDER ON HOLD: Safety-Critical System Fault ({state['dtc_code']}). "
+            f"Vehicle cannot be released without certified Master Diagnostic Technician signature."
+        )
+    else:
+        signoff = "CERTIFIED & AUTHORIZED BY MASTER TECHNICIAN ✅" if state.get("is_approved") else "STANDARD SERVICE RELEASED ✅"
+        summary = f"{state['technical_diagnosis']}\n\nRELEASE STATUS: {signoff}"
+        
+    return {
+        "final_work_order": summary,
+        "audit_trail": ["Work order released to service department."]
+    }
+
+def route_safety_gate(state: AutomotiveDiagnosticState) -> str:
+    if state["is_safety_critical"] and state.get("is_approved") is None:
+        return "approval_node"
+    return "finalize"
+
+def build_automotive_graph(db_path: str = "automotive_capstone.sqlite"):
+    builder = StateGraph(AutomotiveDiagnosticState)
+    
+    builder.add_node("parse_vin", parse_and_decode_node)
+    builder.add_node("obd2_scan", obd2_telemetry_node)
+    builder.add_node("oem_rag", oem_rag_retrieval_node)
+    builder.add_node("pricing", pricing_calculator_node)
+    builder.add_node("synthesis", technical_synthesis_node)
+    builder.add_node("approval_node", master_tech_approval_node)
+    builder.add_node("finalize", finalize_work_order_node)
+    
+    builder.set_entry_point("parse_vin")
+    builder.add_edge("parse_vin", "obd2_scan")
+    builder.add_edge("obd2_scan", "oem_rag")
+    builder.add_edge("oem_rag", "pricing")
+    builder.add_edge("pricing", "synthesis")
+    
+    builder.add_conditional_edges("synthesis", route_safety_gate, {
+        "approval_node": "approval_node",
+        "finalize": "finalize"
+    })
+    
+    builder.add_edge("approval_node", "finalize")
+    builder.add_edge("finalize", END)
+    
+    conn = sqlite3.connect(db_path, check_same_thread=False)
+    saver = SqliteSaver(conn)
+    
+    return builder.compile(checkpointer=saver, interrupt_before=["approval_node"]), conn
+
+if __name__ == "__main__":
+    DB_FILE = "automotive_capstone.sqlite"
+    if os.path.exists(DB_FILE):
+        os.remove(DB_FILE)
+        
+    app, conn = build_automotive_graph(DB_FILE)
+    
+    # Test Case: Safety-Critical ABS Sensor Fault (VIN ending in 9)
+    test_vin = "1HGCR2F83HA001009"
+    cfg = {"configurable": {"thread_id": f"vin_{test_vin}"}}
+    
+    initial_input: AutomotiveDiagnosticState = {
+        "vin": test_vin,
+        "symptom_query": "ABS light illuminated during highway braking; rough pedal pulse.",
+        "vehicle_model": "",
+        "dtc_code": "",
+        "telemetry_data": {},
+        "oem_manual_excerpts": [],
+        "itemized_costs": {},
+        "technical_diagnosis": "",
+        "is_safety_critical": False,
+        "is_approved": None,
+        "rejection_notes": None,
+        "audit_trail": [],
+        "final_work_order": ""
+    }
+    
+    print("=== EXECUTING AUTOMOTIVE DIAGNOSTIC PIPELINE ===")
+    app.invoke(initial_input, config=cfg)
+    
+    snapshot = app.get_state(cfg)
+    print("\n--- GRAPH PAUSED AT SAFETY BREAKPOINT ---")
+    print(f"Next Node: {snapshot.next}")
+    print(f"Safety Critical: {snapshot.values['is_safety_critical']}")
+    print(snapshot.values["technical_diagnosis"])
+    
+    conn.close()
+    if os.path.exists(DB_FILE):
+        os.remove(DB_FILE)
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Complete Python Implementation 2: Synthetic CAN Bus Telemetry Streamer</h2>
+                <p>To test the diagnostic assistant against realistic vehicle signals, Program 24.2 implements an asynchronous SAE J1979 CAN bus frame streamer that emits simulated OBD-II PIDs and freeze-frame telemetry.</p>
+
+                <div class="code-header">
+                    <span>program_24_2_mock_can_streamer.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 24.2: Synthetic SAE J1979 CAN Bus Telemetry Streamer
+Encodes and decodes raw 11-bit OBD-II CAN broadcast frames for live testing.
+"""
+
+import time
+import struct
+from typing import Dict, Any, Generator
+
+class CANBusSimulator:
+    def __init__(self, vin: str):
+        self.vin = vin
+
+    def encode_rpm_frame(self, rpm: float) -> bytes:
+        """Encode engine RPM into standard SAE J1979 Mode 01 PID 0x0C frame."""
+        raw_val = int(rpm * 4)
+        byte_a = (raw_val >> 8) & 0xFF
+        byte_b = raw_val & 0xFF
+        # CAN Frame: [Length=4, Mode=0x01, PID=0x0C, ByteA, ByteB, 0xAA, 0xAA, 0xAA]
+        return struct.pack("8B", 0x04, 0x01, 0x0C, byte_a, byte_b, 0xAA, 0xAA, 0xAA)
+
+    def decode_rpm_frame(self, frame: bytes) -> float:
+        """Decode raw CAN bytes back to physical RPM value."""
+        length, mode, pid, byte_a, byte_b, _, _, _ = struct.unpack("8B", frame)
+        assert mode == 0x01 and pid == 0x0C, "Invalid RPM PID frame!"
+        return round(((byte_a * 256) + byte_b) / 4.0, 1)
+
+    def telemetry_stream(self, samples: int = 5) -> Generator[Dict[str, Any], None, None]:
+        print(f"Initializing CAN Bus Broadcast for VIN: {self.vin} (500 kbps High-Speed CAN)...")
+        base_rpm = 2200.0
+        
+        for i in range(samples):
+            current_rpm = base_rpm + (i * 125.0)
+            raw_frame = self.encode_rpm_frame(current_rpm)
+            decoded_rpm = self.decode_rpm_frame(raw_frame)
+            
+            yield {
+                "can_id": "0x7E8", # Standard ECU broadcast address
+                "raw_hex": raw_frame.hex(),
+                "mode": "0x01",
+                "pid": "0x0C",
+                "physical_rpm": decoded_rpm,
+                "timestamp_ms": int(time.time() * 1000)
+            }
+            time.sleep(0.05)
+
+if __name__ == "__main__":
+    sim = CANBusSimulator("1HGCR2F83HA001009")
+    print("=== STREAMING RAW CAN BUS FRAMES ===")
+    for packet in sim.telemetry_stream(samples=5):
+        print(f"CAN Frame: {packet['can_id']} | Raw: {packet['raw_hex']} -> Decoded RPM: {packet['physical_rpm']}")
+    print("✓ CAN Bus interrogation validated successfully.")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Complete Python Implementation 3: Streamlit Automotive Cockpit UI</h2>
+                <p>Program 24.3 provides a web UI connecting the LangGraph diagnostic engine to workshop technicians, featuring telemetry gauges, OEM manual tabs, itemized repair estimates, and Master Technician sign-off buttons.</p>
+
+                <div class="code-header">
+                    <span>program_24_3_automotive_cockpit_ui.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 24.3: Streamlit Master Automotive Engineering Cockpit
+Industrial UI for certified vehicle diagnostics, RAG manual lookup, and sign-offs.
+"""
+
+import streamlit as st
+import sqlite3
+import os
+from program_24_1_automotive_engine import build_automotive_graph, AutomotiveDiagnosticState
+
+st.set_page_config(page_title="Automotive Diagnostic AI", page_icon="🚗", layout="wide")
+
+st.title("🚗 Enterprise Automotive Diagnostic & Engineering Assistant")
+st.caption("Connected to ISO 14229 Diagnostic Protocol & LangGraph State Machine")
+
+DB_FILE = "automotive_capstone.sqlite"
+app, conn = build_automotive_graph(DB_FILE)
+
+col_left, col_right = st.columns([1, 2])
+
+with col_left:
+    st.subheader("Vehicle Ingestion")
+    vin_input = st.text_input("VIN Number", value="1HGCR2F83HA001009")
+    symptom_input = st.text_area(
+        "Technician / Customer Notes",
+        value="ABS warning lamp illuminated on dashboard; pedal pulse felt during deceleration."
+    )
+    thread_key = f"vin_{vin_input}"
+    config = {"configurable": {"thread_id": thread_key}}
+    
+    run_btn = st.button("⚡ Run Diagnostic Engine", type="primary", use_container_width=True)
+
+with col_right:
+    st.subheader("Diagnostic Telemetry & Certified Work Order")
+    
+    if run_btn:
+        initial_input: AutomotiveDiagnosticState = {
+            "vin": vin_input,
+            "symptom_query": symptom_input,
+            "vehicle_model": "",
+            "dtc_code": "",
+            "telemetry_data": {},
+            "oem_manual_excerpts": [],
+            "itemized_costs": {},
+            "technical_diagnosis": "",
+            "is_safety_critical": False,
+            "is_approved": None,
+            "rejection_notes": None,
+            "audit_trail": [],
+            "final_work_order": ""
+        }
+        with st.spinner("Interrogating CAN bus ECUs and querying OEM manuals..."):
+            app.invoke(initial_input, config=config)
+        st.rerun()
+
+    snapshot = app.get_state(config)
+    if snapshot.values:
+        vals = snapshot.values
+        
+        # Telemetry Metrics Bar
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Detected DTC", vals.get("dtc_code", "None"))
+        m2.metric("Vehicle System", vals.get("telemetry_data", {}).get("system", "N/A"))
+        m3.metric("CAN Bus Voltage", f"{vals.get('telemetry_data', {}).get('voltage', 0.0)} V")
+        
+        st.markdown("---")
+        
+        if "approval_node" in snapshot.next:
+            st.error("⚠️ ASIL-D SAFETY-CRITICAL FAULT DETECTED: Master Technician sign-off required before repair authorization.")
+            st.code(vals.get("technical_diagnosis", ""), language="markdown")
+            
+            c1, c2 = st.columns(2)
+            with c1:
+                if st.button("✅ Authorize Work Order (Master Tech Sign-Off)", use_container_width=True):
+                    app.update_state(config, {"is_approved": True})
+                    res = app.invoke(None, config=config)
+                    st.success("Repair order authorized!")
+                    st.rerun()
+            with c2:
+                if st.button("❌ Reject / Demand Secondary Bench Test", use_container_width=True):
+                    app.update_state(config, {"is_approved": False, "rejection_notes": "Secondary bench test requested."})
+                    res = app.invoke(None, config=config)
+                    st.warning("Work order placed on hold!")
+                    st.rerun()
+        else:
+            st.success("Work Order Released to Service Department")
+            st.code(vals.get("final_work_order", "No report available."), language="markdown")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Automotive Gotchas</h2>
+
+                <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #ef4444; margin-top: 0;">Automotive Gotcha 1: Premature DTC Clearing Destroys Emissions Readiness</h4>
+                    <p><strong>The Incident:</strong> A technician instructs an automated agent to "clear all error codes" to test if a fault re-occurs. Clearing DTCs in Mode 04 resets all OBD-II readiness monitors (Catalyst, Evap, O2 Sensor Heaters) to "Incomplete", causing the vehicle to fail state inspection until driven for 100+ miles.</p>
+                    <p><strong>Mitigation:</strong> Enforce strict tool permissions: the diagnostic agent must be restricted to read-only Mode 01 and Mode 03 commands. DTC clearing (Mode 04) is locked behind two-factor physical confirmation.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #f59e0b; margin-top: 0;">Automotive Gotcha 2: Intermittent CAN Bus Bus-Off State</h4>
+                    <p><strong>The Incident:</strong> A faulty alternator introduces AC ripple voltage onto the 12V bus, causing intermittent frame CRC errors on the CAN transceiver. The agent flags 12 different ECUs as failed simultaneously.</p>
+                    <p><strong>Mitigation:</strong> Implement a <strong>Root-Cause Triage Filter</strong>: if multiple ECUs report communication loss (U-codes) simultaneously, check system supply voltage first before diagnosing individual sensors.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(59, 130, 246, 0.08); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #3b82f6; margin-top: 0;">Automotive Gotcha 3: Hallucinated Torque Specifications</h4>
+                    <p><strong>The Incident:</strong> An LLM generates workshop advice recommending tightening brake caliper bracket bolts to "45 ft-lbs" when OEM specification requires 125 ft-lbs with threadlocker. Caliper bolts back out on the highway, causing brake failure.</p>
+                    <p><strong>Mitigation:</strong> Mechanical fasteners, fluid capacities, and torque specifications must never be synthesized from model memory; they must be retrieved strictly from OEM service manuals via RAG and verified against a deterministic lookup table.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Interactive Knowledge Verification: 10 Final Capstone Questions</h2>
+                <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
+                    
+                    <!-- Question 1 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">1. What automotive standard defines the diagnostic Mode 01-0A service interface used by this capstone?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q1" value="A"> A) IEEE 802.11 Wi-Fi standard</label></li>
+                            <li><label><input type="radio" name="q1" value="B"> B) SAE J1979 / ISO 15031 (OBD-II Diagnostic Services)</label></li>
+                            <li><label><input type="radio" name="q1" value="C"> C) HTML5 DOM specification</label></li>
+                            <li><label><input type="radio" name="q1" value="D"> D) POSIX thread standard</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q1', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q1-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">2. Why must safety-critical faults (such as DTC C0035 for Wheel Speed Sensors) halt at a human approval gate?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q2" value="A"> A) Because wheel speed sensors disable ABS and Electronic Stability Control, posing severe physical injury risks if improperly serviced</label></li>
+                            <li><label><input type="radio" name="q2" value="B"> B) Because OBD-II codes are copyrighted</label></li>
+                            <li><label><input type="radio" name="q2" value="C"> C) Because Python cannot parse strings starting with 'C'</label></li>
+                            <li><label><input type="radio" name="q2" value="D"> D) Because the car cannot be started</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q2', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q2-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">3. What is the formula to decode physical Engine RPM from SAE J1979 Mode 01 PID 0x0C bytes (A and B)?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q3" value="A"> A) RPM = A + B</label></li>
+                            <li><label><input type="radio" name="q3" value="B"> B) RPM = ((256 * A) + B) / 4</label></li>
+                            <li><label><input type="radio" name="q3" value="C"> C) RPM = A * B</label></li>
+                            <li><label><input type="radio" name="q3" value="D"> D) RPM = 256 / (A + B)</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q3', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q3-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">4. Why should repair pricing and flat-rate labor be computed by deterministic Python functions rather than the LLM?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q4" value="A"> A) Deterministic code guarantees exact mathematical accuracy and eliminates dollar hallucinations</label></li>
+                            <li><label><input type="radio" name="q4" value="B"> B) LLMs cannot output currency symbols</label></li>
+                            <li><label><input type="radio" name="q4" value="C"> C) Workshop hourly rates are classified government secrets</label></li>
+                            <li><label><input type="radio" name="q4" value="D"> D) Python math takes less memory than strings</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q4', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q4-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">5. What identifier is used as the unique <code>thread_id</code> in this capstone checkpointer?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q5" value="A"> A) Today's timestamp</label></li>
+                            <li><label><input type="radio" name="q5" value="B"> B) The unique Vehicle Identification Number (VIN)</label></li>
+                            <li><label><input type="radio" name="q5" value="C"> C) The technician's employee ID</label></li>
+                            <li><label><input type="radio" name="q5" value="D"> D) The workshop's zip code</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q5', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q5-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">6. In ISO 26262 automotive safety standards, what does ASIL stand for?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q6" value="A"> A) Automated Software Interface Layer</label></li>
+                            <li><label><input type="radio" name="q6" value="B"> B) Automotive Safety Integrity Level</label></li>
+                            <li><label><input type="radio" name="q6" value="C"> C) Asynchronous Serial Instruction Line</label></li>
+                            <li><label><input type="radio" name="q6" value="D"> D) Advanced Sensor Input Logic</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q6', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q6-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">7. What forensic diagnostic data captures exact sensor readings at the exact millisecond an engine fault triggers?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q7" value="A"> A) The radio station setting</label></li>
+                            <li><label><input type="radio" name="q7" value="B"> B) Freeze-Frame Telemetry Data</label></li>
+                            <li><label><input type="radio" name="q7" value="C"> C) The odometer trip B</label></li>
+                            <li><label><input type="radio" name="q7" value="D"> D) The tire pressure label</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q7', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q7-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 8 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">8. Why is clearing DTC codes without fixing the root fault considered an anti-pattern in vehicle service?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q8" value="A"> A) It wipes emissions readiness monitors and risks sudden catastrophic failure on the road</label></li>
+                            <li><label><input type="radio" name="q8" value="B"> B) It deletes the car's navigation maps</label></li>
+                            <li><label><input type="radio" name="q8" value="C"> C) It discharges the 12V battery immediately</label></li>
+                            <li><label><input type="radio" name="q8" value="D"> D) OBD-II ports cannot be cleared</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q8', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q8-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 9 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">9. In Streamlit, how does the application resume the interrupted diagnostic graph when the Master Tech clicks Approve?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q9" value="A"> A) It calls <code>app.update_state()</code> with approval flags and then invokes <code>app.invoke(None, config)</code></label></li>
+                            <li><label><input type="radio" name="q9" value="B"> B) It restarts the computer</label></li>
+                            <li><label><input type="radio" name="q9" value="C"> C) It runs <code>pip install --upgrade</code></label></li>
+                            <li><label><input type="radio" name="q9" value="D"> D) It deletes the vehicle VIN</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q9', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q9-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 10 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">10. What engineering journey have you completed across all 24 days of this Agentic AI curriculum?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q10" value="A"> A) Only reading web articles about AI chatbots</label></li>
+                            <li><label><input type="radio" name="q10" value="B"> B) The complete industrial agent engineering stack: token mechanics, prompt engineering, structured tools, RAG pipelines, LangGraph cyclic state machines, persistence, multi-agent swarms, security guardrails, FastAPI streaming, and cyber-physical production deployments</label></li>
+                            <li><label><input type="radio" name="q10" value="C"> C) Writing Python for loops only</label></li>
+                            <li><label><input type="radio" name="q10" value="D"> D) Basic Markdown documentation</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q10', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q10-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>8. Hands-On Capstone Certification Assignments</h2>
+                
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Capstone Assignment 24.1: Live Chroma Vector Database for OEM Bulletins</h4>
+                    <p><strong>Specification:</strong> Replace the in-memory dictionary in <code>query_oem_bulletins</code> with a real local ChromaDB vector collection. Index 10 real-world automotive Technical Service Bulletins (TSBs) and perform dense vector cosine retrieval using natural language symptom queries.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #10b981; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Capstone Assignment 24.2: Real SocketCAN / vcan0 Telemetry Integration</h4>
+                    <p><strong>Specification:</strong> On Linux or macOS, configure a virtual CAN interface (<code>vcan0</code>) using <code>python-can</code>. Modify Program 24.2 to stream binary broadcast frames across the virtual bus, and update the diagnostic agent to listen asynchronously on the socket.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Capstone Assignment 24.3: Cryptographic Master Tech Signature Gate</h4>
+                    <p><strong>Specification:</strong> Enhance the approval gate by requiring the Master Technician to sign the authorization token using an RSA private key. The agent verifies the digital signature against the certified technician registry prior to committing the work order.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #8b5cf6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Capstone Assignment 24.4: Automated PDF Work Order Exporter</h4>
+                    <p><strong>Specification:</strong> Use <code>reportlab</code> or <code>weasyprint</code> to generate a formal, high-resolution PDF repair order from the final state dictionary, complete with VIN barcode, itemized parts table, labor subtotal, and certified signature stamp.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #ec4899; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Capstone Assignment 24.5: Full-Stack Dockerized Deployment</h4>
+                    <p><strong>Specification:</strong> Package the complete Automotive Engineering Assistant (FastAPI backend + Streamlit frontend + SQLite checkpointer) into a multi-container <code>docker-compose.yml</code> setup. Launch it with <code>docker compose up --build</code> and perform an end-to-end diagnostic session.</p>
+                </div>
+
+                <footer class="page-navigation" style="display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <a href="day_23.html" class="nav-button" style="text-decoration: none; color: var(--accent-color); font-weight: 600;">&larr; Previous: Day 23 (Project: Recoverable Agent)</a>
+                    <a href="index.html" class="nav-button" style="text-decoration: none; color: var(--accent-color); font-weight: 600;">🎓 Course Complete: Return to Overview &rarr;</a>
+                </footer>
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">SAE Standard</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">SAE International</span>
+                            </div>
+                            <h4>SAE J1979: E/E Diagnostic Test Modes (OBD-II)</h4>
+                            <p>International automotive standard specifying request/response message formats for Mode 01 PIDs, Mode 03 DTCs, and freeze frames.</p>
+                            <a href="https://www.sae.org/standards/content/j1979_201702/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">ISO Standard</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">ISO 26262</span>
+                            </div>
+                            <h4>ISO 26262: Road Vehicles — Functional Safety Standard</h4>
+                            <p>International standard governing electrical and electronic systems in vehicles, establishing ASIL-A through ASIL-D safety integrity levels.</p>
+                            <a href="https://www.iso.org/standard/68383.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">ISO Standard</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">ISO 11898</span>
+                            </div>
+                            <h4>ISO 11898: Road Vehicles — Controller Area Network (CAN)</h4>
+                            <p>The international standard defining high-speed CAN bus physical layer signaling and data link layer frame arbitration.</p>
+                            <a href="https://www.iso.org/standard/67244.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">NHTSA</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Automotive Safety</span>
+                            </div>
+                            <h4>Cybersecurity Best Practices for the Safety of Modern Vehicles</h4>
+                            <p>U.S. National Highway Traffic Safety Administration guidelines for hardening diagnostic ports and preventing unauthorized vehicle commands.</p>
+                            <a href="https://www.nhtsa.gov/technology-innovation/vehicle-cybersecurity" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        function checkAnswer(questionName, correctAnswer, btnElement) {
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            const feedback = document.getElementById(`${questionName}-feedback`);
+            if (!selected) {
+                feedback.style.display = "block";
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "Please select an option before checking.";
+                return;
+            }
+            feedback.style.display = "block";
+            if (selected.value === correctAnswer) {
+                feedback.style.color = "#10b981";
+                feedback.textContent = "✓ Correct! " + getExplanation(questionName);
+            } else {
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "✗ Incorrect. " + getExplanation(questionName);
+            }
+        }
+
+        function getExplanation(questionName) {
+            const explanations = {
+                "q1": "SAE J1979 / ISO 15031 standardizes diagnostic request/response protocols and PID decoding across modern motor vehicles.",
+                "q2": "C0035 touches wheel speed and anti-lock braking; improper repair directly impacts stopping safety, requiring certified human sign-off.",
+                "q3": "Under SAE J1979, Mode 01 PID 0x0C engine RPM is encoded across 2 bytes: ((256 * A) + B) / 4.",
+                "q4": "Deterministic Python calculation ensures exact pricing consistency without numerical hallucinations.",
+                "q5": "The Vehicle Identification Number (VIN) uniquely partitions diagnostic state per automobile in persistent checkpointer storage.",
+                "q6": "ASIL stands for Automotive Safety Integrity Level, established under ISO 26262 functional safety standards.",
+                "q7": "Freeze-frame telemetry records exact engine parameters at the precise millisecond a fault code triggers.",
+                "q8": "Clearing DTCs wipes all emissions readiness monitor flags, causing immediate state inspection test failures.",
+                "q9": "Calling app.update_state() injects the approval verdict and invoke(None, config) resumes execution from the breakpoint.",
+                "q10": "Congratulations! You have mastered the complete 24-day engineering curriculum of Agentic AI!"
+            };
+            return explanations[questionName] || "";
+        }
+
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const code = pre.querySelector('code');
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => { button.textContent = 'Copy Code'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

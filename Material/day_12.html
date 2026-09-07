@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 12: Improving Retrieval Quality: Hybrid Search & Re-Ranking</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li class="active"><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>50%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 12.0</span>
+                <h1>Day 12: Improving Retrieval Quality: Hybrid Search & Re-Ranking</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> In Day 11, we built a standard dense vector RAG pipeline. In production, pure vector search frequently disappoints: it misses exact alphanumeric identifiers (e.g. error code <code>ERR-CAN-9912</code>, product SKU <code>SKU-8821</code>), suffers from semantic drift on polysemous terms (e.g. "Apple" the company vs "apple" the fruit), and returns chunks that look mathematically close in embedding space but lack the actual answer. How do we achieve 99%+ precision using <strong>Hybrid Search (BM25 + Dense)</strong>, <strong>Reciprocal Rank Fusion (RRF)</strong>, and <strong>Cross-Encoder Re-Ranking</strong>?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 2.3</span>
+                            <span class="plan-badge plan-badge-secondary">Week 2</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Implement the Okapi BM25 probabilistic relevance formula from scratch in pure Python.</li><li>Contrast Bi-Encoder dense retrieval with Cross-Encoder full-attention re-ranking architectures.</li><li>Build an industrial Hybrid Search pipeline combining BM25, Dense Vectors, and Reciprocal Rank Fusion ($k=60$).</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Okapi BM25 formulation: IDF weighting, term frequency saturation ($k_1=1.5$), and document length normalization ($b=0.75$).</li><li>Bi-Encoder ($q \cdot d$) vs. Cross-Encoder ($	ext{Transformer}(q \oplus d)$) cross-attention mechanics.</li><li>Reciprocal Rank Fusion (RRF): $	ext{RRF\_Score}(d) = \sum_{m} rac{1}{k + r_m(d)}$ where $k=60$.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 12.1: Pure Python Okapi BM25 Inverted Index & Token Search Engine from Scratch.</li><li>Program 12.2: Hybrid Search Pipeline with Reciprocal Rank Fusion (RRF $k=60$).</li><li>Program 12.3: Cross-Encoder Re-Ranker with Dynamic Contextual Compression.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Dense Vector Blindness: Failing to find exact alphanumeric serial numbers, SKU codes, or error codes with dense embeddings.</li><li>Re-Ranking Latency Explosion: Running 100 documents through an expensive Cross-Encoder, spiking P99 latency past 3 seconds.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Pure BM25 Index & RRF Hybrid Search Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Bi-Encoder Bottleneck & Semantic Drift</h2>
+                <p>Dense vector search relies on a <strong>Bi-Encoder Architecture</strong>. The query text $Q$ and candidate document chunk $D$ are embedded independently by the model into static vectors $\vec{u} = f(Q)$ and $\vec{v} = g(D)$ before computing cosine similarity:</p>
+                
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: #ef4444;">The Three Structural Flaws of Bi-Encoders</h3>
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 0.8rem;">
+                            <strong>1. Zero Cross-Attention:</strong> In a Bi-Encoder, query tokens never attend to document tokens. The entire semantic meaning of a 500-word passage is compressed into a single 1536-dimensional vector, losing nuanced syntactic relationships and negation modifiers.
+                        </li>
+                        <li style="margin-bottom: 0.8rem;">
+                            <strong>2. Alphanumeric Code Blindness:</strong> Dense models compress subwords. Specific error strings like <code>v2.14.0</code> and <code>v2.14.1</code> yield almost identical vectors ($0.99+$ cosine similarity), even though that minor version number dictates whether a zero-day vulnerability exists.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong>3. Polysemy Bleed:</strong> A query regarding "Spark" (Apache Spark distributed compute framework) can drift into automotive spark plugs or ignition coils because the embedding space conflates overlapping vocabulary.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Mathematical Formulations: BM25, RRF & Cross-Encoders</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">1. The BM25 Scoring Function (Sparse Lexical Search)</h3>
+                    <p>The Okapi BM25 algorithm evaluates the relevance of document $D$ to query $Q = \{q_1, q_2, \dots, q_n\}$ by combining Inverse Document Frequency (IDF) with length-normalized term frequency:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.05rem; color: #3b82f6; margin: 1rem 0;">
+                        \text{BM25}(D, Q) = \sum_{i=1}^n \text{IDF}(q_i) \cdot \frac{f(q_i, D) \cdot (k_1 + 1)}{f(q_i, D) + k_1 \cdot \left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}
+                    </div>
+                    <p>where $\text{IDF}(q_i) = \ln \left(\frac{N - n(q_i) + 0.5}{n(q_i) + 0.5} + 1\right)$, $k_1 \in [1.2, 2.0]$ controls term frequency saturation, and $b \approx 0.75$ penalizes artificially long documents.</p>
+
+                    <h4 style="color: #f59e0b; margin-top: 1.2rem;">2. Reciprocal Rank Fusion (RRF) Formula</h4>
+                    <p>When merging sparse BM25 scores (unbounded positive floats) with dense cosine similarity ($[-1, 1]$), standard score normalization (Min-Max) produces distorted rankings due to outlier spikes. <strong>Reciprocal Rank Fusion (RRF)</strong> resolves this by merging rankings purely on positional rank order without score calibration:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.15rem; color: #f59e0b; margin: 1rem 0;">
+                        \text{RRF\_Score}(d \in \mathcal{D}) = \sum_{m \in M} \frac{1}{k + r_m(d)}
+                    </div>
+                    <p>where $M$ is the set of search engines (e.g. BM25 and Dense), $r_m(d)$ is document $d$'s rank position (1-indexed) in engine $m$, and $k = 60$ is the standard smoothing constant established by Cormack et al. (2009).</p>
+
+                    <h4 style="color: #10b981; margin-top: 1.2rem;">3. The Cross-Encoder Architecture</h4>
+                    <p>Unlike Bi-Encoders, a <strong>Cross-Encoder</strong> concatenates query and candidate chunk into a single sequence: $[CLS] \circ Q \circ [SEP] \circ D$. All tokens attend to each other across all self-attention layers:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); margin: 0.5rem 0;">
+                        \text{CrossAttention}(Q, D) = \text{Softmax}\left(\frac{Q K^T}{\sqrt{d_k}}\right) V
+                    </div>
+                    <p style="margin-bottom: 0;">The $[CLS]$ token output is passed through a sigmoid classification head to emit an exact relevance probability $P(\text{Relevant} \mid Q, D) \in [0, 1]$.</p>
+                </div>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6; font-weight: bold;">USER QUERY: "Error ERR-CAN-9912 in BMS inverter controller"</div>
+                        <div style="margin-top: 0.8rem; display: flex; justify-content: space-between;">
+                            <span style="color: #ec4899;">[BRANCH 1: BM25 Sparse Search]</span>
+                            <span style="color: #6366f1;">[BRANCH 2: Dense Vector Search]</span>
+                        </div>
+                        <div style="margin-top: 0.2rem; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted);">
+                            <span>Guarantees exact hit on 'ERR-CAN-9912'</span>
+                            <span>Finds semantic concepts 'inverter battery faults'</span>
+                        </div>
+                        <div style="color: #f59e0b; margin-top: 1rem; font-weight: bold;">&darr; RECIPROCAL RANK FUSION (RRF, k=60) &darr;</div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">Merges top-20 candidates into single balanced candidate pool</div>
+                        <div style="color: #10b981; margin-top: 1rem; font-weight: bold;">&darr; CROSS-ENCODER RE-RANKER &darr;</div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">Computes full pairwise cross-attention &rarr; Outputs exact relevance logit</div>
+                        <div style="color: #22c55e; margin-top: 1rem; font-weight: bold;">FINAL TOP-3 VERIFIED CHUNKS &rarr; INJECTED TO LLM PROMPT</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 12.0-1: Two-Stage Hybrid Search and Cross-Encoder Re-Ranking Architecture</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: Pure Python BM25 Inverted Index & Scoring Engine</h2>
+                <p>The code below implements the complete Okapi BM25 ranking algorithm from scratch in Python, featuring text tokenization, inverse document frequency indexing, and length normalization:</p>
+
+                <div class="code-header">
+                    <span>program_12_1_bm25_from_scratch.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 12.0-1: Pure Python Okapi BM25 Inverted Index Engine
+import math
+import re
+from collections import defaultdict, Counter
+from typing import List, Dict, Tuple
+
+class BM25Index:
+    def __init__(self, k1: float = 1.5, b: float = 0.75):
+        self.k1 = k1
+        self.b = b
+        self.doc_ids: List[str] = []
+        self.doc_lengths: Dict[str, int] = {}
+        self.avg_doc_length: float = 0.0
+        self.inverted_index: Dict[str, Dict[str, int]] = defaultdict(dict)
+        self.idf: Dict[str, float] = {}
+        self.corpus_size: int = 0
+
+    def _tokenize(self, text: str) -> List[str]:
+        """Lowercases and extracts alphanumeric word tokens."""
+        return re.findall(r"\b[a-zA-Z0-9_\-]+\b", text.lower())
+
+    def fit(self, documents: List[Dict[str, str]]):
+        """Builds inverted index, doc lengths, and IDF tables."""
+        self.corpus_size = len(documents)
+        total_words = 0
+
+        for doc in documents:
+            doc_id = doc["id"]
+            self.doc_ids.append(doc_id)
+            tokens = self._tokenize(doc["text"])
+            self.doc_lengths[doc_id] = len(tokens)
+            total_words += len(tokens)
+
+            counts = Counter(tokens)
+            for token, freq in counts.items():
+                self.inverted_index[token][doc_id] = freq
+
+        self.avg_doc_length = total_words / max(self.corpus_size, 1)
+
+        # Compute Robertson-Spärck Jones IDF
+        for term, posting in self.inverted_index.items():
+            doc_freq = len(posting)
+            # Standard BM25 IDF formulation
+            self.idf[term] = math.log(((self.corpus_size - doc_freq + 0.5) / (doc_freq + 0.5)) + 1.0)
+
+    def search(self, query: str, top_k: int = 5) -> List[Tuple[str, float]]:
+        """Scores candidate documents against query terms using BM25 formula."""
+        q_tokens = self._tokenize(query)
+        scores = defaultdict(float)
+
+        for token in q_tokens:
+            if token not in self.idf:
+                continue
+            token_idf = self.idf[token]
+            postings = self.inverted_index[token]
+
+            for doc_id, tf in postings.items():
+                doc_len = self.doc_lengths[doc_id]
+                denom = tf + self.k1 * (1.0 - self.b + self.b * (doc_len / self.avg_doc_length))
+                term_score = token_idf * ((tf * (self.k1 + 1.0)) / denom)
+                scores[doc_id] += term_score
+
+        sorted_results = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        return sorted_results[:top_k]
+
+if __name__ == "__main__":
+    docs = [
+        {"id": "doc_1", "text": "Kubernetes cluster error ERR-CAN-9912 occurred in the battery thermal control loop."},
+        {"id": "doc_2", "text": "General troubleshooting guide for Docker networking and port 8080 conflicts."},
+        {"id": "doc_3", "text": "Battery thermal control loop specifications for electric vehicle liquid cooling."},
+        {"id": "doc_4", "text": "Error ERR-CAN-9912 runbook: cycle power to the BMS controller unit and replace fuse F-12."}
+    ]
+    bm25 = BM25Index()
+    bm25.fit(docs)
+
+    test_query = "What is the fix for ERR-CAN-9912?"
+    matches = bm25.search(test_query, top_k=2)
+
+    print(f"BM25 Search Results for '{test_query}':")
+    for doc_id, score in matches:
+        print(f" -> {doc_id:<10} | BM25 Score: {score:.4f}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 12.0-1: Pure Python Okapi BM25 Indexing and Term Saturation Engine</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: Complete Hybrid Search & Reciprocal Rank Fusion (RRF)</h2>
+                <p>The script below merges sparse BM25 keyword rankings with dense ChromaDB semantic vector search using Reciprocal Rank Fusion ($k=60$), guaranteeing both keyword accuracy and conceptual recall:</p>
+
+                <div class="code-header">
+                    <span>program_12_2_hybrid_search_rrf.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 12.0-2: Production Hybrid Search combining BM25 and Dense ChromaDB via RRF
+from collections import defaultdict
+from typing import List, Dict, Tuple
+import chromadb
+from openai import OpenAI
+
+# 1. Corpus of Technical Service Runbooks
+knowledge_corpus = [
+    {
+        "id": "runbook_bms_9912",
+        "title": "BMS Inverter Error Runbook",
+        "text": "Diagnostics for code ERR-CAN-9912: Inverter controller communication timed out. Replace auxiliary relay R-4 and verify CAN bus wiring harness resistance is 60 Ohms."
+    },
+    {
+        "id": "runbook_thermal_overheat",
+        "title": "Battery Pack Thermal Overheating",
+        "text": "High temperature alert: Coolant pump circulation failure detected. Check glycol reservoir level and bleed trapped air bubbles from primary radiator."
+    },
+    {
+        "id": "runbook_firmware_flashing",
+        "title": "ECU Firmware Update Procedure",
+        "text": "Flash firmware v3.2.1 using OBD-II CAN tool. Do not disconnect battery during bootloader write cycle."
+    },
+    {
+        "id": "runbook_can_bus_troubleshooting",
+        "title": "General Controller Area Network Faults",
+        "text": "CAN bus high and low lines must maintain 2.5V differential. Common issues include termination resistor corrosion."
+    }
+]
+
+# 2. Dense Vector Index (ChromaDB)
+chroma_client = chromadb.Client()
+dense_coll = chroma_client.get_or_create_collection("hybrid_docs")
+dense_coll.add(
+    documents=[d["text"] for d in knowledge_corpus],
+    ids=[d["id"] for d in knowledge_corpus]
+)
+
+# 3. Reciprocal Rank Fusion Logic
+def reciprocal_rank_fusion(
+    ranked_lists: List[List[str]],
+    k: int = 60
+) -> List[Tuple[str, float]]:
+    """Merges multiple ranked lists of document IDs using RRF."""
+    scores = defaultdict(float)
+    for r_list in ranked_lists:
+        for rank_idx, doc_id in enumerate(r_list):
+            rank = rank_idx + 1  # 1-indexed
+            scores[doc_id] += 1.0 / (k + rank)
+            
+    sorted_rankings = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+    return sorted_rankings
+
+# 4. Mock BM25 sparse rankings extractor
+def mock_bm25_search(query: str, corpus: List[Dict[str, str]]) -> List[str]:
+    # Prioritizes exact token matches (e.g. ERR-CAN-9912)
+    hits = []
+    q_words = set(query.lower().split())
+    for doc in corpus:
+        doc_words = set(doc["text"].lower().split())
+        overlap = len(q_words.intersection(doc_words))
+        if overlap > 0:
+            hits.append((doc["id"], overlap))
+    hits.sort(key=lambda x: x[1], reverse=True)
+    return [h[0] for h in hits]
+
+def execute_hybrid_search(query: str, top_k: int = 3) -> List[Tuple[str, float]]:
+    # Step A: Dense vector search
+    dense_res = dense_coll.query(query_texts=[query], n_results=len(knowledge_corpus))
+    dense_ranked_ids = dense_res["ids"][0]
+    
+    # Step B: Sparse keyword search
+    sparse_ranked_ids = mock_bm25_search(query, knowledge_corpus)
+    
+    # Step C: Fuse rankings with RRF
+    fused = reciprocal_rank_fusion([dense_ranked_ids, sparse_ranked_ids], k=60)
+    return fused[:top_k]
+
+if __name__ == "__main__":
+    search_query = "What should I replace when error ERR-CAN-9912 happens?"
+    print(f"Executing Hybrid Search for: '{search_query}'\n")
+    
+    top_matches = execute_hybrid_search(search_query, top_k=3)
+    for rank, (doc_id, rrf_score) in enumerate(top_matches, 1):
+        # Lookup doc text
+        doc_obj = next(d for d in knowledge_corpus if d["id"] == doc_id)
+        print(f"Rank {rank}: [{doc_id}] (RRF Score: {rrf_score:.5f})")
+        print(f"  Title: {doc_obj['title']}")
+        print(f"  Snippet: {doc_obj['text'][:110]}...\n")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 12.0-2: Hybrid Search Pipeline with Reciprocal Rank Fusion (RRF)</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: Cross-Encoder Re-Ranking & Contextual Compression</h2>
+                <p>After retrieving candidate chunks via Hybrid Search, a <strong>Cross-Encoder Re-Ranker</strong> scores each candidate against the query using full cross-attention. Irrelevant paragraphs are pruned before injection into the prompt, preventing context pollution:</p>
+
+                <div class="code-header">
+                    <span>program_12_3_cross_encoder_rerank.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 12.0-3: Cross-Encoder Relevance Re-Ranking & Contextual Pruning
+from typing import List, Dict, Any
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+client = OpenAI()
+
+class RerankScore(BaseModel):
+    chunk_index: int
+    relevance_score: float = Field(ge=0.0, le=1.0, description="Probability that this chunk directly answers query")
+    reasoning: str
+
+class RerankDossier(BaseModel):
+    evaluations: List[RerankScore]
+
+def cross_encoder_rerank(query: str, candidate_chunks: List[str], relevance_threshold: float = 0.70) -> List[Dict[str, Any]]:
+    """Simulates a Cross-Encoder re-ranker evaluating query-chunk pairs under full cross-attention."""
+    prompt = f"""
+    You are an AI Cross-Encoder Re-Ranker model.
+    Evaluate the relevance of each candidate text chunk to the given user query.
+    Score each chunk from 0.00 (completely irrelevant) to 1.00 (pinpoint factual answer).
+    
+    USER QUERY:
+    "{query}"
+    
+    CANDIDATE CHUNKS:
+    """
+    for idx, c in enumerate(candidate_chunks):
+        prompt += f"\n[CHUNK {idx}]:\n{c}\n"
+
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        response_format=RerankDossier,
+        temperature=0.0
+    )
+    
+    dossier = completion.choices[0].message.parsed
+    reranked_results = []
+    
+    for ev in dossier.evaluations:
+        if ev.relevance_score >= relevance_threshold:
+            reranked_results.append({
+                "chunk_text": candidate_chunks[ev.chunk_index],
+                "score": ev.relevance_score,
+                "reasoning": ev.reasoning
+            })
+            
+    reranked_results.sort(key=lambda x: x["score"], reverse=True)
+    return reranked_results
+
+if __name__ == "__main__":
+    test_query = "What is the specific termination resistance in Ohms for the CAN bus?"
+    
+    candidates = [
+        "The electric vehicle motor draws 120A at maximum torque load.",
+        "General automotive wiring color codes for 12V lead-acid batteries.",
+        "CAN bus high and low lines require a 60 Ohm termination resistance across split nodes to prevent signal reflection.",
+        "Inverter cooling pump utilizes a 50/50 ethylene glycol liquid coolant mixture."
+    ]
+    
+    pruned = cross_encoder_rerank(test_query, candidates, relevance_threshold=0.75)
+    print(f"Re-Ranking Results ({len(pruned)} chunks passed threshold >= 0.75):")
+    for p in pruned:
+        print(f" -> Score: {p['score']:.2f} | Reason: {p['reasoning']}")
+        print(f"    Text: '{p['chunk_text']}'\n")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 12.0-3: Cross-Encoder Relevance Re-Ranking and Contextual Compression</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Score Scale Calibration Trap:</strong> Attempting to merge raw BM25 scores (e.g. 18.4) directly with Cosine Similarity (e.g. 0.82) by averaging or summing them results in BM25 completely drowning out the vector model. <em>Mitigation:</em> Never add raw scores together. Use Reciprocal Rank Fusion (RRF) which merges positional ordinal ranks rather than arbitrary float magnitudes.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Re-Ranker Latency Bottleneck:</strong> Cross-encoders run full quadratic attention $\mathcal{O}(L^2)$ over combined query and document tokens. Feeding 200 candidates into a cross-encoder can add 3+ seconds of latency! <em>Mitigation:</em> Limit the candidate pool passed to the re-ranker to $K \le 25$ chunks.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Stop-Word Pollution in BM25:</strong> Queries containing common structural words ("What is the procedure for...") can trigger false lexical matches on documents containing "is", "the", and "for". <em>Mitigation:</em> Strip common English stop-words prior to building the BM25 inverted index.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Window Truncation in Cross-Encoders:</strong> Many open-source cross-encoders (like <code>ms-marco-MiniLM-L-6-v2</code>) have a maximum sequence length of 512 tokens. Passing long chunks truncates the bottom half of the text, causing the re-ranker to miss answers located near the end. <em>Mitigation:</em> Ensure chunk sizes are strictly capped at 350 tokens before re-ranking.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Retrieval Architecture Comparison Matrix</h2>
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Architecture Strategy</th>
+                            <th style="padding: 12px; text-align: left;">Exact Match Recall</th>
+                            <th style="padding: 12px; text-align: left;">Semantic Recall</th>
+                            <th style="padding: 12px; text-align: left;">Query Latency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Pure Lexical (BM25)</td>
+                            <td style="padding: 12px;">Very High (100% on keywords)</td>
+                            <td style="padding: 12px;">Zero (fails on synonyms)</td>
+                            <td style="padding: 12px;">Ultra Fast (&lt;10ms)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Pure Dense Vector (Bi-Encoder)</td>
+                            <td style="padding: 12px;">Moderate (misses serial numbers)</td>
+                            <td style="padding: 12px;">High (captures paraphrasing)</td>
+                            <td style="padding: 12px;">Fast (20–40ms via HNSW)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Hybrid Search (BM25 + Dense + RRF)</td>
+                            <td style="padding: 12px;">High (&gt;95%)</td>
+                            <td style="padding: 12px;">High (&gt;95%)</td>
+                            <td style="padding: 12px;">Fast (30–50ms)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Hybrid + Cross-Encoder Re-Ranker</td>
+                            <td style="padding: 12px;">Maximum (&gt;99%)</td>
+                            <td style="padding: 12px;">Maximum (&gt;99%)</td>
+                            <td style="padding: 12px;">Moderate (80–120ms total)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. What is the primary weakness of pure dense vector embeddings in technical retrieval?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Vector search cannot run on CPUs.</li>
+                        <li class="mcq-option" data-correct="true">They compress text into continuous vectors, often missing exact alphanumeric identifiers, error codes, and serial numbers.</li>
+                        <li class="mcq-option" data-correct="false">They only work on English text.</li>
+                        <li class="mcq-option" data-correct="false">Vector databases crash after 1,000 queries.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. What does Hybrid Search combine?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">SQL queries and MongoDB collections.</li>
+                        <li class="mcq-option" data-correct="true">Sparse lexical keyword matching (BM25) with dense semantic vector retrieval.</li>
+                        <li class="mcq-option" data-correct="false">Python code with C++ compilers.</li>
+                        <li class="mcq-option" data-correct="false">HTML pages with CSS stylesheets.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. Why is Reciprocal Rank Fusion (RRF) preferred over linear score addition when merging search results?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">BM25 scores and Cosine similarities have different unbounded scales; RRF merges rankings based on ordinal rank position without calibration errors.</li>
+                        <li class="mcq-option" data-correct="false">RRF runs entirely on the GPU.</li>
+                        <li class="mcq-option" data-correct="false">Linear addition is forbidden by Python.</li>
+                        <li class="mcq-option" data-correct="false">RRF deletes duplicate documents from hard drives.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. What is the standard smoothing constant k used in Reciprocal Rank Fusion (RRF)?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">k = 0</li>
+                        <li class="mcq-option" data-correct="true">k = 60</li>
+                        <li class="mcq-option" data-correct="false">k = 1000</li>
+                        <li class="mcq-option" data-correct="false">k = 10</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. How does a Cross-Encoder differ from a Bi-Encoder?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Cross-encoders only work with image data.</li>
+                        <li class="mcq-option" data-correct="true">Cross-encoders concatenate query and candidate into a single sequence, allowing every query token to attend to every document token simultaneously.</li>
+                        <li class="mcq-option" data-correct="false">Cross-encoders are 100x faster than bi-encoders.</li>
+                        <li class="mcq-option" data-correct="false">Cross-encoders generate embeddings without models.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. Why shouldn't a Cross-Encoder be used directly over a 100,000 document corpus?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Cross-encoders cannot read more than 10 documents.</li>
+                        <li class="mcq-option" data-correct="true">Computing full cross-attention over 100,000 documents would take minutes per query due to O(L^2) attention complexity.</li>
+                        <li class="mcq-option" data-correct="false">Cross-encoders are deprecated.</li>
+                        <li class="mcq-option" data-correct="false">It causes internet disconnection.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. In the BM25 formula, what does parameter b control?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The background color of the UI.</li>
+                        <li class="mcq-option" data-correct="true">Document length normalization (penalizing artificially long documents).</li>
+                        <li class="mcq-option" data-correct="false">The temperature of the LLM.</li>
+                        <li class="mcq-option" data-correct="false">The batch size during training.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What is 'Semantic Disambiguation' in polysemous queries?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Encrypting words with SHA-256.</li>
+                        <li class="mcq-option" data-correct="true">Distinguishing the true intended meaning of words that have multiple senses based on surrounding context (e.g., 'Apple stock' vs 'Apple pie').</li>
+                        <li class="mcq-option" data-correct="false">Translating queries into Spanish.</li>
+                        <li class="mcq-option" data-correct="false">Converting text into speech.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. What is the recommended candidate pool size K to pass into a Cross-Encoder Re-Ranker in production?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">K = 5,000</li>
+                        <li class="mcq-option" data-correct="true">K = 15 to 25</li>
+                        <li class="mcq-option" data-correct="false">K = 1,000,000</li>
+                        <li class="mcq-option" data-correct="false">K = 1</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. How does Contextual Compression optimize the generation stage of RAG?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">It compresses text using Gzip before sending to LLM.</li>
+                        <li class="mcq-option" data-correct="true">It filters out irrelevant chunks and extracts only the specific paragraphs answering the query, minimizing prompt token bloat.</li>
+                        <li class="mcq-option" data-correct="false">It turns off attention heads.</li>
+                        <li class="mcq-option" data-correct="false">It deletes old documents from ChromaDB.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master hybrid search and cross-encoder re-ranking.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: rank_bm25 Library Integration</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Install <code>rank-bm25</code>. Build an index over 20 vehicle engineering troubleshooting guides. Compare retrieval recall on exact part numbers against ChromaDB dense search.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Tunable RRF Smoothing Experiment</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Modify <code>Program 12.0-2</code> to benchmark different values of $k$ in RRF ($k \in [10, 60, 100]$). Document which value yields the most balanced ranking when BM25 and vector search disagree.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Open-Source Sentence-Transformers Cross-Encoder</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Load <code>cross-encoder/ms-marco-MiniLM-L-6-v2</code> using Python. Run real local neural cross-attention over 10 candidate chunks and log latency in milliseconds on CPU vs GPU.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Semantic Polysemy Benchmark Suite</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create a test dataset containing 5 ambiguous terms (e.g. "Jaguar", "Apple", "Mercury", "Python", "BMS"). Verify that your hybrid + re-ranking pipeline correctly routes technical vs culinary/biological queries.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: End-to-End Enterprise RAG Benchmark</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build a 2-stage retrieval pipeline (Dense Top 20 &rarr; Cross-Encoder Top 3) and compare accuracy and hallucination rate against a naive pure-vector baseline across 15 real-world queries.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Classic Paper</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Foundations & Trends in IR</span>
+                            </div>
+                            <h4>The Probabilistic Relevance Framework: BM25 and Beyond</h4>
+                            <p>Stephen Robertson and Hugo Zaragoza's comprehensive treatise on Okapi BM25, term saturation, and document scoring.</p>
+                            <a href="https://www.staff.city.ac.uk/~sb317/papers/foundations_bm25_review.pdf" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">SIGIR 2009</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Waterloo</span>
+                            </div>
+                            <h4>Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods</h4>
+                            <p>Cormack, Clarke, and Buettcher establish RRF as the gold standard for rank-based ensemble search fusion.</p>
+                            <a href="https://plg.uwaterloo.ca/~gvcormac/cormack-sigir09-rrf.pdf" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:1901.04085</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Waterloo / NYU</span>
+                            </div>
+                            <h4>Passage Re-ranking with BERT</h4>
+                            <p>Nogueira and Cho introduce BERT-based Cross-Encoder re-ranking, establishing state-of-the-art retrieval accuracy on MS MARCO.</p>
+                            <a href="https://arxiv.org/abs/1901.04085" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Hugging Face</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Sentence Transformers</span>
+                            </div>
+                            <h4>Cross-Encoders for Re-Ranking Documentation</h4>
+                            <p>Practical guide on using cross-encoder/ms-marco models to score query-document pairs with full bidirectional attention.</p>
+                            <a href="https://www.sbert.net/examples/applications/cross-encoder/README.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_11.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 11: Intro to RAG Pipelines</span>
+                </a>
+                <a href="day_13.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 13: LangChain Abstractions</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14: Visual Agent Automation with n8n & Webhooks</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li class="active"><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>58%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 14.0</span>
+                <h1>Day 14: Visual Agent Automation with n8n & Webhooks</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Problem Statement:</strong> You need to build an enterprise AI pipeline connecting WhatsApp, Slack, Jira, PostgreSQL, and Google Sheets with an LLM. However, writing custom OAuth authentication, token refresh handshakes, webhook listeners, and retry queues in pure Python for 10 distinct SaaS platforms takes weeks of repetitive engineering. How do we combine Python's algorithmic agent power with <strong>n8n's visual low-code event mesh</strong> to ship production enterprise automations in hours?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 2.5</span>
+                            <span class="plan-badge plan-badge-secondary">Week 2</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.5 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Bridge visual automation platforms (n8n) with programmatic Python agent backends.</li><li>Implement cryptographic webhook security using HMAC-SHA256 signatures and timestamp replay guards.</li><li>Build an industrial Dead-Letter Queue (DLQ) bridge to guarantee zero message loss during downtime.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>HMAC-SHA256 constant-time cryptographic verification and the 300-second replay window attack defense.</li><li>Event-Driven Architecture: Asynchronous webhook callbacks vs. synchronous polling overhead.</li><li>Dead-Letter Queue (DLQ) patterns: Isolating poison-pill payloads for safe human inspection.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 14.1: Production FastAPI Cryptographic Webhook Receiver with HMAC-SHA256 & Replay Protection.</li><li>Program 14.2: Importable n8n Complete AI Agent Workflow JSON Specification.</li><li>Program 14.3: Resilient Python-to-n8n Bridge with SQLite Dead-Letter Queue (DLQ) Engine.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Timing Attack Vulnerability: Comparing HMAC tokens using standard `==` instead of `hmac.compare_digest()`.</li><li>Unbounded Webhook Replay: Allowing attackers to capture and replay valid webhook payloads without timestamp checks.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Cryptographic Webhook Receiver & n8n Bridge • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. The Hybrid AI Architecture: Code-First Models + Low-Code Mesh</h2>
+                <p>Enterprise AI engineering does not force a false binary between "all-code" or "no-code". Modern architectures adopt a <strong>Hybrid Hub-and-Spoke Topology</strong>:</p>
+
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">Architectural Division of Responsibilities</h3>
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 0.8rem;">
+                            <strong>Python / LangGraph (The Brain):</strong> Hosts proprietary domain logic, dynamic ReAct loops, vector embeddings, custom mathematical algorithms, and state persistence.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong>n8n Automation Engine (The Nervous System):</strong> Handles external webhooks, OAuth credentials for 400+ SaaS tools, Slack/WhatsApp dispatchers, Cron scheduling, and visual execution observability.
+                        </li>
+                    </ul>
+                </div>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #10b981; font-weight: bold;">[NODE 1: Secure Inbound Webhook] (POST /webhook/ev-incident)</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.85rem;">Validates HMAC-SHA256 signature &bull; Ingests vehicle telemetry JSON</div>
+                        <div style="color: #6366f1; font-weight: bold; margin-top: 0.8rem;">[NODE 2: LangChain AI Agent Node] (OpenAI GPT-4o-mini)</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.85rem;">Evaluates DTC fault code, estimates repair cost, outputs structured diagnosis</div>
+                        <div style="color: #f59e0b; font-weight: bold; margin-top: 0.8rem;">[NODE 3: IF Condition Router] ($json.severity === 'CRITICAL')</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.85rem;">True branch &rarr; Escalates directly to roadside emergency queue</div>
+                        <div style="color: #ec4899; font-weight: bold; margin-top: 0.8rem;">[NODE 4: PostgreSQL Database Node] &rarr; INSERT INTO service_logs</div>
+                        <div style="color: #3b82f6; font-weight: bold; margin-top: 0.8rem;">[NODE 5: Slack / WhatsApp Notification] &rarr; Alert Regional Workshop Lead</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 14.0-1: Visual Workflow Directed Acyclic Graph (DAG) on n8n Canvas</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Cryptographic Webhook Security: HMAC-SHA256 & Replay Protection</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: #ef4444;">Vulnerability: Denial-of-Wallet & Replay Attacks</h3>
+                    <p>Exposing an unauthenticated webhook endpoint connected to an LLM is a catastrophic financial vulnerability. Malicious bots or port scanners can flood the URL with 50,000 requests, burning your entire OpenAI credit balance in minutes.</p>
+
+                    <h4 style="color: #10b981; margin-top: 1.2rem;">The HMAC-SHA256 Signature Contract</h4>
+                    <p>To secure inter-service webhooks between Python and n8n, every HTTP request must include an HMAC-SHA256 cryptographic signature and a UNIX timestamp header:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #10b981; margin: 1rem 0;">
+                        \text{Signature} = \text{HMAC-SHA256}\Big(K_{\text{secret}}, \; T_{\text{timestamp}} \mathbin{\Vert} \text{RawBody}\Big)
+                    </div>
+                    <p>The receiver enforces two mandatory security gates:</p>
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li><strong>1. Replay Window Verification:</strong> $|T_{\text{current}} - T_{\text{header}}| \le 300\text{ seconds}$. Requests older than 5 minutes are rejected immediately.</li>
+                        <li><strong>2. Constant-Time Digest Comparison:</strong> To eliminate side-channel timing attacks, compare digests using <code>hmac.compare_digest()</code> rather than standard string equality <code>==</code>.</li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: Declarative n8n AI Agent Workflow Specification (JSON)</h2>
+                <p>Because n8n workflows are declared in JSON, they can be versioned in Git, tested in CI/CD, and deployed to Docker clusters. Below is a complete, valid n8n workflow definition featuring a webhook trigger, an OpenAI LLM agent, a conditional switch, and a Slack alert:</p>
+
+                <div class="code-header">
+                    <span>program_14_1_n8n_agent_workflow.json</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-json">
+{
+  "name": "Automotive Telemetry AI Triage",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ev-telemetry-triage",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Inbound Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.0
+        },
+        "prompt": "=Analyze this automotive telematics event:\nVehicle Model: {{ $json.body.model }}\nFault Code: {{ $json.body.fault_code }}\nTelemetry: {{ $json.body.telemetry }}\n\nReturn JSON strictly adhering to schema:\n{\n  \"severity\": \"LOW\" | \"MEDIUM\" | \"CRITICAL\",\n  \"fault_component\": string,\n  \"estimated_repair_cost_inr\": number,\n  \"recommended_action\": string\n}"
+      },
+      "name": "OpenAI Diagnostic Specialist",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ JSON.parse($json.text).severity }}",
+              "value2": "CRITICAL"
+            }
+          ]
+        }
+      },
+      "name": "Check Severity",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "channel": "#ev-emergency-alerts",
+        "text": "=🚨 *CRITICAL EV FAULT DETECTED:*\n*Vehicle:* {{ $('Inbound Webhook').item.json.body.model }}\n*Diagnosis:* {{ JSON.parse($('OpenAI Diagnostic Specialist').item.json.text).recommended_action }}\n*Estimated Cost:* ₹{{ JSON.parse($('OpenAI Diagnostic Specialist').item.json.text).estimated_repair_cost_inr }}"
+      },
+      "name": "Emergency Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [920, 200]
+    }
+  ],
+  "connections": {
+    "Inbound Webhook": {
+      "main": [[{"node": "OpenAI Diagnostic Specialist", "type": "main", "index": 0}]]
+    },
+    "OpenAI Diagnostic Specialist": {
+      "main": [[{"node": "Check Severity", "type": "main", "index": 0}]]
+    },
+    "Check Severity": {
+      "main": [
+        [{"node": "Emergency Slack Alert", "type": "main", "index": 0}],
+        []
+      ]
+    }
+  }
+}
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 14.0-1: Declarative n8n AI Diagnostic Workflow Specification</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: Production Python FastAPI Webhook Receiver with HMAC Security</h2>
+                <p>When n8n or an external SaaS webhook triggers your Python service, you must verify the cryptographic signature and timestamp to prevent replay attacks:</p>
+
+                <div class="code-header">
+                    <span>program_14_2_fastapi_hmac_receiver.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 14.0-2: Production FastAPI Webhook Receiver with HMAC-SHA256 Verification
+import hmac
+import hashlib
+import time
+from fastapi import FastAPI, Request, HTTPException, Header, status
+
+app = FastAPI(title="Secure n8n Agent Webhook Receiver")
+SHARED_SECRET = "enterprise_secret_key_prod_2026"
+MAX_TIME_DRIFT_SECONDS = 300  # 5-minute replay attack window
+
+def verify_hmac_signature(payload_bytes: bytes, received_signature: str, timestamp_str: str) -> bool:
+    """Verifies HMAC-SHA256 signature using constant-time comparison."""
+    if not received_signature or not timestamp_str:
+        return False
+
+    try:
+        req_time = int(timestamp_str)
+        curr_time = int(time.time())
+        # Replay attack guard
+        if abs(curr_time - req_time) > MAX_TIME_DRIFT_SECONDS:
+            print(f"[SECURITY ALERT] Timestamp drift exceeded: {abs(curr_time - req_time)}s")
+            return False
+    except ValueError:
+        return False
+
+    message = f"{timestamp_str}.".encode("utf-8") + payload_bytes
+    expected_sig = hmac.new(SHARED_SECRET.encode("utf-8"), message, hashlib.sha256).hexdigest()
+    
+    # Constant-time comparison prevents timing attacks
+    return hmac.compare_digest(expected_sig, received_signature)
+
+@app.post("/webhook/inbound-agent-event", status_code=status.HTTP_202_ACCEPTED)
+async def handle_incoming_webhook(
+    request: Request,
+    x_webhook_signature: str = Header(None),
+    x_webhook_timestamp: str = Header(None)
+):
+    raw_body = await request.body()
+    
+    # Cryptographic verification
+    is_valid = verify_hmac_signature(raw_body, x_webhook_signature, x_webhook_timestamp)
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Cryptographic signature verification failed or replay window expired."
+        )
+
+    json_payload = await request.json()
+    print(f"&check; Verified Webhook Ingested: Event={json_payload.get('event_type')}")
+    
+    # Return 202 Accepted immediately; process AI pipeline asynchronously
+    return {"status": "accepted", "message": "Event queued for asynchronous agent processing."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 14.0-2: Production FastAPI Webhook Receiver with HMAC Security Verification</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: Resilient Python-to-n8n Bridge with Dead-Letter Queue (DLQ)</h2>
+                <p>When dispatching events from Python to n8n, network glitches or container restarts must not drop customer events. The bridge below implements exponential backoff retries with full jitter and a persistent Dead-Letter Queue (DLQ):</p>
+
+                <div class="code-header">
+                    <span>program_14_3_resilient_webhook_bridge.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 14.0-3: Resilient Python-to-n8n Webhook Bridge with Retry & Dead-Letter Queue
+import hmac
+import hashlib
+import json
+import time
+import random
+from typing import Dict, Any
+import requests
+
+SHARED_SECRET = "enterprise_secret_key_prod_2026"
+N8N_TARGET_URL = "http://127.0.0.1:5678/webhook/ev-telemetry-triage"
+DLQ_FILE_PATH = "dead_letter_queue.jsonl"
+
+def sign_payload(payload_dict: Dict[str, Any]) -> Tuple[bytes, str, str]:
+    payload_bytes = json.dumps(payload_dict, sort_keys=True).encode("utf-8")
+    timestamp = str(int(time.time()))
+    msg = f"{timestamp}.".encode("utf-8") + payload_bytes
+    sig = hmac.new(SHARED_SECRET.encode("utf-8"), msg, hashlib.sha256).hexdigest()
+    return payload_bytes, sig, timestamp
+
+def write_to_dlq(payload: Dict[str, Any], reason: str):
+    """Appends undelivered events to Dead-Letter Queue for audit reconciliation."""
+    entry = {"timestamp": time.time(), "reason": reason, "payload": payload}
+    with open(DLQ_FILE_PATH, "a") as f:
+        f.write(json.dumps(entry) + "\n")
+    print(f"  [DLQ PERSISTED] Event written to {DLQ_FILE_PATH}")
+
+def dispatch_event_with_resilience(payload: Dict[str, Any], max_attempts: int = 3) -> bool:
+    payload_bytes, sig, ts = sign_payload(payload)
+    headers = {
+        "Content-Type": "application/json",
+        "X-Webhook-Signature": sig,
+        "X-Webhook-Timestamp": ts
+    }
+
+    base_backoff = 0.5
+    for attempt in range(1, max_attempts + 1):
+        try:
+            print(f"--> [Attempt {attempt}/{max_attempts}] Dispatching webhook to n8n...")
+            # Simulate network post with 2s timeout
+            # resp = requests.post(N8N_TARGET_URL, data=payload_bytes, headers=headers, timeout=2.0)
+            # if resp.status_code in [200, 202]: return True
+            
+            # Simulated transient failure on attempt 1, success on attempt 2
+            if attempt == 1:
+                raise requests.exceptions.ConnectionError("Connection refused by n8n container.")
+            print("    &check; Webhook accepted by n8n workflow!")
+            return True
+        except Exception as err:
+            jitter = random.uniform(0.1, 0.5)
+            sleep_time = (base_backoff * (2 ** (attempt - 1))) + jitter
+            print(f"    &cross; Delivery failed ({err}). Retrying in {sleep_time:.2f}s...")
+            time.sleep(sleep_time)
+
+    # If all attempts exhausted, write to Dead-Letter Queue
+    write_to_dlq(payload, f"Max retries ({max_attempts}) exhausted.")
+    return False
+
+if __name__ == "__main__":
+    telemetry_event = {
+        "event_type": "HIGH_VOLTAGE_FAULT",
+        "model": "Tata Nexon EV Max",
+        "fault_code": "P0A1F",
+        "telemetry": "Battery pack temp 58C, SOC 42%, coolant pressure low."
+    }
+    dispatch_event_with_resilience(telemetry_event)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 14.0-3: Resilient Webhook Dispatcher with Dead-Letter Queue (DLQ)</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Webhook Gateway Timeout (504):</strong> If an LLM node takes 45 seconds to generate an answer, intermediate reverse proxies (Cloudflare, NGINX) terminate the connection at 30 seconds with an HTTP 504. <em>Mitigation:</em> Configure the webhook node with <em>"Respond Immediately" (HTTP 202 Accepted)</em>, running the AI agent asynchronously and sending results via outbound callback.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Unauthenticated Public Webhooks:</strong> Leaving an open webhook URL without cryptographic signing allows malicious bots to trigger infinite model inferences. <em>Mitigation:</em> Mandate HMAC-SHA256 signatures on all webhooks.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. SQLite Locking in Self-Hosted n8n:</strong> By default, local n8n uses SQLite. Under concurrent load (50+ webhook requests/second), SQLite throws <code>database is locked</code> errors. <em>Mitigation:</em> Configure production n8n with PostgreSQL (<code>DB_TYPE=postgresdb</code>).
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Uncontrolled Memory Leaks in Large Payloads:</strong> Passing high-resolution images or 50MB PDFs through n8n nodes exhausts Docker container RAM. <em>Mitigation:</em> Pass S3 / Cloud Storage presigned URLs instead of raw binary file payloads.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Code-First vs. Visual Low-Code (n8n) Comparison Matrix</h2>
+                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: var(--accent); color: white;">
+                            <th style="padding: 12px; text-align: left;">Architecture Factor</th>
+                            <th style="padding: 12px; text-align: left;">Code-First (Python / LangChain)</th>
+                            <th style="padding: 12px; text-align: left;">Visual Low-Code (n8n)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Time to Connect 5+ SaaS Tools</td>
+                            <td style="padding: 12px;">3–5 days (handling OAuth, SDKs, schemas).</td>
+                            <td style="padding: 12px;">30 minutes (drag-and-drop pre-built nodes).</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Observability & UI Tracing</td>
+                            <td style="padding: 12px;">Requires setting up LangSmith, Arize, or custom logs.</td>
+                            <td style="padding: 12px;">Built-in visual execution canvas showing payload at every step.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 12px; font-weight: 600;">Custom Complex Logic</td>
+                            <td style="padding: 12px;">Infinite flexibility; standard unit testing.</td>
+                            <td style="padding: 12px;">Constrained by node expressions or embedded JS snippets.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; font-weight: 600;">Recommended Use Case</td>
+                            <td style="padding: 12px;">Core proprietary AI models, LangGraph state machines.</td>
+                            <td style="padding: 12px;">Ops automation, webhook ingestion, Slack/CRM notifications.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. What is the primary role of n8n in an enterprise AI architecture?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Training foundation LLMs from scratch.</li>
+                        <li class="mcq-option" data-correct="true">Serving as an integration event mesh connecting SaaS tools, webhooks, and databases to AI models via visual workflows.</li>
+                        <li class="mcq-option" data-correct="false">Writing device drivers for graphics cards.</li>
+                        <li class="mcq-option" data-correct="false">Replacing the Python language completely.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. Why should production webhooks be signed with an HMAC-SHA256 signature?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To make the HTTP payload smaller.</li>
+                        <li class="mcq-option" data-correct="true">To verify authenticity and integrity, preventing unauthorized attackers from triggering expensive AI operations.</li>
+                        <li class="mcq-option" data-correct="false">To translate the payload into German.</li>
+                        <li class="mcq-option" data-correct="false">Because HTTP cannot send JSON without HMAC.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. How does a timestamp header protect webhooks against Replay Attacks?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">The receiver rejects any request whose timestamp differs from current server time by more than a tolerance window (e.g. 5 minutes).</li>
+                        <li class="mcq-option" data-correct="false">It records the user's timezone for analytics.</li>
+                        <li class="mcq-option" data-correct="false">It automatically deletes old records from PostgreSQL.</li>
+                        <li class="mcq-option" data-correct="false">Timestamps double the request processing speed.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. Why should hmac.compare_digest() be used instead of == when validating signatures?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because == is deprecated in Python 3.12.</li>
+                        <li class="mcq-option" data-correct="true">It executes in constant time, preventing attackers from exploiting side-channel timing differences to forge valid keys.</li>
+                        <li class="mcq-option" data-correct="false">It runs in 64-bit precision.</li>
+                        <li class="mcq-option" data-correct="false">It converts strings to integers automatically.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. What is a Dead-Letter Queue (DLQ)?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">An email spam folder.</li>
+                        <li class="mcq-option" data-correct="true">A dedicated storage buffer where undelivered or failed webhook events are recorded for inspection after retries fail.</li>
+                        <li class="mcq-option" data-correct="false">A queue that deletes itself after 24 hours.</li>
+                        <li class="mcq-option" data-correct="false">A CPU register cache.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. How should an n8n webhook be configured if downstream LLM processing takes >45 seconds?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Keep the connection open and let the browser wait.</li>
+                        <li class="mcq-option" data-correct="true">Return an immediate HTTP 202 Accepted response, then execute the long-running AI workflow asynchronously.</li>
+                        <li class="mcq-option" data-correct="false">Cancel the request after 5 seconds.</li>
+                        <li class="mcq-option" data-correct="false">Restart the n8n container.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. Why should self-hosted n8n be switched from SQLite to PostgreSQL in production?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">SQLite locks the database during write spikes, causing crashes under high concurrent webhook volume.</li>
+                        <li class="mcq-option" data-correct="false">PostgreSQL is free while SQLite requires a paid license.</li>
+                        <li class="mcq-option" data-correct="false">PostgreSQL runs on Docker while SQLite cannot.</li>
+                        <li class="mcq-option" data-correct="false">SQLite cannot store JSON.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. In the Hybrid Architecture, what is typically handled in Python rather than n8n?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Posting messages to Slack channels.</li>
+                        <li class="mcq-option" data-correct="true">Core proprietary agent logic, cyclical LangGraph state machines, and specialized mathematical algorithms.</li>
+                        <li class="mcq-option" data-correct="false">Managing Google Sheets OAuth credentials.</li>
+                        <li class="mcq-option" data-correct="false">Listening to inbound HTTP webhooks.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. What does 'Full Jitter' mean in exponential backoff retry algorithms?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Screen shaking during video games.</li>
+                        <li class="mcq-option" data-correct="true">Adding a random sleep variance to retry delays to prevent the 'Thundering Herd' problem from swamping servers.</li>
+                        <li class="mcq-option" data-correct="false">Deleting temporary cache files randomly.</li>
+                        <li class="mcq-option" data-correct="false">Doubling the CPU clock speed.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. Can n8n workflows be saved in Git repositories?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">No, n8n only saves to proprietary binary files.</li>
+                        <li class="mcq-option" data-correct="true">Yes, all n8n workflows are 100% declarative JSON files that can be version-controlled, code-reviewed, and deployed via CI/CD.</li>
+                        <li class="mcq-option" data-correct="false">Only if you pay for enterprise licenses.</li>
+                        <li class="mcq-option" data-correct="false">Only on Windows operating systems.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 hands-on assignments to master low-code workflow orchestration and webhook engineering.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Local Dockerized n8n Deployment</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Run n8n locally using Docker Compose with PostgreSQL backend and a persistent volume. Access <code>http://localhost:5678</code> and verify that credentials persist across container restarts.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Automated Lead Qualifier Workflow</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Import <code>Program 14.0-1</code> into n8n. Configure a test webhook that ingests leads. Connect an AI node that scores each lead and writes qualified leads (score &ge; 8) to a local SQLite database.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: HMAC Signature Middleware in n8n</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> In n8n, add a Code Node immediately after the Webhook Node. Write JavaScript to compute the expected HMAC-SHA256 signature from the raw body and compare it with the <code>X-Webhook-Signature</code> header, halting the workflow if invalid.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Asynchronous Callback Pattern (HTTP 202)</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build a Python client that dispatches a heavy PDF extraction task to n8n. n8n returns an immediate <code>{"job_id": "123", "status": "processing"}</code>, and then fires a secondary webhook back to Python when the AI summarization completes.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Dead-Letter Queue (DLQ) Replay Script</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a Python script <code>replay_dlq.py</code> that reads failed webhook events from <code>dead_letter_queue.jsonl</code> and attempts to re-dispatch them to n8n once connectivity is restored.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">n8n Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Automation</span>
+                            </div>
+                            <h4>n8n Advanced AI & LangChain Integration Nodes</h4>
+                            <p>Official documentation for building visual agent workflows, memory buffers, tool nodes, and webhook triggers in n8n.</p>
+                            <a href="https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.agent/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">RFC 2104</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">IETF Standard</span>
+                            </div>
+                            <h4>HMAC: Keyed-Hashing for Message Authentication</h4>
+                            <p>The Internet Standard defining cryptographic HMAC construction, ensuring authenticity and integrity of webhook events.</p>
+                            <a href="https://datatracker.ietf.org/doc/html/rfc2104" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">FastAPI Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Web Framework</span>
+                            </div>
+                            <h4>FastAPI Request Validation & Background Tasks</h4>
+                            <p>Official guide on raw body verification, dependency injection, and asynchronous background worker processing.</p>
+                            <a href="https://fastapi.tiangolo.com/tutorial/background-tasks/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">EIP</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Enterprise Patterns</span>
+                            </div>
+                            <h4>Dead Letter Channel Design Pattern</h4>
+                            <p>Standard pattern for routing unprocessable or failed messages to a dedicated queue for diagnostic inspection.</p>
+                            <a href="https://www.enterpriseintegrationpatterns.com/patterns/messaging/DeadLetterChannel.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_13.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 13: LangChain Abstractions</span>
+                </a>
+                <a href="day_15.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 15: RAG + Tools</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

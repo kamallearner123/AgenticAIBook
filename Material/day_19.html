@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 19: Multi-Agent Systems: Hierarchical Delegation, Supervisor Routing & Communication Protocols</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li class="active"><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>79%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 19.0</span>
+                <h1>Day 19: Multi-Agent Systems: Hierarchical Delegation, Supervisor Routing & Communication Protocols</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Production Problem Statement:</strong> In naive AI implementations, software teams create a single "monolithic" agent loaded with 35 heterogeneous tools (PostgreSQL client, GitHub API, AWS CLI, PDF parser, Slack webhook, Python REPL) guided by a sprawling 4,500-word system prompt instructing it to simultaneously be a product architect, backend developer, penetration tester, and compliance auditor. In production, this architecture breaks down catastrophically: attention dilution causes high tool hallucination rates, token costs scale quadratically with context length, and debugging erratic behavior becomes virtually impossible. How do we formally decompose complex workflows into specialized, cooperating multi-agent teams with strict communication boundaries and deadlock guarantees?
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Session 3.2</span>
+                            <span class="plan-badge plan-badge-secondary">Week 3</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 5.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Formulate Multi-Agent Systems as Decentralized POMDPs (Dec-POMDPs) and prove quadratic context compute savings.</li><li>Build a Hierarchical Supervisor Agent orchestrating specialized Researcher, Coder, and Reviewer subgraphs.</li><li>Implement peer-to-peer Swarm architectures with structured handoffs, state encapsulation, and deadlock breaking.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Dec-POMDP formulation: Tuple $\langle I, S, \{A_i\}, \mathcal{T}, \{\mathcal{R}_i\}, \{\Omega_i\}, \{\mathcal{O}_i\} angle$.</li><li>Context window compute savings: Splitting $M$ tasks across $M$ agents saves context compute by a factor of $rac{1}{M}$.</li><li>Handoff protocol semantics: Encapsulating local scratchpad state while forwarding public summary payloads.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 19.1: Hierarchical Multi-Agent Supervisor Engine with Specialized Workers.</li><li>Program 19.2: Subgraph Composition & State Encapsulation Pipeline.</li><li>Program 19.3: Peer-to-Peer Swarm with Handoff History and Deadlock Breaker.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Bystander Effect Deadlock: Agent A waits for Agent B while Agent B waits for Agent A, freezing the swarm.</li><li>Context Trampling: Passing internal scratchpad thoughts across agent boundaries, poisoning specialized worker prompts.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Hierarchical Supervisor & Peer Swarm Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. Formal Foundations: Multi-Agent Decision Processes & Attention Capacity</h2>
+                <p>A multi-agent architecture is formally modeled as a <strong>Decentralized Partially Observable Markov Decision Process (Dec-POMDP)</strong> or <strong>Multi-Agent State Transition System</strong> defined as an 8-tuple:</p>
+                
+                <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
+                    $$\mathcal{M}_{\text{multi}} = \langle \mathcal{I}, \mathcal{S}, \{\mathcal{A}_i\}, \mathcal{T}, \{\mathcal{R}_i\}, \{\Omega_i\}, \{\mathcal{O}_i\}, \gamma \rangle$$
+                </div>
+
+                <ul>
+                    <li><strong>$\mathcal{I} = \{1, \dots, M\}$:</strong> The finite set of $M$ specialized agents (e.g. Supervisor, Researcher, Coder, QA Auditor).</li>
+                    <li><strong>$\{\mathcal{A}_i\}$:</strong> Agent $i$'s isolated action space (its dedicated, role-specific tools). For example, Coder only has access to a sandboxed Python REPL; Researcher only has access to vector databases and web scrapers.</li>
+                    <li><strong>$\{\Omega_i\}$ and $\{\mathcal{O}_i\}$:</strong> Observation spaces and observation probability functions. Crucially, agent $i$ does <em>not</em> see the raw global context of all other agents; it observes only its localized prompt and task input.</li>
+                </ul>
+
+                <h3>The Mathematical Argument for Specialization vs. Monolithic Context</h3>
+                <p>Let $K$ be the number of tools and $L_{\text{tool}}$ be the average token size of a JSON tool definition schema. In a monolithic agent, every inference call carries token overhead:</p>
+                $$\text{Overhead}_{\text{mono}} = \sum_{k=1}^K L_{\text{tool}, k} \approx K \cdot \bar{L}_{\text{tool}}$$
+                <p>When $K = 35$ and $\bar{L}_{\text{tool}} = 250$ tokens, the prompt baseline consumes <strong>8,750 tokens before the user query is even read</strong>. In contrast, under a Hierarchical Supervisor topology with $M$ agents where each worker has $K_i \approx 3$ tools:</p>
+                $$\text{Overhead}_{\text{worker}} = K_i \cdot \bar{L}_{\text{tool}} \approx 750 \text{ tokens (91.4\% reduction)}$$
+                <p>Furthermore, because Transformer self-attention computes an $N \times N$ attention matrix with complexity $\mathcal{O}(N^2)$, decomposing a monolithic context of length $N$ into $M$ independent sub-contexts of size $N/M$ decreases peak quadratic attention compute by a factor of $M$:</p>
+                $$\text{Compute Ratio} = \frac{M \times (N/M)^2}{N^2} = \frac{1}{M}$$
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Architecture Blueprint: Hierarchical Supervisor vs. Peer-to-Peer Swarms</h2>
+                <p>Multi-agent workflows generally adopt one of two core topologies depending on task determinism and coordination requirements:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 720px; margin: 0 auto; border: 1px solid var(--border-color); font-size: 0.85rem; line-height: 1.45;">
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span> <span style="color: #3b82f6; font-weight: bold;">PATTERN A: HIERARCHICAL SUPERVISOR TOPOLOGY</span>                                       <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>                                 [USER REQUEST]                                    <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                        |                                          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                        v                                          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                             +---------------------+                               <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                             |  SUPERVISOR ROUTER  | &lt;----------+                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                             +---------------------+            |                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                /        |        \             | Updates State &   <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                               /         |         \            | Returns Control  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                              v          v          v           |                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                     +------------+ +---------+ +-------------+ |                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                     | RESEARCHER | |  CODER  | | QA AUDITOR  | |                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                     | (Docs/RAG) | | (REPL)  | | (Sec Linter)| |                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                     +------------+ +---------+ +-------------+ |                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                            \            |            /         |                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                             +-----------+-----------+----------+                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                         |                                          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                 [Quality Gates Met]                               <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                         v                                          <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                                  [FINAL SINK: END]                                <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span> <span style="color: #10b981; font-weight: bold;">PATTERN B: PEER-TO-PEER SWARM (DYNAMIC HANDOFFS)</span>                                  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span><br>
+<span style="color: #64748b;">|</span>  [User] -&gt; [Triage Agent] --handoff--&gt; [Billing Agent] --handoff--&gt; [Fraud Team]  <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                   ^                                                     |         <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">|</span>                   +----------------- (Deadlock Guard &lt;= 5) -------------+         <span style="color: #64748b;">|</span><br>
+<span style="color: #64748b;">+-----------------------------------------------------------------------------------+</span>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 19.0-1: Hierarchical Supervisor Orchestrator vs. Peer Handoff Swarm Topologies</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Complete Python Implementation 1: Deterministic Hierarchical Supervisor Pattern</h2>
+                <p>The following self-contained program implements a complete Supervisor pattern. A centralized routing node assesses the evolving state and dispatches sub-tasks to dedicated specialist nodes (Researcher, Coder, Reviewer). When the QA Reviewer passes quality gates, the supervisor routes to <code>END</code>.</p>
+
+                <div class="code-header">
+                    <span>program_19_1_supervisor_orchestrator.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 19.1: Deterministic Hierarchical Supervisor Multi-Agent System
+Features dynamic routing, specialist workers, and quality-gate termination.
+"""
+
+from typing import TypedDict, Annotated, List, Dict, Any, Literal
+import operator
+from langgraph.graph import StateGraph, END
+
+# 1. Global Multi-Agent State Schema
+class MultiAgentTeamState(TypedDict):
+    task: str
+    research_notes: str
+    code_solution: str
+    review_verdict: str
+    review_comments: Annotated[List[str], operator.add]
+    iteration_count: int
+    max_iterations: int
+    active_worker: str
+    final_output: str
+
+# 2. Worker Node: Technical Researcher
+def researcher_node(state: MultiAgentTeamState) -> Dict[str, Any]:
+    print("\n[RESEARCHER WORKER] Gathering algorithms and mathematical constraints...")
+    # Specialist output (simulated domain retrieval)
+    notes = (
+        "Specification: Compound Interest Formula is A = P(1 + r/n)^(nt).\n"
+        "Requirements: P > 0, r in [0.0, 1.0], n >= 1, t >= 0. Must return rounded float."
+    )
+    return {
+        "research_notes": notes,
+        "active_worker": "researcher"
+    }
+
+# 3. Worker Node: Software Engineer (Coder)
+def coder_node(state: MultiAgentTeamState) -> Dict[str, Any]:
+    iter_num = state.get("iteration_count", 0) + 1
+    feedback = state.get("review_comments", [])
+    print(f"\n[CODER WORKER] Drafting Python implementation (Iteration #{iter_num})...")
+    
+    if iter_num == 1:
+        # Deliberate flaw on draft 1: Missing input type guards
+        code = (
+            "def compound_interest(p, r, t, n=12):\n"
+            "    return p * ((1 + (r / n)) ** (n * t))"
+        )
+    else:
+        # Hardened production code incorporating reviewer critique
+        code = (
+            "def compound_interest(p: float, r: float, t: float, n: int = 12) -> float:\n"
+            "    if p < 0 or r < 0 or t < 0 or n <= 0:\n"
+            "        raise ValueError('Financial parameters must be non-negative; compounding frequency must be positive.')\n"
+            "    return round(float(p * ((1.0 + (r / n)) ** (n * t))), 2)"
+        )
+        
+    return {
+        "code_solution": code,
+        "iteration_count": iter_num,
+        "active_worker": "coder"
+    }
+
+# 4. Worker Node: QA & Security Reviewer
+def reviewer_node(state: MultiAgentTeamState) -> Dict[str, Any]:
+    code = state["code_solution"]
+    iter_num = state["iteration_count"]
+    print(f"\n[QA REVIEWER WORKER] Auditing code draft #{iter_num} against security and typing standards...")
+    
+    if "raise ValueError" not in code or "round(" not in code:
+        comment = f"Draft #{iter_num} rejected: Missing boundary validation and precision rounding."
+        print(f"  &cross; {comment}")
+        return {
+            "review_verdict": "REJECTED",
+            "review_comments": [comment],
+            "active_worker": "reviewer"
+        }
+
+    print("  &check; Draft approved: Type hints, boundary guards, and monetary rounding verified.")
+    return {
+        "review_verdict": "APPROVED",
+        "review_comments": [f"Draft #{iter_num} approved for production release."],
+        "active_worker": "reviewer"
+    }
+
+# 5. Supervisor Routing Logic
+def supervisor_router(state: MultiAgentTeamState) -> Literal["researcher", "coder", "reviewer", "finalize"]:
+    # Step 1: Research if not done
+    if not state.get("research_notes"):
+        print("[SUPERVISOR ROUTER] Decision -> Assigning task to RESEARCHER.")
+        return "researcher"
+        
+    # Step 2: Code if not yet drafted
+    if not state.get("code_solution"):
+        print("[SUPERVISOR ROUTER] Decision -> Assigning task to CODER.")
+        return "coder"
+        
+    # Step 3: Review if pending
+    if state.get("active_worker") == "coder":
+        print("[SUPERVISOR ROUTER] Decision -> Code updated; routing to QA REVIEWER.")
+        return "reviewer"
+        
+    # Step 4: Evaluate review verdict
+    if state.get("review_verdict") == "APPROVED":
+        print("[SUPERVISOR ROUTER] Decision -> Code APPROVED. Routing to FINALIZE.")
+        return "finalize"
+        
+    # Step 5: Check retry bounds
+    if state.get("iteration_count", 0) >= state.get("max_iterations", 3):
+        print("[SUPERVISOR ROUTER] Decision -> Max retries reached. Forcing FINALIZE with escalation.")
+        return "finalize"
+        
+    print("[SUPERVISOR ROUTER] Decision -> Critique feedback pending; routing back to CODER.")
+    return "coder"
+
+def finalize_node(state: MultiAgentTeamState) -> Dict[str, Any]:
+    print("\n[FINALIZE NODE] Compiling final project package.")
+    summary = (
+        f"Task: {state['task']}\n"
+        f"Final Verdict: {state['review_verdict']}\n"
+        f"Total Cycles: {state['iteration_count']}\n"
+        f"Verified Code:\n{state['code_solution']}"
+    )
+    return {"final_output": summary}
+
+# 6. Construct StateGraph
+def build_multi_agent_system():
+    workflow = StateGraph(MultiAgentTeamState)
+    
+    # Register Nodes
+    workflow.add_node("researcher", researcher_node)
+    workflow.add_node("coder", coder_node)
+    workflow.add_node("reviewer", reviewer_node)
+    workflow.add_node("finalize", finalize_node)
+    
+    # Entry Point routes to supervisor logic immediately
+    # We use a dummy entry or conditional start
+    workflow.set_conditional_entry_point(
+        supervisor_router,
+        {
+            "researcher": "researcher",
+            "coder": "coder",
+            "reviewer": "reviewer",
+            "finalize": "finalize"
+        }
+    )
+    
+    # Every worker reports back to the supervisor conditional routing
+    workflow.add_conditional_edges("researcher", supervisor_router)
+    workflow.add_conditional_edges("coder", supervisor_router)
+    workflow.add_conditional_edges("reviewer", supervisor_router)
+    
+    workflow.add_edge("finalize", END)
+    
+    return workflow.compile()
+
+if __name__ == "__main__":
+    app = build_multi_agent_system()
+    
+    initial_mission: MultiAgentTeamState = {
+        "task": "Develop a compound interest calculation module with monthly compounding.",
+        "research_notes": "",
+        "code_solution": "",
+        "review_verdict": "",
+        "review_comments": [],
+        "iteration_count": 0,
+        "max_iterations": 3,
+        "active_worker": "",
+        "final_output": ""
+    }
+    
+    print("==================================================")
+    print("STARTING HIERARCHICAL MULTI-AGENT EXECUTION")
+    print("==================================================")
+    result = app.invoke(initial_mission)
+    
+    print("\n" + "="*50)
+    print("MULTI-AGENT MISSION COMPLETE")
+    print("="*50)
+    print(result["final_output"])
+    print("\nAudit Trail of QA Review Feedback:")
+    for comment in result["review_comments"]:
+        print(f"  • {comment}")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Complete Python Implementation 2: Subgraph Composition & Hierarchical Delegation</h2>
+                <p>In enterprise architectures, teams of agents are often organized as <strong>Subgraphs</strong>. A parent orchestrator delegates a sub-problem to an independent subgraph that executes its own private cycle, returning only a consolidated summary to the parent state.</p>
+
+                <div class="code-header">
+                    <span>program_19_2_subgraph_delegation.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 19.2: Hierarchical Subgraph Delegation in LangGraph
+Parent graph delegates complex analytical sub-problems to an encapsulated child subgraph.
+"""
+
+from typing import TypedDict, Dict, Any
+from langgraph.graph import StateGraph, END
+
+# --- Child Subgraph: Financial Risk Engine ---
+class RiskAnalysisSubState(TypedDict):
+    raw_balance: float
+    credit_score: int
+    computed_risk_score: float
+    risk_tier: str
+
+def compute_risk_node(state: RiskAnalysisSubState) -> Dict[str, Any]:
+    score = (state["raw_balance"] * 0.001) + (state["credit_score"] * 0.8)
+    print(f"    [SUBGRAPH: Risk Engine] Calculated numeric risk score: {score:.2f}")
+    return {"computed_risk_score": score}
+
+def categorize_tier_node(state: RiskAnalysisSubState) -> Dict[str, Any]:
+    score = state["computed_risk_score"]
+    tier = "LOW_RISK" if score > 600 else "ELEVATED_RISK"
+    print(f"    [SUBGRAPH: Risk Engine] Assigned classification tier: {tier}")
+    return {"risk_tier": tier}
+
+def build_risk_subgraph():
+    sub = StateGraph(RiskAnalysisSubState)
+    sub.add_node("compute_score", compute_risk_node)
+    sub.add_node("categorize", categorize_tier_node)
+    sub.set_entry_point("compute_score")
+    sub.add_edge("compute_score", "categorize")
+    sub.add_edge("categorize", END)
+    return sub.compile()
+
+# --- Parent Orchestrator Graph ---
+class ParentAccountState(TypedDict):
+    account_id: str
+    balance: float
+    credit_score: int
+    risk_assessment: str
+    action_taken: str
+
+def intake_node(state: ParentAccountState) -> Dict[str, Any]:
+    print(f"\n[PARENT GRAPH] Ingesting loan request for Account: {state['account_id']}")
+    return {}
+
+def risk_subgraph_wrapper_node(state: ParentAccountState) -> Dict[str, Any]:
+    print("[PARENT GRAPH] Delegating risk computation to Child Subgraph...")
+    child_graph = build_risk_subgraph()
+    
+    # Map parent state channels into child subgraph input schema
+    child_input: RiskAnalysisSubState = {
+        "raw_balance": state["balance"],
+        "credit_score": state["credit_score"],
+        "computed_risk_score": 0.0,
+        "risk_tier": ""
+    }
+    
+    child_result = child_graph.invoke(child_input)
+    print(f"[PARENT GRAPH] Child Subgraph returned verdict: {child_result['risk_tier']}")
+    
+    # Map child output back to parent schema
+    return {"risk_assessment": child_result["risk_tier"]}
+
+def decision_node(state: ParentAccountState) -> Dict[str, Any]:
+    assessment = state["risk_assessment"]
+    action = "APPROVE_CREDIT_LINE" if assessment == "LOW_RISK" else "REQUIRE_COLLATERAL"
+    print(f"[PARENT GRAPH] Final Business Decision: {action}")
+    return {"action_taken": action}
+
+def build_hierarchical_parent_graph():
+    parent = StateGraph(ParentAccountState)
+    parent.add_node("intake", intake_node)
+    parent.add_node("risk_engine_subgraph", risk_subgraph_wrapper_node)
+    parent.add_node("decision_node", decision_node)
+    
+    parent.set_entry_point("intake")
+    parent.add_edge("intake", "risk_engine_subgraph")
+    parent.add_edge("risk_engine_subgraph", "decision_node")
+    parent.add_edge("decision_node", END)
+    
+    return parent.compile()
+
+if __name__ == "__main__":
+    system = build_hierarchical_parent_graph()
+    
+    customer_payload: ParentAccountState = {
+        "account_id": "ACC-99214",
+        "balance": 150000.0,
+        "credit_score": 740,
+        "risk_assessment": "",
+        "action_taken": ""
+    }
+    
+    print("=== EXECUTING HIERARCHICAL SUBGRAPH ORCHESTRATION ===")
+    final_output = system.invoke(customer_payload)
+    print("\nFinal Consolidated State:")
+    print(f"Account: {final_output['account_id']}")
+    print(f"Risk Rating: {final_output['risk_assessment']}")
+    print(f"Action: {final_output['action_taken']}")
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Complete Python Implementation 3: Peer-to-Peer Swarm with Deadlock Prevention</h2>
+                <p>When agents interact peer-to-peer (without a central supervisor), circular handoffs can cause infinite loops (Deadlock). Program 19.3 implements dynamic handoff tools and a strict Coffman cycle breaker.</p>
+
+                <div class="code-header">
+                    <span>program_19_3_peer_swarm_deadlock.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">"""
+Program 19.3: Peer-to-Peer Agent Swarm with Cycle-Breaking Deadlock Guard
+Implements dynamic agent handoffs with bounded transition telemetry.
+"""
+
+from typing import TypedDict, Annotated, List, Dict, Any, Literal
+import operator
+from langgraph.graph import StateGraph, END
+
+class SwarmState(TypedDict):
+    customer_message: str
+    handoff_history: Annotated[List[str], operator.add]
+    transition_count: int
+    max_allowed_handoffs: int
+    current_agent: str
+    resolution: str
+
+def triage_agent_node(state: SwarmState) -> Dict[str, Any]:
+    msg = state["customer_message"].lower()
+    count = state.get("transition_count", 0) + 1
+    print(f"\n[TRIAGE AGENT] Ingesting inquiry (Handoff #{count})...")
+    
+    if "charge" in msg or "refund" in msg or "invoice" in msg:
+        next_target = "billing_agent"
+    elif "password" in msg or "login" in msg:
+        next_target = "auth_agent"
+    else:
+        return {
+            "current_agent": "triage_agent",
+            "resolution": "Resolved directly by Triage with general FAQ.",
+            "transition_count": count,
+            "handoff_history": ["Triage -> Solved"]
+        }
+
+    return {
+        "current_agent": next_target,
+        "transition_count": count,
+        "handoff_history": [f"Triage -> {next_target}"]
+    }
+
+def billing_agent_node(state: SwarmState) -> Dict[str, Any]:
+    count = state["transition_count"] + 1
+    print(f"\n[BILLING AGENT] Processing billing inquiry (Handoff #{count})...")
+    
+    # Simulate an ambiguous case that needs identity verification
+    if "suspicious" in state["customer_message"].lower():
+        print("  -> Billing detected potential fraud; handing off to Auth specialist...")
+        return {
+            "current_agent": "auth_agent",
+            "transition_count": count,
+            "handoff_history": ["Billing -> Auth"]
+        }
+        
+    return {
+        "current_agent": "billing_agent",
+        "resolution": "Billing adjustment of $49.00 credited successfully.",
+        "transition_count": count,
+        "handoff_history": ["Billing -> Solved"]
+    }
+
+def auth_agent_node(state: SwarmState) -> Dict[str, Any]:
+    count = state["transition_count"] + 1
+    print(f"\n[AUTH AGENT] Processing identity verification (Handoff #{count})...")
+    return {
+        "current_agent": "auth_agent",
+        "resolution": "Identity 2FA token verified. Reset link dispatched.",
+        "transition_count": count,
+        "handoff_history": ["Auth -> Solved"]
+    }
+
+def circuit_breaker_node(state: SwarmState) -> Dict[str, Any]:
+    print("\n🚨 [CIRCUIT BREAKER] Deadlock detected! Max handoff threshold exceeded.")
+    return {
+        "resolution": "ESCALATED_TO_HUMAN_TIER3: Automated handoffs exceeded limit."
+    }
+
+# Swarm Dynamic Router
+def swarm_router(state: SwarmState) -> Literal["triage_agent", "billing_agent", "auth_agent", "circuit_breaker", "finalize"]:
+    if state.get("resolution"):
+        return "finalize"
+        
+    if state.get("transition_count", 0) >= state.get("max_allowed_handoffs", 4):
+        return "circuit_breaker"
+        
+    target = state.get("current_agent", "triage_agent")
+    return target
+
+def build_swarm_graph():
+    swarm = StateGraph(SwarmState)
+    
+    swarm.add_node("triage_agent", triage_agent_node)
+    swarm.add_node("billing_agent", billing_agent_node)
+    swarm.add_node("auth_agent", auth_agent_node)
+    swarm.add_node("circuit_breaker", circuit_breaker_node)
+    
+    swarm.set_entry_point("triage_agent")
+    
+    swarm.add_conditional_edges("triage_agent", swarm_router, {
+        "billing_agent": "billing_agent",
+        "auth_agent": "auth_agent",
+        "circuit_breaker": "circuit_breaker",
+        "finalize": END
+    })
+    
+    swarm.add_conditional_edges("billing_agent", swarm_router, {
+        "auth_agent": "auth_agent",
+        "triage_agent": "triage_agent",
+        "circuit_breaker": "circuit_breaker",
+        "finalize": END
+    })
+    
+    swarm.add_conditional_edges("auth_agent", swarm_router, {
+        "billing_agent": "billing_agent",
+        "circuit_breaker": "circuit_breaker",
+        "finalize": END
+    })
+    
+    swarm.add_edge("circuit_breaker", END)
+    
+    return swarm.compile()
+
+if __name__ == "__main__":
+    app = build_swarm_graph()
+    
+    test_ticket: SwarmState = {
+        "customer_message": "There is a suspicious charge on my invoice and I cannot login.",
+        "handoff_history": [],
+        "transition_count": 0,
+        "max_allowed_handoffs": 4,
+        "current_agent": "triage_agent",
+        "resolution": ""
+    }
+    
+    print("=== EXECUTING PEER SWARM WITH HANDOFFS ===")
+    verdict = app.invoke(test_ticket)
+    
+    print("\n" + "="*50)
+    print("SWARM EXECUTION TERMINATED")
+    print(f"Final Resolution: {verdict['resolution']}")
+    print(f"Total Handoff Transitions: {verdict['transition_count']}")
+    print("Handoff Trajectory Path:")
+    for step in verdict["handoff_history"]:
+        print(f"  -> {step}")
+    print("="*50)
+</code></pre>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Architectural Anti-Patterns</h2>
+
+                <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #ef4444; margin-top: 0;">Anti-Pattern 1: Ping-Pong Critique Loops</h4>
+                    <p><strong>The Failure:</strong> In a Coder &harr; Reviewer pair, the reviewer provides vague critiques ("Optimize this further"), causing the coder to rewrite small cosmetic aspects, triggering another vague review indefinitely. The agents loop back and forth until the budget is depleted.</p>
+                    <p><strong>Production Fix:</strong> Require structured critique schemas using Pydantic (e.g. <code>has_syntax_error: bool</code>, <code>failing_unit_tests: list[str]</code>). Enforce a strict iteration ceiling (e.g. <code>max_iterations = 3</code>) after which the system escalates to human review.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #f59e0b; margin-top: 0;">Anti-Pattern 2: Information Bottlenecking in Hierarchical Summarization</h4>
+                    <p><strong>The Failure:</strong> A supervisor delegates tasks to workers but compresses worker results too aggressively before passing context to downstream specialists. The Coder loses vital mathematical nuances discovered by the Researcher because the Supervisor summarized 2,000 words into two sentences.</p>
+                    <p><strong>Production Fix:</strong> Use dedicated shared state channels (e.g., <code>research_specifications: str</code>) that pass raw outputs verbatim between dependent workers while using the supervisor strictly for routing control flow.</p>
+                </div>
+
+                <div class="danger-callout" style="background: rgba(59, 130, 246, 0.08); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="color: #3b82f6; margin-top: 0;">Anti-Pattern 3: State Contamination via Shared Additive Reducers</h4>
+                    <p><strong>The Failure:</strong> Multiple concurrent workers append raw scratchpad logs to a single global <code>messages</code> list using <code>operator.add</code>. Messages become interleaved out of chronological order, confusing the model's in-context reasoning.</p>
+                    <p><strong>Production Fix:</strong> Isolate worker scratchpads into role-specific state keys (e.g. <code>coder_logs: list[str]</code>, <code>reviewer_logs: list[str]</code>) or encapsulate workers within Subgraphs that maintain private local states.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>7. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
+                    
+                    <!-- Question 1 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">1. What is the primary operational flaw of assigning 30+ disparate tools to a single monolithic agent?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q1" value="A"> A) Python dictionaries cannot hold more than 10 keys</label></li>
+                            <li><label><input type="radio" name="q1" value="B"> B) Attention dilution, tool argument hallucination, and massive prompt token overhead</label></li>
+                            <li><label><input type="radio" name="q1" value="C"> C) Compulsory API rate limiting by Docker</label></li>
+                            <li><label><input type="radio" name="q1" value="D"> D) LLMs cannot output JSON when more than 5 tools exist</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q1', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q1-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">2. In a Hierarchical Supervisor multi-agent topology, what is the role of the Supervisor agent?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q2" value="A"> A) To write all unit tests and execute Python code</label></li>
+                            <li><label><input type="radio" name="q2" value="B"> B) To act as a central orchestrator that evaluates state, delegates tasks to specialists, and verifies quality gates</label></li>
+                            <li><label><input type="radio" name="q2" value="C"> C) To store embeddings in a PostgreSQL vector database</label></li>
+                            <li><label><input type="radio" name="q2" value="D"> D) To compress HTTP headers</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q2', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q2-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">3. Why does decomposing a monolithic context into specialized sub-agents reduce quadratic attention compute?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q3" value="A"> A) Sub-agents run on quantum processors</label></li>
+                            <li><label><input type="radio" name="q3" value="B"> B) Splitting an N-token context across M isolated contexts reduces total attention operations from O(N²) to M·O((N/M)²)</label></li>
+                            <li><label><input type="radio" name="q3" value="C"> C) LangGraph bypasses GPU matrix multiplication</label></li>
+                            <li><label><input type="radio" name="q3" value="D"> D) Context length has no effect on LLM latency</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q3', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q3-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">4. What distinguishes a Peer-to-Peer Swarm from a Hierarchical Supervisor topology?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q4" value="A"> A) In a Swarm, agents hand off control directly to one another without returning to a central supervisor</label></li>
+                            <li><label><input type="radio" name="q4" value="B"> B) Swarms do not require Python code</label></li>
+                            <li><label><input type="radio" name="q4" value="C"> C) Supervisors cannot execute tools</label></li>
+                            <li><label><input type="radio" name="q4" value="D"> D) Swarms cannot handle user queries</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q4', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q4-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">5. What architectural defect causes a "Ping-Pong Critique Loop" in multi-agent workflows?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q5" value="A"> A) The network router dropping UDP packets</label></li>
+                            <li><label><input type="radio" name="q5" value="B"> B) Vague, un-quantified critique rubrics and absence of an iteration counter bound</label></li>
+                            <li><label><input type="radio" name="q5" value="C"> C) Using Python 3.11 instead of 3.10</label></li>
+                            <li><label><input type="radio" name="q5" value="D"> D) Using SQLite instead of Redis</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q5', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q5-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">6. In LangGraph, what is the primary benefit of encapsulating a specialized team inside a Subgraph?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q6" value="A"> A) It enables encapsulation of private internal state without polluting the parent graph's state schema</label></li>
+                            <li><label><input type="radio" name="q6" value="B"> B) It eliminates the need for compiling graphs</label></li>
+                            <li><label><input type="radio" name="q6" value="C"> C) Subgraphs run without using memory</label></li>
+                            <li><label><input type="radio" name="q6" value="D"> D) It forces all variables to become global</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q6', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q6-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">7. How should state communication between a Coder and a Reviewer be structured to avoid message contamination?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q7" value="A"> A) By dumping everything into a single raw text file on disk</label></li>
+                            <li><label><input type="radio" name="q7" value="B"> B) By assigning dedicated, typed channels in the state schema (e.g. `code_draft` and `review_comments`)</label></li>
+                            <li><label><input type="radio" name="q7" value="C"> C) By forcing the Coder to guess what the Reviewer evaluated</label></li>
+                            <li><label><input type="radio" name="q7" value="D"> D) By executing both agents in the same prompt string</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q7', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q7-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 8 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">8. What guardrail mechanism prevents peer handoffs from cycling indefinitely in a Swarm architecture?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q8" value="A"> A) A transition counter channel with an explicit circuit breaker node triggering human escalation</label></li>
+                            <li><label><input type="radio" name="q8" value="B"> B) Increasing the model temperature to 1.5</label></li>
+                            <li><label><input type="radio" name="q8" value="C"> C) Disabling all conditional edges</label></li>
+                            <li><label><input type="radio" name="q8" value="D"> D) Deleting the checkpointer database</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q8', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q8-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 9 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">9. Which Dec-POMDP component represents an individual agent's dedicated, role-specific tools?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q9" value="A"> A) The global transition probability T</label></li>
+                            <li><label><input type="radio" name="q9" value="B"> B) The agent's individual action space A_i</label></li>
+                            <li><label><input type="radio" name="q9" value="C"> C) The discount factor gamma</label></li>
+                            <li><label><input type="radio" name="q9" value="D"> D) The global reward function R</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q9', 'B', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q9-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <!-- Question 10 -->
+                    <div class="quiz-item" style="margin-bottom: 2rem;">
+                        <p style="font-weight: 600;">10. In production multi-agent systems, what is the consequence of Information Bottlenecking?</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li><label><input type="radio" name="q10" value="A"> A) Downstream workers receive over-summarized, degraded specifications that omit critical constraints</label></li>
+                            <li><label><input type="radio" name="q10" value="B"> B) PostgreSQL rejects foreign key constraints</label></li>
+                            <li><label><input type="radio" name="q10" value="C"> C) API keys expire immediately</label></li>
+                            <li><label><input type="radio" name="q10" value="D"> D) Docker images double in size</label></li>
+                        </ul>
+                        <button class="check-btn" onclick="checkAnswer('q10', 'A', this)">Verify Answer</button>
+                        <div class="quiz-feedback" id="q10-feedback" style="display:none; margin-top: 0.5rem;"></div>
+                    </div>
+
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>8. Hands-On Engineering Assignments</h2>
+                
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 19.1: Architect a 4-Tier Security Triage Multi-Agent Team</h4>
+                    <p><strong>Specification:</strong> Build a LangGraph workflow with a Supervisor, Network Log Analyzer, Vulnerability Scanner, and Incident Report Generator. Have the Supervisor route firewall incidents to the Analyzer and unpatched CVE tickets to the Scanner. Aggregate their findings into a standardized markdown incident report.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #10b981; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 19.2: Implement Structured Pydantic Critique Rubrics</h4>
+                    <p><strong>Specification:</strong> Refactor the QA Reviewer in Program 19.1 to return a strict Pydantic model containing: <code>syntax_score: int (1-10)</code>, <code>security_pass: bool</code>, and <code>actionable_fixes: list[str]</code>. Configure the conditional edge to approve code only when <code>syntax_score >= 8</code> and <code>security_pass == True</code>.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #f59e0b; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 19.3: Nested Subgraph Composition with Data Isolation</h4>
+                    <p><strong>Specification:</strong> Build an e-commerce order fulfillment graph. The parent graph handles customer billing and shipping notifications, but delegates warehouse inventory reservation to an independent Subgraph. Verify that warehouse internal bin numbers and pallet tracking keys do not leak into the parent state schema.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #8b5cf6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 19.4: Swarm Circuit Breaker with Dead-Letter Escalation</h4>
+                    <p><strong>Specification:</strong> Implement a 3-agent peer swarm where two agents intentionally reject each other's work (simulating a deadlock). Wire the circuit breaker node to capture the entire trajectory history and write an emergency ticket payload to a dead-letter SQLite table.</p>
+                </div>
+
+                <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #ec4899; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0;">Assignment 19.5: Token Telemetry & Compute Savings Profiler</h4>
+                    <p><strong>Specification:</strong> Write a benchmark profiler that compares the token consumption of a simulated 30-tool monolithic agent against a 3-agent specialist team on identical multi-step tasks. Log and graph prompt token reduction and estimated inference cost savings.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">MIT Press</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Multi-Agent Theory</span>
+                            </div>
+                            <h4>A Concise Introduction to Decentralized POMDPs</h4>
+                            <p>Frans A. Oliehoek and Christopher Amato's definitive mathematical foundation for multi-agent decision making under uncertainty.</p>
+                            <a href="https://link.springer.com/book/10.1007/978-3-319-28929-8" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">GitHub</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI</span>
+                            </div>
+                            <h4>OpenAI Swarm: Educational Multi-Agent Orchestration Framework</h4>
+                            <p>Experimental framework demonstrating stateless multi-agent handoffs, routines, and client-side execution loops.</p>
+                            <a href="https://github.com/openai/swarm" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">LangGraph Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Multi-Agent</span>
+                            </div>
+                            <h4>Multi-Agent Architectures: Supervisor, Network & Hierarchical Teams</h4>
+                            <p>Comprehensive guide on building multi-agent systems with LangGraph StateGraph, subgraphs, and supervisor nodes.</p>
+                            <a href="https://langchain-ai.github.io/langgraph/concepts/multi_agent/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2308.08155</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Microsoft</span>
+                            </div>
+                            <h4>AutoGen: Multi-Agent Conversation Framework</h4>
+                            <p>Foundational paper on conversational agent networks and automated group chat management.</p>
+                            <a href="https://arxiv.org/abs/2308.08155" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        function checkAnswer(questionName, correctAnswer, btnElement) {
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            const feedback = document.getElementById(`${questionName}-feedback`);
+            if (!selected) {
+                feedback.style.display = "block";
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "Please select an option before checking.";
+                return;
+            }
+            feedback.style.display = "block";
+            if (selected.value === correctAnswer) {
+                feedback.style.color = "#10b981";
+                feedback.textContent = "✓ Correct! " + getExplanation(questionName);
+            } else {
+                feedback.style.color = "#ef4444";
+                feedback.textContent = "✗ Incorrect. " + getExplanation(questionName);
+            }
+        }
+
+        function getExplanation(questionName) {
+            const explanations = {
+                "q1": "Overloading a single agent with 30+ tools dilutes attention, increases tool hallucinations, and inflates prompt token overhead.",
+                "q2": "The supervisor serves as an orchestrator that plans sub-tasks, assigns work to specialists, and verifies completion against quality gates.",
+                "q3": "Decomposing context into M independent sub-contexts reduces quadratic attention operations by a factor of M.",
+                "q4": "In a swarm, agents dynamically hand off execution directly to one another without routing through a central supervisor.",
+                "q5": "Vague critique criteria without quantified rubrics or bounded iteration limits cause endless back-and-forth ping-pong cycles.",
+                "q6": "Subgraphs encapsulate their own private state schemas and cycles, preventing channel contamination in the parent state.",
+                "q7": "Isolating worker outputs into dedicated typed state channels ensures clear communication boundaries without interleaving logs.",
+                "q8": "A transition counter combined with a circuit breaker node halts cyclic peer handoffs and triggers human escalation.",
+                "q9": "In Dec-POMDP formulation, A_i represents the isolated set of allowable actions (tools) available to agent i.",
+                "q10": "Information bottlenecking occurs when a supervisor over-summarizes complex findings, stripping key technical details needed downstream."
+            };
+            return explanations[questionName] || "";
+        }
+
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const code = pre.querySelector('code');
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => { button.textContent = 'Copy Code'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

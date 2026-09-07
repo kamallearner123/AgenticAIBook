@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 16: Milestone Project: Company Knowledge Agent</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Theme Toggle Script -->
+    <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Table of Contents -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Agentic AI Course</h2>
+            </div>
+            <div class="sidebar-content">
+                <ul class="toc">
+                    <li><a href="index.html">Course Overview</a></li>
+                    
+                    <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
+                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
+                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+
+                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li class="active"><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+
+                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-nav" id="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" aria-label="Toggle Menu">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="nav-actions">
+                    <div class="completeness-badge">
+                        Completeness: <span>67%</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="Print">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <article class="book-page">
+                <span class="chapter-number">Session 16.0</span>
+                <h1>Day 16: Milestone Project: Company Knowledge Agent</h1>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Milestone Focus:</strong> This session synthesizes all of Week 2: RAG Ingestion & Chunking, Hybrid BM25 + Dense Vector Retrieval, Cross-Encoder Re-Ranking, LCEL Abstractions, and Dynamic Agent Tool Execution. You will build, verify, and test a production-grade <strong>Company Knowledge Agent</strong> that answers internal employee inquiries, computes financial benefits with verifiable arithmetic, queries relational employee HRIS databases, and enforces strict provenance citation integrity.
+                </div>
+
+                <!-- =========================================================
+                     Daily Plan & Learning Architecture
+                     ========================================================= -->
+                <div class="daily-plan-card">
+                    <div class="daily-plan-header">
+                        <div class="daily-plan-title">
+                            <span>📋</span> Daily Plan & Learning Architecture
+                        </div>
+                        <div class="daily-plan-badges">
+                            <span class="plan-badge plan-badge-primary">Capstone 2</span>
+                            <span class="plan-badge plan-badge-secondary">Week 2</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 5.0 hrs</span>
+                        </div>
+                    </div>
+                    <div class="daily-plan-grid">
+                        <div class="plan-col">
+                            <h4>🎯 Today's Mission & Relevance</h4>
+                            <ul>
+                                <li>Engineer Week 2 Capstone: An enterprise-grade Company Knowledge & Operations Assistant.</li><li>Integrate disjoint enterprise silos: ChromaDB policy manual, SQLite employee database, and safe calculator.</li><li>Build an automated Response Faithfulness & Citation Verification Auditor to enforce zero-hallucination policies.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>📐 Theoretical Milestones</h4>
+                            <ul>
+                                <li>Multi-Silo Data Fusion: Reconciling unstructured semantic text with relational tabular ACID records.</li><li>Automated Citation Auditing: Generating character-level citation spans and verifying claim overlap.</li><li>Session Window Memory: Bounded token history maintaining conversational context without quadratic bloat.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>💻 Hands-On Blueprint</h4>
+                            <ul>
+                                <li>Program 16.1: Full Capstone Company Knowledge Agent Engine (`company_knowledge_agent.py`).</li><li>Program 16.2: Automated Response Faithfulness & Citation Verification Auditor.</li><li>Program 16.3: Interactive Employee Portal Multi-Turn Terminal Interface.</li>
+                            </ul>
+                        </div>
+                        <div class="plan-col">
+                            <h4>🛡️ Production Failure Modes</h4>
+                            <ul>
+                                <li>Cross-Tenant Data Leakage: Allowing an employee to query confidential executive payroll records due to missing SQLite filters.</li><li>Unattributed Claims: Producing answers without direct document citation links, violating corporate audit compliance.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="daily-plan-footer">
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Enterprise Knowledge Agent & Citation Auditor • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                    </div>
+                </div>
+
+
+                <h2>1. System Architecture: Multi-Tier Knowledge Mesh</h2>
+                <p>The Company Knowledge Agent serves as the centralized intelligence layer across enterprise documentation, relational databases, and arithmetic calculation engines:</p>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 740px; margin: 0 auto; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6; font-weight: bold;">[INCOMING EMPLOYEE INQUIRY]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted);">&darr;</div>
+                        <div style="color: #6366f1; font-weight: bold;">[AGENT ORCHESTRATOR (ReAct Loop + Session Memory)]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">Deconstructs query &bull; Resolves entity references &bull; Dispatches tools</div>
+                        <div style="margin-top: 0.8rem; display: flex; justify-content: space-between; font-size: 0.85rem;">
+                            <span style="color: #10b981;">[TOOL 1: ChromaDB RAG]</span>
+                            <span style="color: #f59e0b;">[TOOL 2: SQLite HRIS DB]</span>
+                            <span style="color: #ec4899;">[TOOL 3: Math Calculator]</span>
+                        </div>
+                        <div style="margin-top: 0.2rem; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+                            <span>Policy & handbook docs</span>
+                            <span>Employee profile & tenure</span>
+                            <span>Encashment, taxes, payouts</span>
+                        </div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); margin-top: 0.8rem;">&darr;</div>
+                        <div style="color: #22c55e; font-weight: bold;">[CITATION INTEGRITY & VERIFICATION GATE]</div>
+                        <div style="margin-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem;">Verifies claim faithfulness &bull; Attaches <code>[Source: Doc, Section]</code> citations</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 16.0-1: Multi-Tier Knowledge Mesh Architecture of the Company Knowledge Agent</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>2. Theory: Groundedness & Faithfulness Verification Metrics</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; color: var(--accent);">The Faithfulness Mathematical Metric</h3>
+                    <p>In legal, healthcare, and enterprise HR applications, answering accurately is not enough: answers must be provably faithful to source text. Let the answer $A$ be decomposed into atomic factual claims $\{c_1, c_2, \dots, c_m\}$. The <strong>Faithfulness Score</strong> against retrieved context $C$ is:</p>
+                    <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.15rem; color: #10b981; margin: 1rem 0;">
+                        \text{Faithfulness}(A, C) = \frac{\sum_{i=1}^m \mathbb{I}\big(c_i \text{ is directly inferable from } C\big)}{m}
+                    </div>
+                    <p>where $\mathbb{I}(\cdot) \in \{0, 1\}$ is the indicator function. Production deployment mandates $\text{Faithfulness}(A, C) = 1.0$. If any claim in the response lacks explicit document provenance, the response must be quarantined by the verification gate.</p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3. Program 1: The Complete Company Knowledge Agent Core Engine</h2>
+                <p>The complete implementation below fuses a ChromaDB policy store, an in-memory SQLite HRIS database, a safe arithmetic execution engine, and session window memory into an autonomous agent:</p>
+
+                <div class="code-header">
+                    <span>program_16_1_company_knowledge_agent.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 16.0-1: Complete Company Knowledge Agent with Multi-Source RAG & Tools
+import json
+import math
+import sqlite3
+from typing import List, Dict, Any
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain.agents import Tool, AgentExecutor, create_openai_tools_agent
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.memory import ConversationBufferWindowMemory
+
+# 1. Models & Vector Store
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+
+policy_corpus = [
+    {
+        "content": "Privilege Leave (PL) Encashment Policy: Employees may encash up to 10 days of unused PL at year end. Payout formula: (Basic Monthly Salary / 30) * Eligible Days.",
+        "metadata": {"source": "HR Handbook 2026", "section": "Leave Encashment (Sec 5.2)"}
+    },
+    {
+        "content": "Maternity Leave: Female employees receive 26 weeks paid leave for up to two children. Adoptive mothers receive 12 weeks paid leave.",
+        "metadata": {"source": "Statutory Benefits Guide", "section": "Maternity Policy (Sec 2.1)"}
+    },
+    {
+        "content": "Broadband Reimbursement: Remote engineers receive up to ₹1,500 INR monthly internet allowance on submitting bill copy.",
+        "metadata": {"source": "IT Remote Policy", "section": "Expense Claims (Sec 8.4)"}
+    }
+]
+
+vectorstore = Chroma.from_texts(
+    texts=[d["content"] for d in policy_corpus],
+    metadatas=[d["metadata"] for d in policy_corpus],
+    embedding=embeddings
+)
+retriever = vectorstore.as_retriever(search_kwargs={"k": 2})
+
+# 2. Relational HRIS Database (SQLite)
+conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+cursor.execute("""
+    CREATE TABLE employees (
+        emp_id TEXT PRIMARY KEY,
+        name TEXT,
+        department TEXT,
+        monthly_basic_inr REAL,
+        unused_pl_days INTEGER
+    )
+""")
+cursor.execute("INSERT INTO employees VALUES ('EMP-101', 'Ananya Sharma', 'Engineering', 90000.0, 8)")
+cursor.execute("INSERT INTO employees VALUES ('EMP-102', 'Vikram Verma', 'Product', 120000.0, 14)")
+conn.commit()
+
+# 3. Agent Tool Implementations
+def tool_search_policies(query: str) -> str:
+    """Search internal enterprise policies, employee handbooks, and benefits rules."""
+    docs = retriever.invoke(query)
+    if not docs:
+        return "No policy documents found matching query."
+    results = []
+    for d in docs:
+        src = d.metadata.get("source", "Handbook")
+        sec = d.metadata.get("section", "General")
+        results.append(f"[Source: {src}, {sec}]\n{d.page_content}")
+    return "\n\n".join(results)
+
+def tool_query_hris(emp_id: str) -> str:
+    """Query employee profile, monthly basic salary, and remaining leave days by emp_id."""
+    cur = conn.cursor()
+    cur.execute("SELECT name, department, monthly_basic_inr, unused_pl_days FROM employees WHERE emp_id = ?", (emp_id.strip(),))
+    row = cur.fetchone()
+    if row:
+        return json.dumps({
+            "name": row[0],
+            "department": row[1],
+            "monthly_basic_inr": row[2],
+            "unused_pl_days": row[3]
+        })
+    return json.dumps({"error": f"Employee ID '{emp_id}' not found in HRIS database."})
+
+def tool_calculate_math(expression: str) -> str:
+    """Safely evaluates financial encashment, tax deductions, or arithmetic formulas."""
+    try:
+        allowed = {"round": round, "abs": abs}
+        val = eval(expression, {"__builtins__": None}, allowed)
+        return json.dumps({"status": "success", "result": round(float(val), 2)})
+    except Exception as e:
+        return json.dumps({"status": "error", "message": str(e)})
+
+tools = [
+    Tool(
+        name="search_company_policies",
+        func=tool_search_policies,
+        description="Search internal company policies, handbooks, and leave formulas. Always cite source."
+    ),
+    Tool(
+        name="query_employee_hris",
+        func=tool_query_hris,
+        description="Retrieve confidential employee compensation and leave balances using emp_id (e.g., EMP-101)."
+    ),
+    Tool(
+        name="calculate_math",
+        func=tool_calculate_math,
+        description="Execute exact arithmetic expressions for leave payouts, taxes, and allowances."
+    )
+]
+
+# 4. Agent Configuration with Memory
+prompt = ChatPromptTemplate.from_messages([
+    ("system", (
+        "You are the official Company Knowledge Agent. "
+        "Strict Operating Rules:\n"
+        "1. Every factual statement must cite its exact [Source: Document, Section].\n"
+        "2. If an employee queries encashment or benefits, look up their HRIS record, search the policy for formula caps, "
+        "and calculate the final payout using the calculate_math tool.\n"
+        "3. If a policy is not found in company documentation, explicitly say: 'I could not find this in official company documentation.'\n"
+        "4. Be professional, direct, and empathetic."
+    )),
+    MessagesPlaceholder(variable_name="chat_history"),
+    ("human", "{input}"),
+    MessagesPlaceholder(variable_name="agent_scratchpad")
+])
+
+memory = ConversationBufferWindowMemory(k=3, memory_key="chat_history", return_messages=True)
+agent = create_openai_tools_agent(llm, tools, prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True)
+
+if __name__ == "__main__":
+    print("=" * 65)
+    print("COMPANY KNOWLEDGE AGENT INITIALIZED")
+    print("=" * 65)
+
+    test_query = (
+        "Check records for employee EMP-102. Can he encash all his unused PL days under company policy, "
+        "and what will his total gross payout be in INR?"
+    )
+    result = agent_executor.invoke({"input": test_query})
+    print("\n" + "=" * 25 + " AGENT RESOLUTION " + "=" * 25)
+    print(result["output"])
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 16.0-1: Company Knowledge Agent Core Execution Engine</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>4. Program 2: Automated Faithfulness & Citation Validator</h2>
+                <p>To eliminate legal compliance risks, the validator below inspects the agent's output, checking that every numerical dollar amount and policy clause cited corresponds directly to verified retrieved evidence:</p>
+
+                <div class="code-header">
+                    <span>program_16_2_citation_validator.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 16.0-2: Production Faithfulness & Citation Verification Gate
+from typing import List
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+client = OpenAI()
+
+class ClaimAudit(BaseModel):
+    claim_text: str
+    is_supported: bool
+    cited_source_valid: bool
+    discrepancy_explanation: str
+
+class VerificationAuditReport(BaseModel):
+    all_claims_faithful: bool
+    faithfulness_score: float = Field(ge=0.0, le=1.0)
+    audited_claims: List[ClaimAudit]
+
+def verify_response_faithfulness(agent_response: str, retrieved_context: str) -> VerificationAuditReport:
+    """Evaluates whether all claims in the response are grounded in the retrieved context."""
+    audit_prompt = f"""
+    You are an Enterprise Legal Compliance Inspector.
+    Audit the generated agent response against the provided reference context.
+    
+    RETRIEVED REFERENCE CONTEXT:
+    {retrieved_context}
+    
+    GENERATED AGENT RESPONSE:
+    {agent_response}
+    
+    Deconstruct the response into individual factual claims and check if each claim is directly supported.
+    """
+    comp = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": audit_prompt}],
+        response_format=VerificationAuditReport,
+        temperature=0.0
+    )
+    return comp.choices[0].message.parsed
+
+if __name__ == "__main__":
+    context = "Section 5.2: Maximum leave encashment is 10 days. Rate is (Monthly Basic / 30) * Days. Vikram Verma basic is 120,000 INR."
+    valid_response = "Under Section 5.2, Vikram Verma can encash a maximum of 10 days, resulting in a payout of ₹40,000 INR."
+    
+    audit = verify_response_faithfulness(valid_response, context)
+    print(f"Audit Passed: {audit.all_claims_faithful} (Faithfulness: {audit.faithfulness_score:.2f})")
+    for claim in audit.audited_claims:
+        print(f" - Claim: '{claim.claim_text}' | Supported: {claim.is_supported}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 16.0-2: Automated Response Faithfulness and Citation Auditor</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5. Program 3: Multi-Turn Interactive CLI with Session Memory</h2>
+                <p>Below is a terminal user interface allowing employees to conduct ongoing conversational inquiries, maintaining state across questions while streaming tool invocation traces:</p>
+
+                <div class="code-header">
+                    <span>program_16_3_interactive_employee_portal.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 16.0-3: Multi-Turn Employee Portal CLI with Live Session Memory
+import sys
+from program_16_1_company_knowledge_agent import agent_executor
+
+def run_interactive_portal():
+    print("=" * 60)
+    print("Welcome to the Enterprise Employee Knowledge Portal")
+    print("Ask any question about company policies, leave, or benefits.")
+    print("Type 'exit' or 'quit' to end session.")
+    print("=" * 60)
+
+    while True:
+        try:
+            user_input = input("\nEmployee Question > ").strip()
+            if not user_input:
+                continue
+            if user_input.lower() in ["exit", "quit"]:
+                print("Session closed. Goodbye!")
+                break
+
+            print("\n--> Agent Processing...")
+            result = agent_executor.invoke({"input": user_input})
+            print("\n" + "-" * 40)
+            print(result["output"])
+            print("-" * 40)
+        except (KeyboardInterrupt, EOFError):
+            print("\nExiting session...")
+            break
+
+if __name__ == "__main__":
+    run_interactive_portal()
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 16.0-3: Interactive Multi-Turn Employee Portal CLI</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>6. Production Failure Modes & Hardening Playbooks</h2>
+                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
+                    <ul style="padding-left: 1.2rem; margin-bottom: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #ef4444;">1. Cross-Employee Salary Leakage (Data Privilege Violation):</strong> If an employee asks: <em>"What is my manager's salary?"</em>, an unconstrained agent might query the HRIS database and disclose confidential executive compensation. <em>Hardening:</em> Enforce session identity token authentication in <code>query_employee_hris</code>; only return records matching the authenticated user's <code>emp_id</code> unless an executive role flag is present.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #f59e0b;">2. Hallucinated Citation Phantom:</strong> Models may output realistic-looking citations like <code>[Source: HR Handbook 2024, Sec 9.1]</code> that do not actually exist in the retrieved text. <em>Hardening:</em> Run <code>Program 16.0-2</code> as a post-generation regex assertion gate to guarantee the cited text string exists verbatim in the retriever output.
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: #3b82f6;">3. Stale SQL Ledger Cache:</strong> If an employee submits an expense claim in another tab, the agent must not read cached stale balance numbers. <em>Hardening:</em> Ensure database queries run with transactional read-committed isolation and zero local query caching.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #10b981;">4. Arithmetic Hallucination on Edge Cases:</strong> If an employee has 14 unused days, but policy caps encashment at 10 days, models without strict guidance may multiply by 14 instead of 10. <em>Hardening:</em> Require the agent to explicitly state the capped days before invoking the calculator tool.
+                        </li>
+                    </ul>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Topic Quiz (10 Questions)</h2>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">1. Why does the Company Knowledge Agent combine a Vector Store, a Relational Database, and a Calculator?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To make the program 3x slower.</li>
+                        <li class="mcq-option" data-correct="true">Vector stores hold unstructured policy text, relational databases store structured employee records, and calculators guarantee exact arithmetic without hallucination.</li>
+                        <li class="mcq-option" data-correct="false">Because OpenAI requires at least 3 tools.</li>
+                        <li class="mcq-option" data-correct="false">To avoid using Python.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">2. What is the mathematical definition of Faithfulness in an enterprise RAG system?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The ratio of prompt tokens to completion tokens.</li>
+                        <li class="mcq-option" data-correct="true">The percentage of generated factual claims that are directly supported by the retrieved reference documentation.</li>
+                        <li class="mcq-option" data-correct="false">The user's satisfaction rating from 1 to 5.</li>
+                        <li class="mcq-option" data-correct="false">The cosine similarity between query and answer.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">3. How does the agent prevent disclosing another employee's confidential salary?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">By deleting all salaries from the database.</li>
+                        <li class="mcq-option" data-correct="true">By verifying authenticated session credentials inside the query_employee_hris tool to enforce role-based access control (RBAC).</li>
+                        <li class="mcq-option" data-correct="false">By changing salaries to zero.</li>
+                        <li class="mcq-option" data-correct="false">By running the agent in dark mode.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">4. If an employee has 14 unused leave days, but the policy caps encashment at 10 days, what must the agent do?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Calculate payout for 14 days.</li>
+                        <li class="mcq-option" data-correct="true">Identify the 10-day policy ceiling from retrieved documents and calculate the payout strictly on 10 days.</li>
+                        <li class="mcq-option" data-correct="false">Refuse to process the request.</li>
+                        <li class="mcq-option" data-correct="false">Delete the 4 extra days from HRIS.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">5. What role does ConversationBufferWindowMemory(k=3) play in Program 16.0-1?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="true">It maintains the last 3 conversation turns in memory so follow-up questions can resolve pronouns (e.g. 'her payout') without context bloat.</li>
+                        <li class="mcq-option" data-correct="false">It stores 3 gigabytes of cache files.</li>
+                        <li class="mcq-option" data-correct="false">It reboots the computer every 3 turns.</li>
+                        <li class="mcq-option" data-correct="false">It limits the employee to 3 questions per day.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">6. What happens if an employee asks about a policy that is not documented in the company handbook?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">The agent invents a logical guess based on competitor policies.</li>
+                        <li class="mcq-option" data-correct="true">The agent explicitly states: 'I could not find this in official company documentation.'</li>
+                        <li class="mcq-option" data-correct="false">The application crashes with an unhandled exception.</li>
+                        <li class="mcq-option" data-correct="false">The user's computer screen turns red.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">7. Why are citations formatted as [Source: Document, Section] in the prompt rules?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">To make the text longer.</li>
+                        <li class="mcq-option" data-correct="true">To ensure legal provenance, auditability, and immediate human verification of company policies.</li>
+                        <li class="mcq-option" data-correct="false">It is required by the Python compiler.</li>
+                        <li class="mcq-option" data-correct="false">To increase API token charges.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">8. What is a 'Citation Phantom'?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">A ghost character in an online video game.</li>
+                        <li class="mcq-option" data-correct="true">A hallucinated citation where the model invents a plausible-sounding document name or section number that does not exist in the retrieved context.</li>
+                        <li class="mcq-option" data-correct="false">A font style in CSS.</li>
+                        <li class="mcq-option" data-correct="false">A deleted SQLite row.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">9. In Program 16.0-2, what does the verification gate do if faithfulness is below 1.0?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Sends an SMS to the CEO.</li>
+                        <li class="mcq-option" data-correct="true">Identifies the unverified claim and prevents the answer from being served to the user until rectified.</li>
+                        <li class="mcq-option" data-correct="false">Deletes the vector store.</li>
+                        <li class="mcq-option" data-correct="false">Upgrades the model to GPT-5.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <div class="mcq-container">
+                    <div class="mcq-question">10. Why is this project considered the Week 2 Milestone Capstone?</div>
+                    <ul class="mcq-options">
+                        <li class="mcq-option" data-correct="false">Because it contains 10,000 lines of code.</li>
+                        <li class="mcq-option" data-correct="true">It synthesizes vector embeddings, hybrid retrieval, relational databases, deterministic tool execution, and session memory into a cohesive production enterprise assistant.</li>
+                        <li class="mcq-option" data-correct="false">It is the last day of the course.</li>
+                        <li class="mcq-option" data-correct="false">It replaces human management completely.</li>
+                    </ul>
+                    <button class="mcq-submit" disabled>Submit</button>
+                    <div class="mcq-feedback"></div>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>Hands-On Assignments</h2>
+                <p>Complete the following 5 milestone assignments to customize and deploy your Company Knowledge Agent.</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Role-Based Access Control (RBAC) Security</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Add a <code>role</code> column to the <code>employees</code> table. If an employee with <code>role='individual_contributor'</code> asks for another employee's salary, return: <code>"Access Denied: You are not authorized to view peer compensation."</code></p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Automated Slack Notification Tool</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Add a 4th tool: <code>submit_hr_ticket(emp_id, issue_summary)</code>. If an employee's question cannot be resolved via documentation, allow the agent to submit an internal ticket automatically.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Tax Deducted at Source (TDS) Calculation</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Expand the leave encashment calculation to automatically deduct 20% TDS under Indian tax regulations, reporting both Gross Payout and Net Credited Amount.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Streamlit Interactive UI</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Build a clean Streamlit chat interface for the Company Knowledge Agent. Display the agent's internal thoughts and tool calls in collapsible <code>st.expander</code> accordions.</p>
+                </div>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Automated Regression Testing Suite</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a pytest test suite containing 10 test cases (5 valid lookups, 3 math encashments, 2 ungrounded queries). Assert that all 10 pass with 100% faithfulness and correct provenance citations.</p>
+                </div>
+
+            
+                <!-- =========================================================
+                     Official References, Research Papers & Standards
+                     ========================================================= -->
+                <div class="references-section">
+                    <h2>Official References, Research Papers & Standards</h2>
+                    <p class="references-intro">
+                        Deepen your engineering foundations with seminal research literature, official framework documentation, and industry standards referenced in today's curriculum:
+                    </p>
+                    <div class="reference-grid">
+
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">arXiv:2309.15217</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Exploding Gradients</span>
+                            </div>
+                            <h4>RAGAS: Automated Evaluation of Retrieval Augmented Generation</h4>
+                            <p>Es et al. establish automated metrics for Faithfulness, Answer Relevance, and Context Recall without human ground truth.</p>
+                            <a href="https://arxiv.org/abs/2309.15217" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">SQLite Org</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Python DB-API</span>
+                            </div>
+                            <h4>sqlite3 — DB-API 2.0 Interface for SQLite Databases</h4>
+                            <p>Official Python documentation for parameterized queries, transaction isolation levels, and row factory configurations.</p>
+                            <a href="https://docs.python.org/3/library/sqlite3.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">ISO Standard</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Information Security</span>
+                            </div>
+                            <h4>ISO/IEC 27001 Information Security Management Standard</h4>
+                            <p>International security standards governing multi-tenant access control, audit logging, and sensitive data separation.</p>
+                            <a href="https://www.iso.org/standard/27001" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Anthropic</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Prompt Architecture</span>
+                            </div>
+                            <h4>Contextual Retrieval & Prompt Caching</h4>
+                            <p>Advanced RAG technique prepending chunk-specific context to maintain precision across large enterprise corpora.</p>
+                            <a href="https://www.anthropic.com/news/contextual-retrieval" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <footer class="page-navigation">
+                <a href="day_15.html" class="nav-button prev">
+                    <span class="nav-label">Previous</span>
+                    <span class="nav-title">Day 15: RAG + Tools</span>
+                </a>
+                <a href="day_17.html" class="nav-button next">
+                    <span class="nav-label">Next</span>
+                    <span class="nav-title">Day 17: LangGraph Fundamentals</span>
+                </a>
+            </footer>
+
+            <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
+                <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // MCQ Interactivity
+        document.querySelectorAll('.mcq-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
+                this.style.background = 'var(--bg-color)';
+                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                container.querySelector('.mcq-submit').disabled = false;
+            });
+        });
+        
+        document.querySelectorAll('.mcq-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = this.closest('.mcq-container');
+                const selected = container.querySelector('.mcq-option.selected');
+                const feedback = container.querySelector('.mcq-feedback');
+                
+                if (selected) {
+                    if (selected.getAttribute('data-correct') === 'true') {
+                        feedback.textContent = 'Correct answer! Great job!';
+                        feedback.style.color = '#10b981';
+                    } else {
+                        feedback.textContent = 'Incorrect. Please review the material.';
+                        feedback.style.color = '#ef4444';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
