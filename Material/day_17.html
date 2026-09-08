@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. Theoretical Foundations: State Machines vs. Directed Acyclic Graphs</h2>
+                <h2>17.1. Theoretical Foundations: State Machines vs. Directed Acyclic Graphs</h2>
                 <p>To architect resilient agents, we must formally model their computational behavior. A standard pipeline is a <strong>Directed Acyclic Graph (DAG)</strong> $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ where the path length is bounded and $\forall v_i \in \mathcal{V}$, there exists no path $v_i \to \dots \to v_i$. Conversely, an agentic loop is an extended <strong>Mealy-type Finite State Machine (FSM)</strong> or <strong>Discrete Transition System</strong> defined as a 6-tuple:</p>
                 
                 <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
@@ -174,7 +174,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture Blueprint: The LangGraph Runtime Engine</h2>
+                <h2>17.2. Architecture Blueprint: The LangGraph Runtime Engine</h2>
                 <p>The diagram below details the internal execution cycle of LangGraph, illustrating how state is read, updated via reducers, checkpointed, and conditionally routed across cyclic transitions:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -217,7 +217,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. The Mechanics of State Reducers (<code>Annotated</code> & <code>operator.add</code>)</h2>
+                <h2>17.3. The Mechanics of State Reducers (<code>Annotated</code> & <code>operator.add</code>)</h2>
                 <p>The single greatest point of confusion for engineers migrating from LangChain LCEL to LangGraph is how state is updated. In Python's standard <code>TypedDict</code>, keys are overwritten by default:</p>
 
                 <div class="table-responsive">
@@ -251,7 +251,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Complete Python Implementation 1: StateGraph with Reducers & Message History</h2>
+                <h2>17.4. Complete Python Implementation 1: StateGraph with Reducers & Message History</h2>
                 <p>In this production-grade foundation, we build a multi-node conversation graph featuring append-only message reducers, scalar counter updates, and full execution telemetry.</p>
 
                 <div class="code-header">
@@ -365,7 +365,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Complete Python Implementation 2: Cyclic Self-Refining Code Generator with Bounded Loop</h2>
+                <h2>17.5. Complete Python Implementation 2: Cyclic Self-Refining Code Generator with Bounded Loop</h2>
                 <p>Now let's build the gold-standard agent pattern: an <strong>Evaluator-Optimizer Cycle</strong>. The generator drafts code, a tester executes static validation against test assertions, and a conditional edge dynamically decides whether to loop back for revision or finalize.</p>
 
                 <div class="code-header">
@@ -533,7 +533,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Complete Python Implementation 3: Multi-Branch Routing Graph with State Inspection</h2>
+                <h2>17.6. Complete Python Implementation 3: Multi-Branch Routing Graph with State Inspection</h2>
                 <p>Enterprise applications rarely follow simple single loops; they involve multi-path bifurcations (triage, fraud detection, security verification, and automated routing). Program 17.3 demonstrates dynamic multi-branch routing, graph compilation options, and programmatic visualization export.</p>
 
                 <div class="code-header">
@@ -673,7 +673,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Production Failure Modes & Anti-Patterns</h2>
+                <h2>17.7. Production Failure Modes & Anti-Patterns</h2>
 
                 <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="color: #ef4444; margin-top: 0;">Anti-Pattern 1: Unbounded Cyclic Recursion</h4>
@@ -695,7 +695,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <h2>17.8. Interactive Knowledge Verification: 10 Examination Questions</h2>
                 <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
                     
                     <!-- Question 1 -->
@@ -832,7 +832,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>9. Hands-On Engineering Assignments</h2>
+                <h2>17.9. Hands-On Engineering Assignments</h2>
                 
                 <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="margin-top: 0;">Assignment 17.1: Build an Iterative Prompt Refiner with Character Budget Reducers</h4>
@@ -916,6 +916,7 @@ if __name__ == "__main__":
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
     <script>
         // Interactive Quiz Logic
         function checkAnswer(questionName, correctAnswer, btnElement) {

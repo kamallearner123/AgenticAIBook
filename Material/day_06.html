@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Fundamental Limit of Text Prediction</h2>
+                <h2>6.1. The Fundamental Limit of Text Prediction</h2>
                 <p>As established in previous sessions, an LLM is a closed neural network. It possesses neither hands, network sockets, nor a Python runtime. When asked to perform complex floating-point arithmetic, it does not execute arithmetic logic; it emits the tokens that <em>look</em> like the answer based on statistical patterns—often failing on 5+ digit multiplications.</p>
 
                 <p>The solution is not to train larger models, but to equip the model with <strong>Tools</strong>. In an agentic architecture, the LLM acts as the <strong>Reasoning Engine (Brain)</strong>, while deterministic external code (APIs, databases, Python scripts, CLI commands) acts as the <strong>Hands</strong>.</p>
@@ -165,7 +165,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. The Function Calling Lifecycle</h2>
+                <h2>6.2. The Function Calling Lifecycle</h2>
                 <p>Function Calling is a bi-directional handshake between your host Python application and the remote LLM inference server. The model never runs your code directly; it emits a structured JSON request instructing your application which function to run and with what arguments.</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -192,7 +192,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Implementing the Tool Execution Loop in Python</h2>
+                <h2>6.3. Implementing the Tool Execution Loop in Python</h2>
                 <p>Here is a complete, production-ready implementation of a multi-turn tool execution loop that provides an LLM with live calculator and weather capabilities:</p>
 
                 <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -328,7 +328,7 @@ if response_message.tool_calls:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Tool Error Handling & Self-Healing Retries</h2>
+                <h2>6.4. Tool Error Handling & Self-Healing Retries</h2>
                 <p>In production, external APIs fail: database connections time out, rate limits are hit, or the LLM passes an invalid parameter. If your Python code throws an uncaught exception, your agent crashes.</p>
 
                 <p>Instead, <strong>catch the exception and serialize the error message back to the LLM as a tool result</strong>! High-capability models can inspect the error message, realize what argument was malformed, and emit a corrected tool call autonomously.</p>
@@ -356,7 +356,7 @@ print(safe_tool_executor(lambda: 1/0))
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. The Function Calling Wire Protocol & Token Overhead Mathematics</h2>
+                <h2>6.5. The Function Calling Wire Protocol & Token Overhead Mathematics</h2>
                 <p>When you provide tools to an API, the provider serializes each tool definition into hidden system prompt tokens formatted in a specialized schema (such as TypeScript interface syntax or JSON Schema). Consider the economic and context window implications:</p>
 
                 <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
@@ -371,7 +371,7 @@ print(safe_tool_executor(lambda: 1/0))
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Deep-Dive Production Engineering Programs</h2>
+                <h2>6.6. Deep-Dive Production Engineering Programs</h2>
 
                 <h3>Program 6.0-3: Automated `@tool` Decorator with Schema Introspection</h3>
                 <p>Writing JSON schemas manually in raw dictionaries is error-prone. This production utility inspects any Python function's type annotations and docstring, compiling it automatically into an OpenAI-compatible function definition.</p>
@@ -529,7 +529,7 @@ print(run_sandboxed_python(infinite_loop, timeout_seconds=1))
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Tool Execution Security Best Practices</h2>
+                <h2>6.7. Tool Execution Security Best Practices</h2>
                 <ol>
                     <li><strong>Never Expose Unparameterized SQL or Shell Tools:</strong> A generic <code>run_bash(cmd)</code> tool converts any prompt injection into a remote code execution (RCE) server breach. Use granular, single-purpose functions instead (e.g. <code>fetch_user_by_id(id)</code>).</li>
                     <li><strong>Validate Read vs. Write Scopes:</strong> Tools that mutate data (e.g., <code>delete_account</code>, <code>send_wire_transfer</code>) must enforce human confirmation gates before execution.</li>

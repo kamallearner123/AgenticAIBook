@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Bi-Encoder Bottleneck & Semantic Drift</h2>
+                <h2>12.1. The Bi-Encoder Bottleneck & Semantic Drift</h2>
                 <p>Dense vector search relies on a <strong>Bi-Encoder Architecture</strong>. The query text $Q$ and candidate document chunk $D$ are embedded independently by the model into static vectors $\vec{u} = f(Q)$ and $\vec{v} = g(D)$ before computing cosine similarity:</p>
                 
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
@@ -174,26 +174,26 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Mathematical Formulations: BM25, RRF & Cross-Encoders</h2>
+                <h2>12.2. Mathematical Formulations: BM25, RRF & Cross-Encoders</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <h3 style="margin-top: 0; color: var(--accent);">1. The BM25 Scoring Function (Sparse Lexical Search)</h3>
                     <p>The Okapi BM25 algorithm evaluates the relevance of document $D$ to query $Q = \{q_1, q_2, \dots, q_n\}$ by combining Inverse Document Frequency (IDF) with length-normalized term frequency:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.05rem; color: #3b82f6; margin: 1rem 0;">
-                        \text{BM25}(D, Q) = \sum_{i=1}^n \text{IDF}(q_i) \cdot \frac{f(q_i, D) \cdot (k_1 + 1)}{f(q_i, D) + k_1 \cdot \left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}
+                        $$\text{BM25}(D, Q) = \sum_{i=1}^n \text{IDF}(q_i) \cdot \frac{f(q_i, D) \cdot (k_1 + 1)}{f(q_i, D) + k_1 \cdot \left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
                     </div>
                     <p>where $\text{IDF}(q_i) = \ln \left(\frac{N - n(q_i) + 0.5}{n(q_i) + 0.5} + 1\right)$, $k_1 \in [1.2, 2.0]$ controls term frequency saturation, and $b \approx 0.75$ penalizes artificially long documents.</p>
 
                     <h4 style="color: #f59e0b; margin-top: 1.2rem;">2. Reciprocal Rank Fusion (RRF) Formula</h4>
                     <p>When merging sparse BM25 scores (unbounded positive floats) with dense cosine similarity ($[-1, 1]$), standard score normalization (Min-Max) produces distorted rankings due to outlier spikes. <strong>Reciprocal Rank Fusion (RRF)</strong> resolves this by merging rankings purely on positional rank order without score calibration:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.15rem; color: #f59e0b; margin: 1rem 0;">
-                        \text{RRF\_Score}(d \in \mathcal{D}) = \sum_{m \in M} \frac{1}{k + r_m(d)}
+                        $$\text{RRF\_Score}(d \in \mathcal{D}) = \sum_{m \in M} \frac{1}{k + r_m(d)}$$
                     </div>
                     <p>where $M$ is the set of search engines (e.g. BM25 and Dense), $r_m(d)$ is document $d$'s rank position (1-indexed) in engine $m$, and $k = 60$ is the standard smoothing constant established by Cormack et al. (2009).</p>
 
                     <h4 style="color: #10b981; margin-top: 1.2rem;">3. The Cross-Encoder Architecture</h4>
                     <p>Unlike Bi-Encoders, a <strong>Cross-Encoder</strong> concatenates query and candidate chunk into a single sequence: $[CLS] \circ Q \circ [SEP] \circ D$. All tokens attend to each other across all self-attention layers:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); margin: 0.5rem 0;">
-                        \text{CrossAttention}(Q, D) = \text{Softmax}\left(\frac{Q K^T}{\sqrt{d_k}}\right) V
+                        $$\text{CrossAttention}(Q, D) = \text{Softmax}\left(\frac{Q K^T}{\sqrt{d_k}}\right) V$$
                     </div>
                     <p style="margin-bottom: 0;">The $[CLS]$ token output is passed through a sigmoid classification head to emit an exact relevance probability $P(\text{Relevant} \mid Q, D) \in [0, 1]$.</p>
                 </div>
@@ -220,7 +220,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: Pure Python BM25 Inverted Index & Scoring Engine</h2>
+                <h2>12.3. Program 1: Pure Python BM25 Inverted Index & Scoring Engine</h2>
                 <p>The code below implements the complete Okapi BM25 ranking algorithm from scratch in Python, featuring text tokenization, inverse document frequency indexing, and length normalization:</p>
 
                 <div class="code-header">
@@ -314,7 +314,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: Complete Hybrid Search & Reciprocal Rank Fusion (RRF)</h2>
+                <h2>12.4. Program 2: Complete Hybrid Search & Reciprocal Rank Fusion (RRF)</h2>
                 <p>The script below merges sparse BM25 keyword rankings with dense ChromaDB semantic vector search using Reciprocal Rank Fusion ($k=60$), guaranteeing both keyword accuracy and conceptual recall:</p>
 
                 <div class="code-header">
@@ -416,7 +416,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: Cross-Encoder Re-Ranking & Contextual Compression</h2>
+                <h2>12.5. Program 3: Cross-Encoder Re-Ranking & Contextual Compression</h2>
                 <p>After retrieving candidate chunks via Hybrid Search, a <strong>Cross-Encoder Re-Ranker</strong> scores each candidate against the query using full cross-attention. Irrelevant paragraphs are pruned before injection into the prompt, preventing context pollution:</p>
 
                 <div class="code-header">
@@ -495,7 +495,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <h2>12.6. Production Failure Modes & Engineering Gotchas</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
@@ -515,7 +515,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Retrieval Architecture Comparison Matrix</h2>
+                <h2>12.7. Retrieval Architecture Comparison Matrix</h2>
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">

@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The RAG Paradigm: Open-Book Grounding</h2>
+                <h2>11.1. The RAG Paradigm: Open-Book Grounding</h2>
                 <p><strong>Retrieval-Augmented Generation (RAG)</strong> decouples knowledge storage from the LLM's static parameter weights. Instead of memorizing all enterprise facts inside neural network weights, documents are indexed in a high-dimensional vector database. When a user asks a question, the system queries the vector store, retrieves the Top-$k$ most relevant text chunks, and injects them as verified reference material into the prompt:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -170,30 +170,30 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Mathematical Foundation: Vector Geometry & HNSW Graph Indexing</h2>
+                <h2>11.2. Mathematical Foundation: Vector Geometry & HNSW Graph Indexing</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <h3 style="margin-top: 0; color: var(--accent);">High-Dimensional Embedding Space & Cosine Similarity</h3>
                     <p>An embedding model maps a text snippet $t$ into a dense vector $\vec{v} \in \mathbb{R}^d$, where $d = 1,536$ (for <code>text-embedding-3-small</code>) or $d = 3,072$ (for <code>text-embedding-3-large</code>). Semantic similarity between query vector $\vec{q}$ and document vector $\vec{d}$ is defined by the <strong>Cosine Similarity</strong>:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.15rem; color: #10b981; margin: 1rem 0;">
-                        \cos(\theta) = \frac{\vec{q} \cdot \vec{d}}{\|\vec{q}\|_2 \|\vec{d}\|_2} = \frac{\sum_{i=1}^d q_i d_i}{\sqrt{\sum_{i=1}^d q_i^2} \sqrt{\sum_{i=1}^d d_i^2}}
+                        $$\cos(\theta) = \frac{\vec{q} \cdot \vec{d}}{\|\vec{q}\|_2 \|\vec{d}\|_2} = \frac{\sum_{i=1}^d q_i d_i}{\sqrt{\sum_{i=1}^d q_i^2} \sqrt{\sum_{i=1}^d d_i^2}}$$
                     </div>
                     <p>When vectors are pre-normalized to unit length ($\|\vec{q}\|_2 = \|\vec{d}\|_2 = 1$), cosine similarity simplifies directly to the inner product: $\cos(\theta) = \vec{q} \cdot \vec{d}$, and squared Euclidean distance relates directly via:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); margin-bottom: 1rem;">
-                        \|\vec{q} - \vec{d}\|_2^2 = 2 - 2(\vec{q} \cdot \vec{d})
+                        $$\|\vec{q} - \vec{d}\|_2^2 = 2 - 2(\vec{q} \cdot \vec{d})$$
                     </div>
 
                     <h4 style="color: #f59e0b; margin-top: 1.2rem;">Exact Search vs. HNSW Approximate Nearest Neighbors (ANN)</h4>
                     <p>Exhaustive Brute-Force $K$-Nearest Neighbor search requires computing distance against every vector in the corpus. For $N$ documents in $d$ dimensions, query complexity is $\mathcal{O}(N \cdot d)$. At $N = 1,000,000$, brute force requires billions of floating-point operations per query, resulting in 500ms+ latencies.</p>
                     <p>Modern vector databases (ChromaDB, Milvus, Qdrant) utilize <strong>Hierarchical Navigable Small World (HNSW)</strong> graphs. HNSW constructs a multi-layer graph where upper layers have long-range edges (like express highway lanes) and bottom layers have short-range local connections (local city streets). Query complexity drops from linear to logarithmic:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #f59e0b; margin: 0.5rem 0;">
-                        \text{HNSW Query Latency} = \mathcal{O}(\log N)
+                        $$\text{HNSW Query Latency} = \mathcal{O}(\log N)$$
                     </div>
                     <p style="margin-bottom: 0;">This enables sub-5-millisecond similarity retrieval over millions of chunks with $>98\%$ recall accuracy.</p>
                 </div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: Production ChromaDB RAG Pipeline with Metadata Filtering</h2>
+                <h2>11.3. Program 1: Production ChromaDB RAG Pipeline with Metadata Filtering</h2>
                 <p>The code below implements an end-to-end RAG pipeline using ChromaDB, demonstrating chunk ingestion, metadata filtering (restricting search to specific departments and fiscal years), and grounded generation with strict provenance citations:</p>
 
                 <div class="code-header">
@@ -310,7 +310,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: Pure Python Recursive Semantic Chunking Engine</h2>
+                <h2>11.4. Program 2: Pure Python Recursive Semantic Chunking Engine</h2>
                 <p>Naive character chunking splits words and code blocks in half. The recursive chunker below splits text hierarchically: first on double newlines (paragraphs), then single newlines, then sentence periods, ensuring natural grammatical boundaries are preserved with sliding overlap:</p>
 
                 <div class="code-header">
@@ -408,7 +408,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: NumPy Vector Search Engine (Cosine Similarity from Scratch)</h2>
+                <h2>11.5. Program 3: NumPy Vector Search Engine (Cosine Similarity from Scratch)</h2>
                 <p>Understanding how vector databases calculate similarity under the hood is essential for debugging retrieval anomalies. Below is a complete, vector-math implementation of cosine similarity search implemented in pure NumPy:</p>
 
                 <div class="code-header">
@@ -482,7 +482,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <h2>11.6. Production Failure Modes & Engineering Gotchas</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
@@ -502,7 +502,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Chunking Strategy Comparison Matrix</h2>
+                <h2>11.7. Chunking Strategy Comparison Matrix</h2>
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">

@@ -137,7 +137,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>1. Variables, Data Types & String Manipulation</h2>
+                <h2>2.1. Variables, Data Types & String Manipulation</h2>
                 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
                     <img src="assets/python_variables_diagram_1788556494180.png" alt="Python Variables Diagram" style="max-width: 100%; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -162,7 +162,7 @@ print(f"Agent {agent_name} received clean input: '{sanitized_input}'")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Control Flow: If/Else & Loops</h2>
+                <h2>2.2. Control Flow: If/Else & Loops</h2>
                 <p>Agentic AI requires logic. <strong>If/Else</strong> statements route intent. <strong>While</strong> loops allow the agent to keep "thinking" until it finds an answer.</p>
 
                 <pre><code class="language-python">
@@ -192,7 +192,7 @@ print("Agent finished task.")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Collections: Lists, Tuples, and Sets</h2>
+                <h2>2.3. Collections: Lists, Tuples, and Sets</h2>
                 <p>Python provides multiple ways to group data. <strong>Lists</strong> are mutable (can change), <strong>Tuples</strong> are immutable (cannot change), and <strong>Sets</strong> store unique items (no duplicates).</p>
 
                 <pre><code class="language-python">
@@ -228,7 +228,7 @@ print(f"Agent is using model: {agent_config['model']}") # O(1) Instant Lookup
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Functions, Modules, and Classes (OOP)</h2>
+                <h2>2.4. Functions, Modules, and Classes (OOP)</h2>
                 <p>To write clean code, we group logic into <strong>Functions</strong>. We pull in pre-written code from <strong>Modules</strong>. Finally, we use <strong>Classes (Object-Oriented Programming)</strong> to bundle data (state) and functions (behavior) together into a single "Object".</p>
 
                 <pre><code class="language-python">
@@ -265,7 +265,7 @@ print(f"Memory size: {len(my_agent.memory)}")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Regular Expressions (Regex) & API Communication</h2>
+                <h2>2.5. Regular Expressions (Regex) & API Communication</h2>
                 <p>When an LLM outputs raw text, it often embeds "tool calls" inside strings like `[Action: SearchWeb]`. To programmatically extract that command, we use <strong>Regular Expressions (regex)</strong>, a powerful pattern-matching language.</p>
 
                 <pre><code class="language-python">
@@ -305,7 +305,7 @@ if response.status_code == 200:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Data Ingestion & Long Term Memory (Databases)</h2>
+                <h2>2.6. Data Ingestion & Long Term Memory (Databases)</h2>
 
                 <pre><code class="language-python">
 # Program 2.0-9: Saving Agent Memory to local JSON files (File I/O)
@@ -359,7 +359,7 @@ conn.close()
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>12. Modern Python Typing for Agent State Management</h2>
+                <h2>2.12. Modern Python Typing for Agent State Management</h2>
                 <p>In modern agent frameworks (like LangGraph and AutoGen), agents pass structured state dictionaries across dozens of graph nodes. Plain unstructured dictionaries lead to silent runtime `KeyError` bugs. Python 3.10+ provides robust typing primitives:</p>
                 <ul>
                     <li><strong><code>TypedDict</code>:</strong> Defines dictionary shapes with strict compile-time key names and value types. Unlike dataclasses, TypedDicts serialize directly to JSON without overhead.</li>
@@ -369,7 +369,7 @@ conn.close()
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>13. Pydantic v2: Schema Enforcement & Constrained Extraction</h2>
+                <h2>2.13. Pydantic v2: Schema Enforcement & Constrained Extraction</h2>
                 <p>Large Language Models produce stochastic, unvalidated text. <strong>Pydantic v2</strong> is the industrial backbone of agent tooling. It compiles Python classes to high-speed Rust parsers, validating LLM tool arguments, coercing types, and rejecting corrupted payloads before they touch your production database.</p>
 
                 <div class="code-header">
@@ -419,7 +419,7 @@ except ValidationError as e:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>14. High-Throughput Asynchronous Concurrency with asyncio</h2>
+                <h2>2.14. High-Throughput Asynchronous Concurrency with asyncio</h2>
                 <p>LLM API calls are I/O bound: your Python process spends 95% of its time waiting for remote GPUs over network sockets. Synchronous code processes documents sequentially (100 docs × 2 sec = 200 seconds). Asynchronous concurrency via <strong><code>asyncio.gather()</code></strong> and <strong><code>asyncio.Semaphore</code></strong> processes 100 documents in parallel within 5 seconds without hitting provider rate limits.</p>
 
                 <div class="code-header">
@@ -460,7 +460,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>15. Fault-Tolerant Retries with Exponential Backoff & Jitter</h2>
+                <h2>2.15. Fault-Tolerant Retries with Exponential Backoff & Jitter</h2>
                 <p>Enterprise AI APIs regularly throw <strong>HTTP 429 (Rate Limit Exceeded)</strong> and <strong>HTTP 503/504 (Server Overload)</strong>. Naive code crashes; naive retries hammer the server simultaneously (the <em>thundering herd problem</em>). Production agents must implement <strong>Full Jitter Exponential Backoff</strong>:</p>
                 <div style="font-family: 'Fira Code', monospace; padding: 0.75rem; background: var(--code-bg); border-radius: 4px; margin: 0.75rem 0;">
                     sleep_interval = random.uniform(0, min(max_delay, base_delay * (2 ** attempt)))

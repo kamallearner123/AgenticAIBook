@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Hybrid AI Architecture: Code-First Models + Low-Code Mesh</h2>
+                <h2>14.1. The Hybrid AI Architecture: Code-First Models + Low-Code Mesh</h2>
                 <p>Enterprise AI engineering does not force a false binary between "all-code" or "no-code". Modern architectures adopt a <strong>Hybrid Hub-and-Spoke Topology</strong>:</p>
 
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
@@ -185,7 +185,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Cryptographic Webhook Security: HMAC-SHA256 & Replay Protection</h2>
+                <h2>14.2. Cryptographic Webhook Security: HMAC-SHA256 & Replay Protection</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <h3 style="margin-top: 0; color: #ef4444;">Vulnerability: Denial-of-Wallet & Replay Attacks</h3>
                     <p>Exposing an unauthenticated webhook endpoint connected to an LLM is a catastrophic financial vulnerability. Malicious bots or port scanners can flood the URL with 50,000 requests, burning your entire OpenAI credit balance in minutes.</p>
@@ -193,7 +193,7 @@
                     <h4 style="color: #10b981; margin-top: 1.2rem;">The HMAC-SHA256 Signature Contract</h4>
                     <p>To secure inter-service webhooks between Python and n8n, every HTTP request must include an HMAC-SHA256 cryptographic signature and a UNIX timestamp header:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #10b981; margin: 1rem 0;">
-                        \text{Signature} = \text{HMAC-SHA256}\Big(K_{\text{secret}}, \; T_{\text{timestamp}} \mathbin{\Vert} \text{RawBody}\Big)
+                        $$\text{Signature} = \text{HMAC-SHA256}\Big(K_{\text{secret}}, \; T_{\text{timestamp}} \mathbin{\Vert} \text{RawBody}\Big)$$
                     </div>
                     <p>The receiver enforces two mandatory security gates:</p>
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
@@ -204,7 +204,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: Declarative n8n AI Agent Workflow Specification (JSON)</h2>
+                <h2>14.3. Program 1: Declarative n8n AI Agent Workflow Specification (JSON)</h2>
                 <p>Because n8n workflows are declared in JSON, they can be versioned in Git, tested in CI/CD, and deployed to Docker clusters. Below is a complete, valid n8n workflow definition featuring a webhook trigger, an OpenAI LLM agent, a conditional switch, and a Slack alert:</p>
 
                 <div class="code-header">
@@ -287,7 +287,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: Production Python FastAPI Webhook Receiver with HMAC Security</h2>
+                <h2>14.4. Program 2: Production Python FastAPI Webhook Receiver with HMAC Security</h2>
                 <p>When n8n or an external SaaS webhook triggers your Python service, you must verify the cryptographic signature and timestamp to prevent replay attacks:</p>
 
                 <div class="code-header">
@@ -356,7 +356,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: Resilient Python-to-n8n Bridge with Dead-Letter Queue (DLQ)</h2>
+                <h2>14.5. Program 3: Resilient Python-to-n8n Bridge with Dead-Letter Queue (DLQ)</h2>
                 <p>When dispatching events from Python to n8n, network glitches or container restarts must not drop customer events. The bridge below implements exponential backoff retries with full jitter and a persistent Dead-Letter Queue (DLQ):</p>
 
                 <div class="code-header">
@@ -435,7 +435,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <h2>14.6. Production Failure Modes & Engineering Gotchas</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
@@ -455,7 +455,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Code-First vs. Visual Low-Code (n8n) Comparison Matrix</h2>
+                <h2>14.7. Code-First vs. Visual Low-Code (n8n) Comparison Matrix</h2>
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">

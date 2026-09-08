@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. Mathematical Formalization of Checkpoint Storage & Recovery</h2>
+                <h2>18.1. Mathematical Formalization of Checkpoint Storage & Recovery</h2>
                 <p>In distributed agentic systems, execution resilience is governed by the <strong>Recovery Time Objective (RTO)</strong> and <strong>Write Amplification Factor (WAF)</strong>. Consider an agent trajectory of $N$ discrete node transitions $v_1, v_2, \dots, v_N$:</p>
 
                 <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
@@ -171,7 +171,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture Blueprint: The Checkpointer Storage Subsystem</h2>
+                <h2>18.2. Architecture Blueprint: The Checkpointer Storage Subsystem</h2>
                 <p>Every LangGraph checkpointer conforms to an atomic transactional interface. When a node executes, the graph runtime executes a three-phase commit:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -210,7 +210,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Production Checkpointer Storage Matrix</h2>
+                <h2>18.3. Production Checkpointer Storage Matrix</h2>
                 <div class="table-responsive">
                     <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem;">
                         <thead>
@@ -250,7 +250,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Complete Python Implementation 1: SqliteSaver with Crash Simulation & Recovery</h2>
+                <h2>18.4. Complete Python Implementation 1: SqliteSaver with Crash Simulation & Recovery</h2>
                 <p>This script instantiates an 8-node pipeline backed by persistent SQLite disk storage. Step 5 is intentionally armed to raise a simulated network crash during the first attempt. We catch the crash, verify the checkpoint database, and resume execution with <code>app.invoke(None)</code>—proving that steps 1 to 4 are never re-run.</p>
 
                 <div class="code-header">
@@ -387,7 +387,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Complete Python Implementation 2: Time-Travel Debugging & State Forking</h2>
+                <h2>18.5. Complete Python Implementation 2: Time-Travel Debugging & State Forking</h2>
                 <p>Time-travel debugging allows developers and human reviewers to inspect past states, rewind the graph to a prior checkpoint, modify a variable, and fork execution down an alternate path.</p>
 
                 <div class="code-header">
@@ -498,7 +498,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Complete Python Implementation 3: Multi-Tenant Concurrency & Thread Isolation</h2>
+                <h2>18.6. Complete Python Implementation 3: Multi-Tenant Concurrency & Thread Isolation</h2>
                 <p>Enterprise platforms run thousands of agents concurrently. Program 18.3 proves how distinct <code>thread_id</code> configurations guarantee strict multi-tenant isolation within a shared checkpointer database.</p>
 
                 <div class="code-header">
@@ -578,7 +578,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Production Failure Modes & Operational Gotchas</h2>
+                <h2>18.7. Production Failure Modes & Operational Gotchas</h2>
 
                 <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="color: #ef4444; margin-top: 0;">Gotcha 1: Unserializable State Values (Pickle / JSON Crashes)</h4>
@@ -600,7 +600,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <h2>18.8. Interactive Knowledge Verification: 10 Examination Questions</h2>
                 <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
                     
                     <!-- Question 1 -->
@@ -737,7 +737,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>9. Hands-On Engineering Assignments</h2>
+                <h2>18.9. Hands-On Engineering Assignments</h2>
                 
                 <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="margin-top: 0;">Assignment 18.1: Multi-Step Data Ingestion with Manual Crash Injection</h4>
@@ -821,6 +821,7 @@ if __name__ == "__main__":
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
     <script>
         function checkAnswer(questionName, correctAnswer, btnElement) {
             const selected = document.querySelector(`input[name="${questionName}"]:checked`);

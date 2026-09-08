@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Paradigm Shift: From Fixed Pipeline to Agentic Routing</h2>
+                <h2>15.1. The Paradigm Shift: From Fixed Pipeline to Agentic Routing</h2>
                 <p>In <strong>Traditional RAG</strong>, retrieval is a fixed step in an unbending sequence: <code>Query &rarr; Vector Search &rarr; Prompt &rarr; LLM</code>. The pipeline has no mechanism to determine <em>whether</em> retrieval is actually necessary, cannot query multiple heterogeneous data silos (SQL vs Vector vs Live REST), and cannot execute follow-up computational actions based on what it reads.</p>
 
                 <p>In <strong>Agentic RAG</strong>, the Vector Database is treated as simply <strong>one specialized tool among many in the agent's toolbox</strong>. An orchestrating agent dynamically decides which tool to call, inspects retrieved excerpts, performs calculations, and self-reflects if retrieved evidence is insufficient:</p>
@@ -175,7 +175,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Theory: Self-RAG Reflection & Adaptive Routing Mathematics</h2>
+                <h2>15.2. Theory: Self-RAG Reflection & Adaptive Routing Mathematics</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <h3 style="margin-top: 0; color: var(--accent);">Self-RAG Reflection Tokens (Asai et al., 2023)</h3>
                     <p>In standard RAG, the model blindly consumes whatever the retriever returns. <strong>Self-RAG</strong> introduces programmatic reflection evaluations at each phase:</p>
@@ -190,14 +190,14 @@
                     <h4 style="color: #f59e0b; margin-top: 1.2rem;">Expected Query Latency & Cost Modeling</h4>
                     <p>Let $P(\text{Direct})$ be the probability of a simple query, $P(\text{Calc})$ for computational queries, and $P(\text{RAG})$ for documentation lookups. Expected system latency is:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.05rem; color: #f59e0b; margin: 1rem 0;">
-                        E[T] = P(\text{Direct}) T_{\text{LLM}} + P(\text{Calc}) (T_{\text{Tool}} + T_{\text{LLM}}) + P(\text{RAG}) (T_{\text{Embed}} + T_{\text{ANN}} + T_{\text{LLM}})
+                        $$E[T] = P(\text{Direct}) T_{\text{LLM}} + P(\text{Calc}) (T_{\text{Tool}} + T_{\text{LLM}}) + P(\text{RAG}) (T_{\text{Embed}} + T_{\text{ANN}} + T_{\text{LLM}})$$
                     </div>
                     <p style="margin-bottom: 0;">In an enterprise customer portal where 40% of queries are conversational greetings and 25% are account calculations, Agentic RAG slashes vector database load by <strong>65%</strong> compared to traditional static RAG pipelines!</p>
                 </div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: Production Multi-Silo Agentic RAG (Vector + SQLite + Math)</h2>
+                <h2>15.3. Program 1: Production Multi-Silo Agentic RAG (Vector + SQLite + Math)</h2>
                 <p>The code below implements an enterprise Agentic RAG system that dynamically routes between an unstructured ChromaDB policy store, a structured SQLite customer database, and a local calculator tool:</p>
 
                 <div class="code-header">
@@ -363,7 +363,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: Self-Reflective Retrieval with Automatic Query Rewriting</h2>
+                <h2>15.4. Program 2: Self-Reflective Retrieval with Automatic Query Rewriting</h2>
                 <p>When initial vector search returns irrelevant documents, static RAG produces hallucinated summaries. The Self-RAG engine below programmatically grades retrieved document relevance; if relevance falls below threshold, it rewrites the query and re-retrieves:</p>
 
                 <div class="code-header">
@@ -436,7 +436,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: Multi-Hop Document Reasoning Agent</h2>
+                <h2>15.5. Program 3: Multi-Hop Document Reasoning Agent</h2>
                 <p>Enterprise questions often require cross-referencing information scattered across multiple separate documents (e.g. Doc A states policy parameters, while Doc B states customer usage tiers). The multi-hop agent below executes sequential search passes, resolving intermediate facts until the complete cross-document deduction is assembled:</p>
 
                 <div class="code-header">
@@ -518,7 +518,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <h2>15.6. Production Failure Modes & Engineering Gotchas</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
@@ -538,7 +538,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Traditional RAG vs. Agentic RAG Comparison Matrix</h2>
+                <h2>15.7. Traditional RAG vs. Agentic RAG Comparison Matrix</h2>
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">

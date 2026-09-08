@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. Formal Foundations: Cyber-Physical Automotive Protocols & ISO 26262 ASIL Risk</h2>
+                <h2>24.1. Formal Foundations: Cyber-Physical Automotive Protocols & ISO 26262 ASIL Risk</h2>
                 <p>Automotive diagnostics operate under strict international standards: <strong>SAE J1979 / ISO 15031 (OBD-II)</strong> and <strong>ISO 14229 (Unified Diagnostic Services - UDS)</strong>. Real-time vehicle telematics stream across Controller Area Network (CAN) 2.0B / CAN-FD frames with 11-bit or 29-bit identifiers:</p>
 
                 <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
@@ -169,7 +169,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture Blueprint: The End-to-End Automotive Diagnostics Pipeline</h2>
+                <h2>24.2. Architecture Blueprint: The End-to-End Automotive Diagnostics Pipeline</h2>
                 <p>The diagram below details the entire capstone architecture spanning vehicle ingestion, ECU CAN bus scanning, vector RAG manual retrieval, deterministic parts pricing, and human sign-off:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -218,7 +218,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Complete Python Implementation 1: The Automotive Diagnostics Engine</h2>
+                <h2>24.3. Complete Python Implementation 1: The Automotive Diagnostics Engine</h2>
                 <p>This module implements the complete 7-node LangGraph StateGraph, OBD-II telemetry scanner, OEM manual RAG store, flat-rate labor estimator, and safety sign-off checkpoint.</p>
 
                 <div class="code-header">
@@ -499,7 +499,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Complete Python Implementation 2: Synthetic CAN Bus Telemetry Streamer</h2>
+                <h2>24.4. Complete Python Implementation 2: Synthetic CAN Bus Telemetry Streamer</h2>
                 <p>To test the diagnostic assistant against realistic vehicle signals, Program 24.2 implements an asynchronous SAE J1979 CAN bus frame streamer that emits simulated OBD-II PIDs and freeze-frame telemetry.</p>
 
                 <div class="code-header">
@@ -562,7 +562,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Complete Python Implementation 3: Streamlit Automotive Cockpit UI</h2>
+                <h2>24.5. Complete Python Implementation 3: Streamlit Automotive Cockpit UI</h2>
                 <p>Program 24.3 provides a web UI connecting the LangGraph diagnostic engine to workshop technicians, featuring telemetry gauges, OEM manual tabs, itemized repair estimates, and Master Technician sign-off buttons.</p>
 
                 <div class="code-header">
@@ -660,7 +660,7 @@ with col_right:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Automotive Gotchas</h2>
+                <h2>24.6. Production Failure Modes & Automotive Gotchas</h2>
 
                 <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="color: #ef4444; margin-top: 0;">Automotive Gotcha 1: Premature DTC Clearing Destroys Emissions Readiness</h4>
@@ -682,7 +682,7 @@ with col_right:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Interactive Knowledge Verification: 10 Final Capstone Questions</h2>
+                <h2>24.7. Interactive Knowledge Verification: 10 Final Capstone Questions</h2>
                 <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
                     
                     <!-- Question 1 -->
@@ -819,7 +819,7 @@ with col_right:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Hands-On Capstone Certification Assignments</h2>
+                <h2>24.8. Hands-On Capstone Certification Assignments</h2>
                 
                 <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="margin-top: 0;">Capstone Assignment 24.1: Live Chroma Vector Database for OEM Bulletins</h4>
@@ -907,6 +907,7 @@ with col_right:
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
     <script>
         function checkAnswer(questionName, correctAnswer, btnElement) {
             const selected = document.querySelector(`input[name="${questionName}"]:checked`);

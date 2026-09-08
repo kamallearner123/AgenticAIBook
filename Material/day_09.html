@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Spectrum of AI Autonomy: Assistant vs. Workflow vs. Agent</h2>
+                <h2>9.1. The Spectrum of AI Autonomy: Assistant vs. Workflow vs. Agent</h2>
                 <p>To architect production agentic systems, you must clearly distinguish between the three stages of modern AI software engineering:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -173,7 +173,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Mathematical Formalization: The Agent as a Markov Decision Process (MDP)</h2>
+                <h2>9.2. Mathematical Formalization: The Agent as a Markov Decision Process (MDP)</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <h3 style="margin-top: 0; color: var(--accent);">Formal Agent-Environment Interaction</h3>
                     <p>An autonomous agent operating within an external software environment can be modeled as a discrete-time Partially Observable Markov Decision Process (POMDP) defined by the tuple $(\mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \Omega, \mathcal{O})$:</p>
@@ -189,14 +189,14 @@
                     <h4 style="color: #f59e0b; margin-top: 1.2rem;">Cumulative Quadratic Token Physics</h4>
                     <p>At turn $t$, the LLM must ingest the entire cumulative history $H_t$ to predict action $a_{t+1}$. If each turn produces an average of $\bar{L}$ tokens between thought, tool call, and observation:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #f59e0b; margin: 1rem 0;">
-                        \text{Total Tokens Billed across } N \text{ turns} = \sum_{t=1}^N (T_0 + t \cdot \bar{L}) = N \cdot T_0 + \bar{L} \cdot \frac{N(N+1)}{2} = \mathcal{O}(N^2)
+                        $$\text{Total Tokens Billed across } N \text{ turns} = \sum_{t=1}^N (T_0 + t \cdot \bar{L}) = N \cdot T_0 + \bar{L} \cdot \frac{N(N+1)}{2} = \mathcal{O}(N^2)$$
                     </div>
                     <p style="margin-bottom: 0;"><strong>Engineering Implication:</strong> Agent trajectories exhibit <strong>quadratic token growth $\mathcal{O}(N^2)$</strong>. If an agent loops 15 times with 1,000-token tool observations, token consumption does not scale linearly; it burns over 120,000 billed input tokens! Unbounded agent loops are financial emergencies.</p>
                 </div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: Production Bounded ReAct Agent Loop with Token Telemetry</h2>
+                <h2>9.3. Program 1: Production Bounded ReAct Agent Loop with Token Telemetry</h2>
                 <p>The implementation below features an autonomous ReAct loop with hard turn limits, dynamic tool dispatching, token accounting, and explicit termination detection:</p>
 
                 <div class="code-header">
@@ -365,7 +365,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: The Reflexion Architecture (Self-Critique & Memory)</h2>
+                <h2>9.4. Program 2: The Reflexion Architecture (Self-Critique & Memory)</h2>
                 <p>Standard agents fail when a tool returns an unexpected error and the agent repeats the exact same failing query in the next turn (the "Groundhog Day Loop"). The <strong>Reflexion Architecture</strong> (Shinn et al., 2023) equips the agent with verbal self-reflection stored in an episodic memory buffer:</p>
 
                 <div class="code-header">
@@ -466,7 +466,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: Multi-Path Tool Selection with Dynamic Fallback</h2>
+                <h2>9.5. Program 3: Multi-Path Tool Selection with Dynamic Fallback</h2>
                 <p>Autonomous agents must survive unexpected environment degradation. If a primary REST API fails with HTTP 503 or an API rate-limit occurs, the agent must autonomously fall back to secondary data sources rather than failing the run:</p>
 
                 <div class="code-header">
@@ -560,7 +560,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <h2>9.6. Production Failure Modes & Engineering Gotchas</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
@@ -580,7 +580,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Assistant vs. Workflow vs. Agent Architectural Matrix</h2>
+                <h2>9.7. Assistant vs. Workflow vs. Agent Architectural Matrix</h2>
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">

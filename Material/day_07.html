@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Monolithic Mega-Prompt Fallacy & Compound Reliability</h2>
+                <h2>7.1. The Monolithic Mega-Prompt Fallacy & Compound Reliability</h2>
                 <p>When novice developers build AI systems, they often write a 2,000-word "mega-prompt" commanding the model to ingest an email, classify the sentiment, extract order numbers, query a database mentally, verify warranty dates, and draft a response adhering to 10 specific business rules. In enterprise production, this pattern collapses under the <strong>Law of Compound Reliability</strong>.</p>
 
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
@@ -192,7 +192,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architectural Patterns for Agentic Workflows</h2>
+                <h2>7.2. Architectural Patterns for Agentic Workflows</h2>
                 <p>Enterprise AI engineering utilizes five primary architectural topologies depending on task complexity, parallelism, and human oversight requirements:</p>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; margin: 1.5rem 0;">
@@ -245,7 +245,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: Sequential Prompt Chain with Validation Gates & Self-Correction</h2>
+                <h2>7.3. Program 1: Sequential Prompt Chain with Validation Gates & Self-Correction</h2>
                 <p>The code below demonstrates an industrial-strength prompt chain. Notice how the validation gate detects regex non-compliance and programmatically invokes a targeted self-correction pass before downstream steps can be contaminated:</p>
 
                 <div class="code-header">
@@ -391,7 +391,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: Parallel Fan-Out / Fan-In Async Aggregator</h2>
+                <h2>7.4. Program 2: Parallel Fan-Out / Fan-In Async Aggregator</h2>
                 <p>Sequential chains accumulate wall-clock latency ($T_{\text{total}} = \sum t_i$). When different aspects of a document can be analyzed independently, the <strong>Parallel Fan-Out / Fan-In</strong> pattern executes $N$ specialist LLM workers concurrently using <code>asyncio.gather</code>, then collapses their findings into a single unified synthesis report:</p>
 
                 <div class="code-header">
@@ -536,7 +536,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: Resilient State Machine with Checkpointing & Audit Trail</h2>
+                <h2>7.5. Program 3: Resilient State Machine with Checkpointing & Audit Trail</h2>
                 <p>In enterprise banking, healthcare, and mission-critical workflows, failure midway through a multi-step chain must not corrupt data. The <strong>State Machine with Checkpointing</strong> pattern guarantees full auditability, rollback capability, and conditional branch routing:</p>
 
                 <div class="code-header">
@@ -670,7 +670,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <h2>7.6. Production Failure Modes & Engineering Gotchas</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
@@ -690,7 +690,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Monolithic Mega-Prompt vs. Chained Pipeline Comparison</h2>
+                <h2>7.7. Monolithic Mega-Prompt vs. Chained Pipeline Comparison</h2>
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">

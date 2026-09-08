@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Root Cause of Hallucinations</h2>
+                <h2>4.1. The Root Cause of Hallucinations</h2>
                 <p>As learned in Day 3, an LLM does not possess a real-time database of factual truths. It is an associative engine predicting the most statistically plausible tokens. When you ask: <em>"What is the refund policy for Acme Corp?"</em>, if the model was never trained on Acme Corp's internal handbook, it will not pause and say "I have no data" unless explicitly programmed to do so. Instead, it generates a fluent, highly convincing paragraph describing a standard 30-day refund policy with restocking fees—a total fabrication!</p>
 
                 <p>A hallucination occurs whenever the model's training prior (general patterns) overpowers the empirical evidence present in the immediate context. To build autonomous agents, our prompts must invert this balance: <strong>grounding context must strictly override speculative generation</strong>.</p>
@@ -165,7 +165,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture of a Production-Grade Prompt</h2>
+                <h2>4.2. Architecture of a Production-Grade Prompt</h2>
                 <p>Prompt engineering is not "magic words." It is modular software engineering applied to natural language. A production prompt must cleanly isolate instructions, reference context, user intent, and output formatting rules.</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -193,7 +193,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Zero-Shot vs. Few-Shot In-Context Learning</h2>
+                <h2>4.3. Zero-Shot vs. Few-Shot In-Context Learning</h2>
                 <p>In <strong>Zero-Shot Prompting</strong>, you give the model a task with zero demonstration examples. In <strong>Few-Shot Prompting</strong>, you provide 2 to 3 demonstrations before the query. Demonstrations condition the model's attention weights, locking it into the exact tone, syntax, and refusal patterns you require.</p>
 
                 <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -271,7 +271,7 @@ print(response.choices[0].message.content)
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Four Grounding Techniques to Eliminate Hallucinations</h2>
+                <h2>4.4. Four Grounding Techniques to Eliminate Hallucinations</h2>
                 <p>When engineering autonomous workflows, you should combine four complementary defense-in-depth grounding techniques:</p>
 
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
@@ -360,7 +360,7 @@ print(f"\nFinal Result: {result}")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Cognitive & Mathematical Foundations: In-Context Learning Dynamics</h2>
+                <h2>4.5. Cognitive & Mathematical Foundations: In-Context Learning Dynamics</h2>
                 <p>How does a frozen neural network learn new tasks purely through prompt tokens without weight updates? Theoretical research (Xie et al., 2021; von Oswald et al., 2023) demonstrates that <strong>In-Context Learning (ICL) acts as implicit Bayesian inference</strong>. The model uses prompt tokens to locate a latent concept pre-existing in its high-dimensional parameter manifold.</p>
 
                 <h3>5.1 Chain-of-Thought (CoT) Attention Physics</h3>
@@ -369,7 +369,7 @@ print(f"\nFinal Result: {result}")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Deep-Dive Production Engineering Programs</h2>
+                <h2>4.6. Deep-Dive Production Engineering Programs</h2>
 
                 <h3>Program 4.0-3: Dynamic Few-Shot Exemplar Selector with Cosine Similarity</h3>
                 <p>Hard-coding static few-shot examples wastes context and degrades performance on varied inputs. Production agent frameworks dynamically retrieve the <strong>top-K semantically closest demonstration exemplars</strong> from an indexed database.</p>
@@ -511,7 +511,7 @@ print(certified_answer)
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Prompt Engineering Failure Modes: The 4 Critical Antipatterns</h2>
+                <h2>4.7. Prompt Engineering Failure Modes: The 4 Critical Antipatterns</h2>
                 <ol>
                     <li><strong>Exemplar Format Inconsistency:</strong> If few-shot examples vary in indentation, JSON structure, or markdown casing, the model will stochastically alternate between formats in its output.</li>
                     <li><strong>Recency / Label Skew:</strong> In classification prompts, if the last three few-shot examples all demonstrate <code>"REJECT"</code>, the model develops an immediate recency bias toward predicting <code>"REJECT"</code> regardless of input. Always balance class distributions in few-shot exemplars!</li>

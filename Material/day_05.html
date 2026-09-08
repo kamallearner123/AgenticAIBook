@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Anatomy of a Specialist Persona</h2>
+                <h2>5.1. The Anatomy of a Specialist Persona</h2>
                 <p>When an LLM is prompted without a defined persona, it draws from the entire average mass of its training data—producing safe, middle-of-the-road answers. To make it behave like a Senior Cloud Architect, a Cybersecurity Auditor, or a Bioinformatician, you must constrain its cognitive space using five interconnected components:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -182,7 +182,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Code Review Specialist Implementation</h2>
+                <h2>5.2. Code Review Specialist Implementation</h2>
                 <p>Let's observe how a well-engineered System Persona transforms a model from a casual chatbot into an uncompromising Senior Systems Reviewer:</p>
 
                 <div class="code-header">
@@ -240,7 +240,7 @@ print(response.choices[0].message.content)
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Machine-Parseable Output: Pydantic Structured Outputs</h2>
+                <h2>5.3. Machine-Parseable Output: Pydantic Structured Outputs</h2>
                 <p>While markdown reviews are great for humans, software agents downstream cannot reliably parse free-text markdown. If a model outputs <code>"Severity: High"</code> on one run and <code>"**Critical issue:**"</code> on another, regular expressions break.</p>
 
                 <p>Modern APIs provide <strong>Structured Outputs (Constrained Decoding)</strong>. By compiling a <strong>Pydantic schema</strong> into a JSON Schema, the inference engine guarantees that every generated token satisfies the grammar of your schema—with 100% syntactic validity!</p>
@@ -310,7 +310,7 @@ for issue in review.issues:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Specialist Persona Matrix</h2>
+                <h2>5.4. Specialist Persona Matrix</h2>
                 <p>Here is how enterprise engineering organizations configure distinct specialist personas to collaborate across an agentic pipeline:</p>
 
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
@@ -352,7 +352,7 @@ for issue in review.issues:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. The Mechanics of Constrained Decoding & Grammar-Guided Sampling</h2>
+                <h2>5.5. The Mechanics of Constrained Decoding & Grammar-Guided Sampling</h2>
                 <p>How do modern APIs (like OpenAI's <code>response_format={"type": "json_schema"}</code>) guarantee that the model never emits syntax errors or missing brackets? They do not prompt the model to "please write valid JSON". Instead, they implement <strong>Grammar-Guided Constrained Decoding</strong>:</p>
 
                 <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
@@ -366,7 +366,7 @@ for issue in review.issues:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Deep-Dive Production Engineering Programs</h2>
+                <h2>5.6. Deep-Dive Production Engineering Programs</h2>
 
                 <h3>Program 5.0-3: Grammar-Guided Token Masking Engine Simulation</h3>
                 <p>This program demonstrates how constrained decoders filter candidate vocabulary logits using a finite state machine representing valid JSON tokens.</p>
@@ -502,7 +502,7 @@ print(leg_report.model_dump_json(indent=2))
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Anti-Patterns in Structured Extraction</h2>
+                <h2>5.7. Anti-Patterns in Structured Extraction</h2>
                 <ol>
                     <li><strong>Recursive Nested Schemas without Depth Bounds:</strong> Defining schemas where <code>Comment</code> contains a list of <code>Comment</code> objects causes models to exhaust their context window emitting deeply nested trees. Always bound recursion depth to 2 or 3 levels.</li>
                     <li><strong>Using Primitive Dictionaries Instead of Typed Pydantic Models:</strong> Requesting <code>{"type": "object"}</code> without property declarations forces the model into free-form JSON generation, inviting key typos and type coercions.</li>

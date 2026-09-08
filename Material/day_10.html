@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Mechanics of Dynamic Tool Selection</h2>
+                <h2>10.1. The Mechanics of Dynamic Tool Selection</h2>
                 <p>When you provide an array of tools to a foundation model, the model does not execute code or inspect your Python function bodies. It performs <strong>in-context semantic matching</strong> between the user's intent and the <code>description</code>, <code>parameters</code>, and docstrings defined in the OpenAPI schema.</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -172,26 +172,26 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Theory: Two-Stage Semantic Tool Retrieval for Large Catalogs</h2>
+                <h2>10.2. Theory: Two-Stage Semantic Tool Retrieval for Large Catalogs</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <h3 style="margin-top: 0; color: var(--accent);">The Tool Bloat Problem & Mathematical Sizing</h3>
                     <p>Each tool schema in the OpenAI function specification consumes approximately $150 \text{ to } 350 \text{ tokens}$. If an enterprise platform provides $M = 50$ enterprise tools:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #ef4444; margin: 1rem 0;">
-                        \text{Baseline Overhead per Turn} = 50 \times 250 \approx 12,500 \text{ tokens}
+                        $$\text{Baseline Overhead per Turn} = 50 \times 250 \approx 12,500 \text{ tokens}$$
                     </div>
                     <p>Across a 6-turn agent trajectory, this overhead wastes <strong>75,000 tokens</strong> solely defining irrelevant tools! Even worse, large tool catalogs trigger <em>Tool Confusion</em>, where models pick the wrong tool because of overlapping keywords.</p>
 
                     <h4 style="color: #10b981; margin-top: 1.2rem;">The Vector-Indexed Two-Stage Solution</h4>
                     <p>Instead of passing all $M$ tools to the LLM, we embed tool descriptions into a dense vector index. On each turn, given user query $q$, we compute cosine similarity between the query embedding $e_q$ and all tool description embeddings $e_{t_i}$:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.1rem; color: #10b981; margin: 1rem 0;">
-                        \text{Sim}(q, t_i) = \frac{e_q \cdot e_{t_i}}{\|e_q\|_2 \|e_{t_i}\|_2}
+                        $$\text{Sim}(q, t_i) = \frac{e_q \cdot e_{t_i}}{\|e_q\|_2 \|e_{t_i}\|_2}$$
                     </div>
                     <p style="margin-bottom: 0;">We dynamically select the <strong>Top-$k$ (e.g., $k=4$)</strong> highest scoring tools, slashing token consumption by <strong>92%</strong> and eliminating model distraction.</p>
                 </div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: Dynamic Multi-Tool Registry with Pydantic v2 Introspection</h2>
+                <h2>10.3. Program 1: Dynamic Multi-Tool Registry with Pydantic v2 Introspection</h2>
                 <p>The code below demonstrates a production tool registry with an automated <code>@agent_tool</code> decorator that uses type introspection to compile OpenAPI JSON schemas directly from Python signatures:</p>
 
                 <div class="code-header">
@@ -312,7 +312,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: Two-Stage Semantic Tool Retrieval Engine</h2>
+                <h2>10.4. Program 2: Two-Stage Semantic Tool Retrieval Engine</h2>
                 <p>When an enterprise provides 30+ tools, passing all definitions causes massive context bloat. The implementation below uses dense vector embeddings to index tool capabilities, retrieving only the Top-3 relevant tools per turn:</p>
 
                 <div class="code-header">
@@ -383,7 +383,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: Resilient Tool Dispatcher with Auto-Coercion & Error Healing</h2>
+                <h2>10.5. Program 3: Resilient Tool Dispatcher with Auto-Coercion & Error Healing</h2>
                 <p>LLMs sometimes pass integer strings (<code>"850000"</code>) when a tool expects a float (<code>850000.0</code>), or miss mandatory parameters. The resilient dispatcher below intercepts validation errors, auto-coerces types, and feeds structured error feedback back to the LLM if coercion fails:</p>
 
                 <div class="code-header">
@@ -437,7 +437,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <h2>10.6. Production Failure Modes & Engineering Gotchas</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
@@ -457,7 +457,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Tool Description Engineering Guidelines</h2>
+                <h2>10.7. Tool Description Engineering Guidelines</h2>
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">

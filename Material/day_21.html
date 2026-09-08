@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. Formal Mechanics of Real-Time Agent Streaming: SSE Protocol & Latency Dynamics</h2>
+                <h2>21.1. Formal Mechanics of Real-Time Agent Streaming: SSE Protocol & Latency Dynamics</h2>
                 <p>When an agent executes multi-step tool calls, total round-trip time is the sum of prompt processing, vector retrieval, and autoregressive generation:</p>
 
                 <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
@@ -178,7 +178,7 @@ data: {"status": "SUCCESS", "total_tokens": 142}
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture Blueprint: The 4-Tier Enterprise Agent Stack</h2>
+                <h2>21.2. Architecture Blueprint: The 4-Tier Enterprise Agent Stack</h2>
                 <p>The diagram below illustrates the decoupled architecture of an enterprise agent product:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -214,7 +214,7 @@ data: {"status": "SUCCESS", "total_tokens": 142}
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Complete Python Implementation 1: Production FastAPI Backend with SSE Token Streaming</h2>
+                <h2>21.3. Complete Python Implementation 1: Production FastAPI Backend with SSE Token Streaming</h2>
                 <p>This script sets up a production-ready FastAPI service featuring Pydantic v2 schemas, API key validation, and an asynchronous Server-Sent Events (SSE) streaming endpoint powered by LangGraph's <code>astream_events</code> protocol.</p>
 
                 <div class="code-header">
@@ -315,7 +315,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Complete Python Implementation 2: Streamlit Studio with Thought Accordions & HITL Gate</h2>
+                <h2>21.4. Complete Python Implementation 2: Streamlit Studio with Thought Accordions & HITL Gate</h2>
                 <p>Streamlit delivers interactive visual dashboards in pure Python. Program 21.2 features collapsible reasoning trees (<code>st.status</code>), thread session persistence, and an interactive Human-in-the-Loop approval gate.</p>
 
                 <div class="code-header">
@@ -417,7 +417,7 @@ if prompt := st.chat_input("Enter instruction or business query..."):
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Complete Python Implementation 3: SSE Streaming Client with Disconnect Handling</h2>
+                <h2>21.5. Complete Python Implementation 3: SSE Streaming Client with Disconnect Handling</h2>
                 <p>An enterprise backend must be validated by a robust client script. Program 21.3 implements a streaming consumer in Python that parses SSE event blocks and handles graceful connection drops.</p>
 
                 <div class="code-header">
@@ -497,7 +497,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Operational Gotchas</h2>
+                <h2>21.6. Production Failure Modes & Operational Gotchas</h2>
 
                 <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="color: #ef4444; margin-top: 0;">Gotcha 1: Zombie LLM Generation on Client Disconnect</h4>
@@ -519,7 +519,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <h2>21.7. Interactive Knowledge Verification: 10 Examination Questions</h2>
                 <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
                     
                     <!-- Question 1 -->
@@ -656,7 +656,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Hands-On Engineering Assignments</h2>
+                <h2>21.8. Hands-On Engineering Assignments</h2>
                 
                 <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="margin-top: 0;">Assignment 21.1: Build an SSE Fast-Streaming Endpoint with Disconnect Guards</h4>
@@ -740,6 +740,7 @@ if __name__ == "__main__":
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
     <script>
         function checkAnswer(questionName, correctAnswer, btnElement) {
             const selected = document.querySelector(`input[name="${questionName}"]:checked`);

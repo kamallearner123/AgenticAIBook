@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. Formal Foundations: The Saga Pattern & State Recovery Guarantees</h2>
+                <h2>23.1. Formal Foundations: The Saga Pattern & State Recovery Guarantees</h2>
                 <p>In distributed transaction theory, long-running agent workflows are modeled using the <strong>Saga Pattern</strong> rather than distributed Two-Phase Locking (2PC). A saga is a sequence of local transactions $T_1, T_2, \dots, T_n$ where each transaction updates state within a single service and commits a checkpoint.</p>
 
                 <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
@@ -169,7 +169,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture Blueprint: The Recoverable System Topology</h2>
+                <h2>23.2. Architecture Blueprint: The Recoverable System Topology</h2>
                 <p>The system is architected across two cooperating processes sharing an ACID checkpointer database:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -220,7 +220,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Complete Python Implementation 1: The Resilient Backend Engine</h2>
+                <h2>23.3. Complete Python Implementation 1: The Resilient Backend Engine</h2>
                 <p>This module implements the complete LangGraph StateGraph, registers the persistent SQLite checkpointer, sets up the interrupt gate, and provides deterministic execution and resumption methods.</p>
 
                 <div class="code-header">
@@ -377,7 +377,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Complete Python Implementation 2: Streamlit Human Approval Cockpit UI</h2>
+                <h2>23.4. Complete Python Implementation 2: Streamlit Human Approval Cockpit UI</h2>
                 <p>This web application connects directly to the SQLite checkpointer, allowing operations engineers to view all paused threads, inspect staged dry-run plans, and inject approval or rejection decisions.</p>
 
                 <div class="code-header">
@@ -468,7 +468,7 @@ if st.session_state.get("inspected", False):
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Complete Python Implementation 3: Crash-Injection & Automated Recovery Benchmark</h2>
+                <h2>23.5. Complete Python Implementation 3: Crash-Injection & Automated Recovery Benchmark</h2>
                 <p>To mathematically prove crash resilience, Program 23.3 simulates a catastrophic power failure / process crash during execution, restarts the system, verifies that earlier steps are not repeated, and resumes cleanly.</p>
 
                 <div class="code-header">
@@ -550,7 +550,7 @@ print("\n✓ Zero Duplicate Execution Verified: Steps 1 & 2 were NOT repeated af
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Mitigation Strategies</h2>
+                <h2>23.6. Production Failure Modes & Mitigation Strategies</h2>
 
                 <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="color: #ef4444; margin-top: 0;">Failure Mode 1: The Stale Checkpoint Problem</h4>
@@ -572,7 +572,7 @@ print("\n✓ Zero Duplicate Execution Verified: Steps 1 & 2 were NOT repeated af
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <h2>23.7. Interactive Knowledge Verification: 10 Examination Questions</h2>
                 <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
                     
                     <!-- Question 1 -->
@@ -709,7 +709,7 @@ print("\n✓ Zero Duplicate Execution Verified: Steps 1 & 2 were NOT repeated af
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Hands-On Engineering Assignments</h2>
+                <h2>23.8. Hands-On Engineering Assignments</h2>
                 
                 <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="margin-top: 0;">Assignment 23.1: Run the End-to-End Milestone Locally</h4>
@@ -793,6 +793,7 @@ print("\n✓ Zero Duplicate Execution Verified: Steps 1 & 2 were NOT repeated af
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
     <script>
         function checkAnswer(questionName, correctAnswer, btnElement) {
             const selected = document.querySelector(`input[name="${questionName}"]:checked`);

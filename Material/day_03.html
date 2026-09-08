@@ -156,7 +156,7 @@
                 </div>
 
 
-                <h2>1. The Mechanical Reality: Next-Token Prediction</h2>
+                <h2>3.1. The Mechanical Reality: Next-Token Prediction</h2>
                 <p>Despite appearances of conscious thought, a Large Language Model (LLM) is fundamentally a <strong>statistical next-token prediction engine</strong>. When you input a prompt, the model does not consult an internal philosophical compass or "reason" about right versus wrong. Instead, it evaluates the mathematical probability distribution across its entire vocabulary of tokens and selects the most probable next token given everything that came before.</p>
 
                 <p>This process is autoregressive: once token $N+1$ is selected, it is appended to the input sequence, and the entire enlarged sequence is fed back into the transformer to predict token $N+2$. The model repeats this prediction cycle hundreds or thousands of times until it produces an explicit <code>&lt;|endoftext|&gt;</code> stop token or reaches its maximum output limit.</p>
@@ -167,7 +167,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Tokens vs. Words: The Anatomy of Subword Tokenization</h2>
+                <h2>3.2. Tokens vs. Words: The Anatomy of Subword Tokenization</h2>
                 <p>Computers cannot read characters or words directly. Before text enters a neural network, it is sliced into discrete units called <strong>tokens</strong>. Modern LLMs use an algorithm known as <strong>Byte Pair Encoding (BPE)</strong>. BPE iteratively merges frequently occurring character pairs into reusable subword units.</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -217,7 +217,7 @@ for tid in token_ids:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Embeddings: Giving Geometry to Meaning</h2>
+                <h2>3.3. Embeddings: Giving Geometry to Meaning</h2>
                 <p>Once text is converted into token IDs, how does the model know that "cat" is related to "kitten", or that "Paris" relates to "France" the same way "Tokyo" relates to "Japan"? The answer lies in <strong>Dense Vector Embeddings</strong>.</p>
 
                 <p>An embedding converts an integer token ID into a vector of floating-point numbers in a high-dimensional continuous space (e.g., 1,536 dimensions in OpenAI <code>text-embedding-3-small</code>, or 4,096 in LLaMA-3). Tokens with similar semantic meanings or grammatical functions are placed close to one another in this high-dimensional space.</p>
@@ -266,7 +266,7 @@ print(f"  king vs apple:   {cosine_similarity(embeddings['king'], embeddings['ap
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Context Windows & The Attention Bottleneck</h2>
+                <h2>3.4. Context Windows & The Attention Bottleneck</h2>
                 <p>Every language model is bound by a <strong>Context Window</strong> (e.g., 8k, 32k, 128k, or 1M tokens). The context window is the maximum number of tokens the model can "see" at any single moment, including both your input prompt and the output it is currently generating.</p>
 
                 <p>Inside the transformer, the <strong>Self-Attention Mechanism</strong> allows every token in the context window to attend to (look at) every other token to compute contextual relevance. However, this comes with computational trade-offs:</p>
@@ -334,7 +334,7 @@ print(f"Selected: '{word}'")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Temperature and Hyperparameters Reference Guide</h2>
+                <h2>3.5. Temperature and Hyperparameters Reference Guide</h2>
                 <p>When engineering autonomous agents, choosing the correct inference hyperparameters determines whether your agent executes deterministic tool calls or hallucinates invalid arguments.</p>
 
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
@@ -376,7 +376,7 @@ print(f"Selected: '{word}'")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Tokenization Mechanics: Byte Pair Encoding (BPE) from Scratch</h2>
+                <h2>3.6. Tokenization Mechanics: Byte Pair Encoding (BPE) from Scratch</h2>
                 <p>LLMs cannot read characters directly; they operate on numerical token IDs. The dominant tokenization algorithm across GPT-4, Llama 3, and Claude is <strong>Byte Pair Encoding (BPE)</strong>. BPE operates at the subword level, finding the optimal balance between character-level vocabularies (which require too many tokens per sentence) and word-level vocabularies (which suffer from Out-Of-Vocabulary errors on rare words and code identifiers).</p>
 
                 <div class="code-header">
@@ -460,7 +460,7 @@ print(f"Tokens: {encoded_tokens}")
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. GPU Hardware Physics: The Key-Value (KV) Cache Mathematical Sizing</h2>
+                <h2>3.7. GPU Hardware Physics: The Key-Value (KV) Cache Mathematical Sizing</h2>
                 <p>When an agent runs a long multi-turn dialogue with 10 documents in context, the primary memory bottleneck on GPUs is <strong>not the model weights</strong>—it is the <strong>KV Cache</strong>. In standard autoregressive generation, past Key and Value attention matrices are cached in GPU VRAM so earlier tokens are not redundantly recomputed.</p>
 
                 <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
@@ -531,7 +531,7 @@ for k, v in stats.items():
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Context Window Attention Physics: The "Lost in the Middle" Trap</h2>
+                <h2>3.8. Context Window Attention Physics: The "Lost in the Middle" Trap</h2>
                 <p>Stanford researchers (Liu et al., 2023) proved that LLM performance follows a U-shaped retrieval curve: models recall information placed at the <strong>very beginning (primacy effect)</strong> or the <strong>very end (recency effect)</strong> of a prompt with near 100% accuracy. When critical facts are placed in the middle 50% of an 80,000-token prompt, retrieval accuracy degrades by up to <strong>40%</strong>!</p>
 
                 <div class="code-header">
@@ -576,7 +576,7 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>9. Production Debugging Playbook: Solving 5 Core LLM Failure Modes</h2>
+                <h2>3.9. Production Debugging Playbook: Solving 5 Core LLM Failure Modes</h2>
                 <ol>
                     <li><strong>Hallucination of Non-Existent APIs:</strong> Cause: High temperature and unconstrained next-token sampling. <em>Fix:</em> Set temperature to <code>0.0</code> and bind tools to strict Pydantic JSON schemas.</li>
                     <li><strong>Runaway Verbosity & Repetition Loops:</strong> Cause: Token transition probabilities loop on common n-grams. <em>Fix:</em> Set <code>frequency_penalty=0.5</code> and define explicit stop sequences (<code>["\n\nUser:", "Observation:"]</code>).</li>

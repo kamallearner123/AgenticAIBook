@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. Formal SRE Metrics for Autonomous Agents</h2>
+                <h2>22.1. Formal SRE Metrics for Autonomous Agents</h2>
                 <p>Deploying production agents requires treating non-deterministic language models with traditional Site Reliability Engineering (SRE) rigor. System availability and operational health are formulated across three key dimensions:</p>
 
                 <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
@@ -170,7 +170,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture Blueprint: The SRE Observability & Containerization Lifecycle</h2>
+                <h2>22.2. Architecture Blueprint: The SRE Observability & Containerization Lifecycle</h2>
                 <p>The production deployment lifecycle bridges code commits, automated verification, containerization, and runtime distributed tracing:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -212,7 +212,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Complete Python Implementation 1: End-to-End Hardened Enterprise Agent</h2>
+                <h2>22.3. Complete Python Implementation 1: End-to-End Hardened Enterprise Agent</h2>
                 <p>This script brings together input guardrails, vector RAG retrieval, safe calculator tools, PII scrubbing, and SQLite state checkpointing into a self-contained production service.</p>
 
                 <div class="code-header">
@@ -366,7 +366,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Complete Python Implementation 2: Automated PyTest Regression Harness</h2>
+                <h2>22.4. Complete Python Implementation 2: Automated PyTest Regression Harness</h2>
                 <p>Enterprise agents cannot be deployed based on manual vibes. Program 22.2 provides an automated test suite verifying guardrail rejection, tool precision, and state immutability.</p>
 
                 <div class="code-header">
@@ -434,7 +434,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Production Multi-Stage Dockerfile & GitHub Actions CI/CD</h2>
+                <h2>22.5. Production Multi-Stage Dockerfile & GitHub Actions CI/CD</h2>
                 <p>The multi-stage Dockerfile eliminates build tools from the runtime container, yielding an image under 200MB executing under a non-root system user.</p>
 
                 <div class="code-header">
@@ -523,7 +523,7 @@ jobs:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Operational Gotchas</h2>
+                <h2>22.6. Production Failure Modes & Operational Gotchas</h2>
 
                 <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="color: #ef4444; margin-top: 0;">SRE Gotcha 1: Container OOM from In-Memory Vector Indices</h4>
@@ -545,7 +545,7 @@ jobs:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <h2>22.7. Interactive Knowledge Verification: 10 Examination Questions</h2>
                 <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
                     
                     <!-- Question 1 -->
@@ -682,7 +682,7 @@ jobs:
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Hands-On Engineering Assignments</h2>
+                <h2>22.8. Hands-On Engineering Assignments</h2>
                 
                 <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="margin-top: 0;">Assignment 22.1: Implement Multi-Stage Docker Packaging</h4>
@@ -766,6 +766,7 @@ jobs:
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
     <script>
         function checkAnswer(questionName, correctAnswer, btnElement) {
             const selected = document.querySelector(`input[name="${questionName}"]:checked`);

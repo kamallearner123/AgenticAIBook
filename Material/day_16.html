@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. System Architecture: Multi-Tier Knowledge Mesh</h2>
+                <h2>16.1. System Architecture: Multi-Tier Knowledge Mesh</h2>
                 <p>The Company Knowledge Agent serves as the centralized intelligence layer across enterprise documentation, relational databases, and arithmetic calculation engines:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -182,19 +182,19 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Theory: Groundedness & Faithfulness Verification Metrics</h2>
+                <h2>16.2. Theory: Groundedness & Faithfulness Verification Metrics</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <h3 style="margin-top: 0; color: var(--accent);">The Faithfulness Mathematical Metric</h3>
                     <p>In legal, healthcare, and enterprise HR applications, answering accurately is not enough: answers must be provably faithful to source text. Let the answer $A$ be decomposed into atomic factual claims $\{c_1, c_2, \dots, c_m\}$. The <strong>Faithfulness Score</strong> against retrieved context $C$ is:</p>
                     <div style="text-align: center; font-family: 'Fira Code', monospace; font-size: 1.15rem; color: #10b981; margin: 1rem 0;">
-                        \text{Faithfulness}(A, C) = \frac{\sum_{i=1}^m \mathbb{I}\big(c_i \text{ is directly inferable from } C\big)}{m}
+                        $$\text{Faithfulness}(A, C) = \frac{\sum_{i=1}^m \mathbb{I}\big(c_i \text{ is directly inferable from } C\big)}{m}$$
                     </div>
                     <p>where $\mathbb{I}(\cdot) \in \{0, 1\}$ is the indicator function. Production deployment mandates $\text{Faithfulness}(A, C) = 1.0$. If any claim in the response lacks explicit document provenance, the response must be quarantined by the verification gate.</p>
                 </div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: The Complete Company Knowledge Agent Core Engine</h2>
+                <h2>16.3. Program 1: The Complete Company Knowledge Agent Core Engine</h2>
                 <p>The complete implementation below fuses a ChromaDB policy store, an in-memory SQLite HRIS database, a safe arithmetic execution engine, and session window memory into an autonomous agent:</p>
 
                 <div class="code-header">
@@ -346,7 +346,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: Automated Faithfulness & Citation Validator</h2>
+                <h2>16.4. Program 2: Automated Faithfulness & Citation Validator</h2>
                 <p>To eliminate legal compliance risks, the validator below inspects the agent's output, checking that every numerical dollar amount and policy clause cited corresponds directly to verified retrieved evidence:</p>
 
                 <div class="code-header">
@@ -407,7 +407,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: Multi-Turn Interactive CLI with Session Memory</h2>
+                <h2>16.5. Program 3: Multi-Turn Interactive CLI with Session Memory</h2>
                 <p>Below is a terminal user interface allowing employees to conduct ongoing conversational inquiries, maintaining state across questions while streaming tool invocation traces:</p>
 
                 <div class="code-header">
@@ -451,7 +451,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Hardening Playbooks</h2>
+                <h2>16.6. Production Failure Modes & Hardening Playbooks</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">

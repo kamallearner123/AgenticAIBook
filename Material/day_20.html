@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. Formal Threat Modeling: The Agent Attack Surface (OWASP Top 10 for LLMs)</h2>
+                <h2>20.1. Formal Threat Modeling: The Agent Attack Surface (OWASP Top 10 for LLMs)</h2>
                 <p>Because Large Language Models fundamentally process instructions and data within the <em>same linguistic channel</em>, they suffer from the classic <strong>Confused Deputy Problem</strong>. An agent acts as a privileged proxy executing untrusted instructions on behalf of an unverified caller.</p>
 
                 <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
@@ -169,7 +169,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture Blueprint: The 4-Tier Defense-in-Depth Model</h2>
+                <h2>20.2. Architecture Blueprint: The 4-Tier Defense-in-Depth Model</h2>
                 <p>Enterprise AI architectures enforce security across four sequential, non-bypassable perimeters:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -210,7 +210,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Complete Python Implementation 1: Ingestion Guardrail Engine</h2>
+                <h2>20.3. Complete Python Implementation 1: Ingestion Guardrail Engine</h2>
                 <p>This standalone module evaluates untrusted inputs against direct injection signatures, system prompt override commands, and lexical obfuscations (base64, hex, and zero-width spaces).</p>
 
                 <div class="code-header">
@@ -296,7 +296,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Complete Python Implementation 2: Automated PII & Secret Redactor</h2>
+                <h2>20.4. Complete Python Implementation 2: Automated PII & Secret Redactor</h2>
                 <p>Before any prompt text is transmitted to external inference providers or logged to disk, sensitive entity scrubbers must identify and mask Personally Identifiable Information (PII) and credentials.</p>
 
                 <div class="code-header">
@@ -374,7 +374,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Complete Python Implementation 3: LangGraph Human-in-the-Loop Approval Gate</h2>
+                <h2>20.5. Complete Python Implementation 3: LangGraph Human-in-the-Loop Approval Gate</h2>
                 <p>Program 20.3 constructs an enterprise workflow using LangGraph's <code>interrupt_before</code> capability. The graph runs autonomously through preparation, but halts execution when reaching a destructive action node, requiring an authorized human review token before resuming.</p>
 
                 <div class="code-header">
@@ -483,7 +483,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Real-World CVEs</h2>
+                <h2>20.6. Production Failure Modes & Real-World CVEs</h2>
 
                 <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="color: #ef4444; margin-top: 0;">Vulnerability 1: Invisible Markdown Data Exfiltration</h4>
@@ -505,7 +505,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <h2>20.7. Interactive Knowledge Verification: 10 Examination Questions</h2>
                 <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
                     
                     <!-- Question 1 -->
@@ -642,7 +642,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Hands-On Engineering Assignments</h2>
+                <h2>20.8. Hands-On Engineering Assignments</h2>
                 
                 <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="margin-top: 0;">Assignment 20.1: Build an Ingestion Guardrail with Unicode Normalization</h4>
@@ -726,6 +726,7 @@ if __name__ == "__main__":
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
     <script>
         function checkAnswer(questionName, correctAnswer, btnElement) {
             const selected = document.querySelector(`input[name="${questionName}"]:checked`);

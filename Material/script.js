@@ -165,6 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initPrintButton();
     initGitHubButton();
     initMobileMenu();
+    initSubtopicNavigation();
+    initMathRendering();
+    initSidebarResize();
 });
 
 // =========================================================
@@ -442,6 +445,152 @@ function initMobileMenu() {
 
     toggleBtn.addEventListener('click', toggleMenu);
     backdrop.addEventListener('click', closeMenu);
+}
+
+function initSidebarResize() {
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar || window.matchMedia('(max-width: 900px)').matches) return;
+
+    const handle = document.createElement('button');
+    handle.type = 'button';
+    handle.className = 'sidebar-resize-handle';
+    handle.setAttribute('aria-label', 'Resize navigation sidebar');
+    handle.title = 'Drag to resize navigation sidebar';
+    sidebar.appendChild(handle);
+
+    const savedWidth = Number.parseInt(localStorage.getItem('agentic-ai-sidebar-width'), 10);
+    if (savedWidth) setSidebarWidth(savedWidth);
+
+    let resizing = false;
+
+    handle.addEventListener('pointerdown', (event) => {
+        resizing = true;
+        handle.setPointerCapture(event.pointerId);
+        document.body.classList.add('resizing-sidebar');
+        event.preventDefault();
+    });
+
+    handle.addEventListener('pointermove', (event) => {
+        if (!resizing) return;
+        setSidebarWidth(event.clientX);
+    });
+
+    const stopResizing = (event) => {
+        if (!resizing) return;
+        resizing = false;
+        if (event.pointerId !== undefined && handle.hasPointerCapture(event.pointerId)) {
+            handle.releasePointerCapture(event.pointerId);
+        }
+        document.body.classList.remove('resizing-sidebar');
+        localStorage.setItem('agentic-ai-sidebar-width', getComputedStyle(sidebar).width);
+    };
+
+    handle.addEventListener('pointerup', stopResizing);
+    handle.addEventListener('pointercancel', stopResizing);
+}
+
+function setSidebarWidth(width) {
+    const clampedWidth = Math.min(Math.max(width, 220), Math.min(480, window.innerWidth * 0.45));
+    document.documentElement.style.setProperty('--sidebar-width', `${clampedWidth}px`);
+}
+
+// Build expandable day groups with links to every lesson section.
+function initSubtopicNavigation() {
+    const article = document.querySelector('article.book-page');
+    const dayLinks = Array.from(document.querySelectorAll('.toc > li > a[href^="day_"]'));
+    if (!dayLinks.length) return;
+
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const currentHeadings = article ? getLessonHeadings(article) : [];
+
+    dayLinks.forEach((dayLink) => {
+        const dayItem = dayLink.parentElement;
+        const dayMatch = dayLink.getAttribute('href').match(/day_(\d+)/);
+        if (!dayMatch || dayItem.querySelector('details')) return;
+
+        const dayNumber = Number.parseInt(dayMatch[1], 10);
+        const dayPage = dayLink.getAttribute('href');
+        const details = document.createElement('details');
+        details.className = 'day-toc-group';
+        details.open = dayPage === currentPage;
+
+        const summary = document.createElement('summary');
+        summary.appendChild(dayLink.cloneNode(true));
+        details.appendChild(summary);
+        dayItem.replaceChildren(details);
+
+        if (dayPage === currentPage) {
+            addSubtopicLinks(details, dayNumber, currentHeadings, '');
+            scrollToRequestedTopic();
+            return;
+        }
+
+        fetch(dayPage)
+            .then(response => response.text())
+            .then(html => {
+                const page = new DOMParser().parseFromString(html, 'text/html');
+                addSubtopicLinks(details, dayNumber, getLessonHeadings(page), dayPage);
+            })
+            .catch(() => {
+                // Keep the day link usable when lesson pages are opened from file://.
+            });
+    });
+}
+
+function getLessonHeadings(root) {
+    return Array.from(root.querySelectorAll('article.book-page h2, main h2'))
+        .filter(heading => /^\d+\.\d+\.\s/.test(heading.textContent.trim()));
+}
+
+function addSubtopicLinks(details, dayNumber, headings, page) {
+    if (!headings.length || details.querySelector('.toc-subtopics')) return;
+
+    const subtopics = document.createElement('ul');
+    subtopics.className = 'toc-subtopics';
+    subtopics.setAttribute('aria-label', `Day ${dayNumber} subtopics`);
+
+    headings.forEach((heading, index) => {
+        const topicId = `day-${String(dayNumber).padStart(2, '0')}-topic-${index + 1}`;
+        if (!heading.id) heading.id = topicId;
+
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `${page}#${topicId}`;
+        link.textContent = heading.textContent.trim();
+        item.appendChild(link);
+        subtopics.appendChild(item);
+    });
+
+    details.appendChild(subtopics);
+}
+
+function scrollToRequestedTopic() {
+    const targetId = window.location.hash.slice(1);
+    if (!targetId) return;
+    const target = document.getElementById(targetId);
+    if (target) target.scrollIntoView();
+}
+
+function initMathRendering() {
+    const katexCss = document.createElement('link');
+    katexCss.rel = 'stylesheet';
+    katexCss.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css';
+    document.head.appendChild(katexCss);
+
+    const autoRender = document.createElement('script');
+    autoRender.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js';
+    autoRender.onload = () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            throwOnError: false
+        });
+    };
+    document.head.appendChild(autoRender);
 }
 
 

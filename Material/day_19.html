@@ -132,7 +132,8 @@
                         <div class="plan-col">
                             <h4>📐 Theoretical Milestones</h4>
                             <ul>
-                                <li>Dec-POMDP formulation: Tuple $\langle I, S, \{A_i\}, \mathcal{T}, \{\mathcal{R}_i\}, \{\Omega_i\}, \{\mathcal{O}_i\} angle$.</li><li>Context window compute savings: Splitting $M$ tasks across $M$ agents saves context compute by a factor of $rac{1}{M}$.</li><li>Handoff protocol semantics: Encapsulating local scratchpad state while forwarding public summary payloads.</li>
+                                <li>Dec-POMDP formulation: Tuple $\langle I, S, \{A_i\}, \mathcal{T}, \{\mathcal{R}_i\}, \{\Omega_i\}, \{\mathcal{O}_i\} 
+angle$.</li><li>Context window compute savings: Splitting $M$ tasks across $M$ agents saves context compute by a factor of $rac{1}{M}$.</li><li>Handoff protocol semantics: Encapsulating local scratchpad state while forwarding public summary payloads.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
@@ -154,7 +155,7 @@
                 </div>
 
 
-                <h2>1. Formal Foundations: Multi-Agent Decision Processes & Attention Capacity</h2>
+                <h2>19.1. Formal Foundations: Multi-Agent Decision Processes & Attention Capacity</h2>
                 <p>A multi-agent architecture is formally modeled as a <strong>Decentralized Partially Observable Markov Decision Process (Dec-POMDP)</strong> or <strong>Multi-Agent State Transition System</strong> defined as an 8-tuple:</p>
                 
                 <div style="padding: 1.25rem; background: var(--sidebar-bg); border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.95rem;">
@@ -177,7 +178,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Architecture Blueprint: Hierarchical Supervisor vs. Peer-to-Peer Swarms</h2>
+                <h2>19.2. Architecture Blueprint: Hierarchical Supervisor vs. Peer-to-Peer Swarms</h2>
                 <p>Multi-agent workflows generally adopt one of two core topologies depending on task determinism and coordination requirements:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
@@ -217,7 +218,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Complete Python Implementation 1: Deterministic Hierarchical Supervisor Pattern</h2>
+                <h2>19.3. Complete Python Implementation 1: Deterministic Hierarchical Supervisor Pattern</h2>
                 <p>The following self-contained program implements a complete Supervisor pattern. A centralized routing node assesses the evolving state and dispatches sub-tasks to dedicated specialist nodes (Researcher, Coder, Reviewer). When the QA Reviewer passes quality gates, the supervisor routes to <code>END</code>.</p>
 
                 <div class="code-header">
@@ -409,7 +410,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Complete Python Implementation 2: Subgraph Composition & Hierarchical Delegation</h2>
+                <h2>19.4. Complete Python Implementation 2: Subgraph Composition & Hierarchical Delegation</h2>
                 <p>In enterprise architectures, teams of agents are often organized as <strong>Subgraphs</strong>. A parent orchestrator delegates a sub-problem to an independent subgraph that executes its own private cycle, returning only a consolidated summary to the parent state.</p>
 
                 <div class="code-header">
@@ -521,7 +522,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Complete Python Implementation 3: Peer-to-Peer Swarm with Deadlock Prevention</h2>
+                <h2>19.5. Complete Python Implementation 3: Peer-to-Peer Swarm with Deadlock Prevention</h2>
                 <p>When agents interact peer-to-peer (without a central supervisor), circular handoffs can cause infinite loops (Deadlock). Program 19.3 implements dynamic handoff tools and a strict Coffman cycle breaker.</p>
 
                 <div class="code-header">
@@ -676,7 +677,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Architectural Anti-Patterns</h2>
+                <h2>19.6. Production Failure Modes & Architectural Anti-Patterns</h2>
 
                 <div class="danger-callout" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="color: #ef4444; margin-top: 0;">Anti-Pattern 1: Ping-Pong Critique Loops</h4>
@@ -698,7 +699,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Interactive Knowledge Verification: 10 Examination Questions</h2>
+                <h2>19.7. Interactive Knowledge Verification: 10 Examination Questions</h2>
                 <div class="quiz-container" style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border: 1px solid var(--border-color);">
                     
                     <!-- Question 1 -->
@@ -835,7 +836,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>8. Hands-On Engineering Assignments</h2>
+                <h2>19.8. Hands-On Engineering Assignments</h2>
                 
                 <div class="assignment-card" style="background: var(--sidebar-bg); border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 4px; margin: 1.5rem 0;">
                     <h4 style="margin-top: 0;">Assignment 19.1: Architect a 4-Tier Security Triage Multi-Agent Team</h4>
@@ -919,6 +920,7 @@ if __name__ == "__main__":
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
     <script>
         function checkAnswer(questionName, correctAnswer, btnElement) {
             const selected = document.querySelector(`input[name="${questionName}"]:checked`);

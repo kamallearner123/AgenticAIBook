@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. The Evolution of LangChain: From Black-Box Chains to LCEL</h2>
+                <h2>13.1. The Evolution of LangChain: From Black-Box Chains to LCEL</h2>
                 <p>Early versions of LangChain (v0.0.x) relied on monolithic classes like <code>RetrievalQA</code> or <code>LLMChain</code>. These legacy classes acted as opaque black boxes: inspecting prompts required monkey-patching internal methods, token streaming was cumbersome, and switching foundation model providers required rewriting application code.</p>
 
                 <p>Modern LangChain (v0.2+) introduced <strong>LangChain Expression Language (LCEL)</strong>. LCEL treats every component—prompt templates, chat models, vector retrievers, and output parsers—as a standardized <strong>Runnable</strong> that composes via the standard Unix pipe operator (<code>|</code>):</p>
@@ -176,7 +176,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Mathematical Formalization: The Runnable Protocol & Monadic Composition</h2>
+                <h2>13.2. Mathematical Formalization: The Runnable Protocol & Monadic Composition</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <h3 style="margin-top: 0; color: var(--accent);">The Runnable Functional Interface</h3>
                     <p>In category theory and functional programming, the pipe operator represents function composition: $(f \circ g)(x) = f(g(x))$, written in LCEL as <code>g | f</code>. Every component conforming to the <code>Runnable[Input, Output]</code> protocol guarantees 6 fundamental runtime behaviors:</p>
@@ -226,7 +226,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 1: Declarative RAG Pipeline with Streaming Token Iteration</h2>
+                <h2>13.3. Program 1: Declarative RAG Pipeline with Streaming Token Iteration</h2>
                 <p>The implementation below showcases an end-to-end RAG pipeline constructed in LCEL, demonstrating <code>RunnableParallel</code>, in-memory Chroma vector retrieval, and live token-by-token streaming to the terminal:</p>
 
                 <div class="code-header">
@@ -300,7 +300,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 2: Multi-Branch Dynamic Router with Pydantic Schema Validation</h2>
+                <h2>13.4. Program 2: Multi-Branch Dynamic Router with Pydantic Schema Validation</h2>
                 <p>Real-world applications don't execute a single pipeline for every request. The code below uses <code>RunnableBranch</code> to route queries into specialized sub-chains based on classification, extracting strongly-typed Pydantic output schemas:</p>
 
                 <div class="code-header">
@@ -384,7 +384,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Program 3: Resilient Chains with Model Fallbacks & Automatic Retries</h2>
+                <h2>13.5. Program 3: Resilient Chains with Model Fallbacks & Automatic Retries</h2>
                 <p>Production systems must survive OpenAI rate-limits (HTTP 429) or transient outages. LCEL provides declarative resilience methods: <code>.with_fallbacks()</code> switches to backup model providers (e.g. Anthropic Claude or local Ollama), while <code>.with_retry()</code> implements exponential backoff:</p>
 
                 <div class="code-header">
@@ -437,7 +437,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>6. Production Failure Modes & Engineering Gotchas</h2>
+                <h2>13.6. Production Failure Modes & Engineering Gotchas</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
@@ -457,7 +457,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>7. Raw Python API vs. Modern LCEL Comparison Matrix</h2>
+                <h2>13.7. Raw Python API vs. Modern LCEL Comparison Matrix</h2>
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">

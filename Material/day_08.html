@@ -154,7 +154,7 @@
                 </div>
 
 
-                <h2>1. Problem Solver Cognitive Architecture</h2>
+                <h2>8.1. Problem Solver Cognitive Architecture</h2>
                 <p>Real-world engineering challenges (e.g., enterprise cloud migration ROI modeling, complex tax reconciliations, or diagnosing distributed microservice failures) cannot be solved by single-turn LLM generation. Attempting a one-shot response inevitably leads to calculation drift, overlooked constraints, and unformatted outputs.</p>
 
                 <p>The <strong>Autonomous Problem Solver</strong> implements a rigorous 4-stage cognitive lifecycle with isolated responsibility boundaries:</p>
@@ -178,7 +178,7 @@
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>2. Program 1: The Core Autonomous Problem Solver Engine</h2>
+                <h2>8.2. Program 1: The Core Autonomous Problem Solver Engine</h2>
                 <p>The complete, typed Python implementation below incorporates Pydantic v2 schemas, tool routing, an adversarial validation gate, and comprehensive error handling:</p>
 
                 <div class="code-header">
@@ -408,7 +408,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3. Program 2: Interactive Terminal UI with Rich & Human-in-the-Loop (HITL)</h2>
+                <h2>8.3. Program 2: Interactive Terminal UI with Rich & Human-in-the-Loop (HITL)</h2>
                 <p>Enterprise users require visibility, live step spinners, and the power to inspect or modify the generated execution plan before any external tools run. Below is the production CLI interface utilizing <code>rich</code> and an interactive Human-in-the-Loop approval gate:</p>
 
                 <div class="code-header">
@@ -503,7 +503,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>4. Program 3: Sandboxed Code Runner with Self-Healing Error Loop</h2>
+                <h2>8.4. Program 3: Sandboxed Code Runner with Self-Healing Error Loop</h2>
                 <p>Certain problem steps require running custom Python scripts to parse complex datasets or calculate multi-variable formulas. The sandboxed code runner executes code in an isolated sub-process with memory and timeout constraints, capturing <code>stderr</code> and invoking self-healing reflection if runtime errors occur:</p>
 
                 <div class="code-header">
@@ -601,7 +601,7 @@ if __name__ == "__main__":
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5. Production Failure Modes & Hardening Playbooks</h2>
+                <h2>8.5. Production Failure Modes & Hardening Playbooks</h2>
                 <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 1.5rem 0;">
                     <ul style="padding-left: 1.2rem; margin-bottom: 0;">
                         <li style="margin-bottom: 1rem;">
