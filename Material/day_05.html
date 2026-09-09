@@ -16,6 +16,10 @@
     
     <!-- Theme Toggle Script -->
     <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -30,8 +34,8 @@
                     
                     <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
                     <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
-                    <li><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
-                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li><a href="day_03.html">Day 3: LLM & Prompting Basics</a></li>
+                    <li><a href="day_04.html">Day 4: Advanced Prompting & Training</a></li>
                     <li class="active"><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
                     <li><a href="day_06.html">Day 6: Tool Execution</a></li>
                     <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
@@ -105,7 +109,7 @@
                 <h1>Day 5: Structuring Outputs & LLM Specialist Behavior</h1>
 
                 <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>Problem Statement:</strong> Out-of-the-box conversational models are designed to be general-purpose, polite, and chatty. However, autonomous agents require hyper-focused specialist personas that produce deterministic, structured data formats (such as validated JSON schemas) with strict guardrails and zero conversational fluff. How do you transform a generalist model into an uncompromising domain specialist?
+                    <strong>Problem Statement:</strong> By default, an LLM talks like a generic, polite chatbot — it replies in free-flowing paragraphs and tries to be helpful about almost anything. But most real use cases need something more specific: feeding the model's output into another program, filling in a report template, or having it act like a focused specialist for one particular job. That means the model needs to (a) behave like a narrow specialist instead of a generalist, and (b) reply in a predictable, specific format instead of free text. How do you get both, reliably?
                 </div>
 
                 <!-- =========================================================
@@ -126,509 +130,462 @@
                         <div class="plan-col">
                             <h4>🎯 Today's Mission & Relevance</h4>
                             <ul>
-                                <li>Force non-deterministic LLMs to output 100% syntactically valid JSON conforming to strict schemas.</li><li>Understand constrained decoding, context-free grammars (CFGs), and DFA logit masking.</li><li>Build a multi-specialist dispatcher routing queries to specialized Pydantic schema handlers.</li>
+                                <li>Understand why LLMs need explicit instructions to act like a focused specialist instead of a generic chatbot.</li><li>Learn to separate standing instructions from the actual task using system and user roles.</li><li>Learn to reliably get machine-readable output — JSON, tables, or labeled fields — instead of unpredictable free text.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
                             <h4>📐 Theoretical Milestones</h4>
                             <ul>
-                                <li>Deterministic Finite Automaton (DFA) state transitions over token vocabularies.</li><li>Logit masking mathematics: setting invalid token logits to $-\infty$ during autoregressive generation.</li><li>Grammar-guided decoding vs. naive post-generation regex parsing.</li>
+                                <li>System messages vs. user messages in a chat API call.</li><li>The four building blocks of a specialist persona: identity, focus, guardrails, and output format.</li><li>What a schema is, and why "please reply in JSON" alone isn't reliable.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
                             <h4>💻 Hands-On Blueprint</h4>
                             <ul>
-                                <li>Program 5.1: Pure Python DFA Logit Masking Simulator for Constrained Decoding.</li><li>Program 5.2: Multi-Specialist Pydantic Schema Router with Discriminated Unions.</li><li>Program 5.3: Automated Schema Repair Pipeline with Self-Correcting Feedback Loops.</li>
+                                <li>Program 5.0-1: A minimal system + user message list.</li><li>Program 5.0-2: A specialist persona reviewing Python code.</li><li>Program 5.0-3: A simple Pydantic schema for structured output.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
-                            <h4>🛡️ Production Failure Modes</h4>
+                            <h4>🛡️ Common Beginner Pitfalls</h4>
                             <ul>
-                                <li>The Regex Parsing Trap: Using fragile regex to parse unconstrained LLM outputs, causing 15-30% drop rates.</li><li>Schema Drift: Modifying backend schemas without versioning prompt contracts, causing silent agent pipeline failure.</li>
+                                <li>The Over-Strict Persona Trap: writing guardrails so rigid the model refuses even valid, in-scope requests.</li><li>The "Just Ask Nicely" Trap: asking for JSON in plain words with no real schema, then being surprised when the parsing code breaks.</li>
                             </ul>
                         </div>
                     </div>
                     <div class="daily-plan-footer">
-                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Multi-Specialist Pydantic Schema Dispatcher • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Specialist Persona + Structured Output Walkthrough • 10 Interactive MCQs • 5 Hands-On Assignments</span>
                     </div>
                 </div>
 
 
-                <h2>5.1. The Anatomy of a Specialist Persona</h2>
-                <p>When an LLM is prompted without a defined persona, it draws from the entire average mass of its training data—producing safe, middle-of-the-road answers. To make it behave like a Senior Cloud Architect, a Cybersecurity Auditor, or a Bioinformatician, you must constrain its cognitive space using five interconnected components:</p>
+                <h2>5.1. System Prompts vs. User Prompts</h2>
+                <p>When you call an LLM through an API, you don't send a single block of text — you send a <strong>list of messages</strong>, and each message is tagged with a <strong>role</strong>. Two roles matter most for this lesson: <code>"system"</code> and <code>"user"</code>.</p>
+                <ul>
+                    <li>The <strong>system</strong> message sets standing instructions for the whole conversation — who the model should act as, what it should focus on, and how it should behave. It's set once, usually before the conversation starts.</li>
+                    <li>The <strong>user</strong> message is the actual question or task — the thing the person (or program) is asking the model to do right now.</li>
+                </ul>
+
+                <div class="code-header">
+                    <span>system_and_user_messages.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 5.0-1: A Minimal System + User Message List
+messages = [
+    {"role": "system", "content": "You are a helpful assistant that only answers questions about cooking."},
+    {"role": "user", "content": "What's a good substitute for butter in a cake recipe?"}
+]
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-1: A System Message Sets the Rules, a User Message Asks the Question</div>
+
+                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <strong>Line by line:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li><code>messages</code> is just a Python list — each item is one message in the conversation.</li>
+                        <li>The first dictionary has <code>"role": "system"</code> — this is the standing instruction: "only answer questions about cooking."</li>
+                        <li>The second dictionary has <code>"role": "user"</code> — this is the specific question being asked right now.</li>
+                        <li>This list is what actually gets sent to the LLM API in a chat completion call.</li>
+                    </ul>
+                </div>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    This connects to something you already saw in Day 3: <code>conversation_history.append({"role": "user", ...})</code>. You were already using the <code>"user"</code> role there — now you know there's also a <code>"system"</code> role, and what it's for.
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5.2. The Anatomy of a Specialist Persona</h2>
+                <p>When an LLM is prompted with no persona at all, it defaults to being a generic, polite, all-purpose assistant. To make it behave like a focused specialist — for one job, on one kind of task — you build a <strong>persona</strong> out of four parts:</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
                     <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); max-width: 680px; margin: 0 auto; border: 1px solid var(--border-color);">
-                        <div style="color: #6366f1; font-weight: bold;">1. IDENTITY & AUTHORITY:</div>
-                        <div style="margin-left: 1rem; color: var(--text-muted);">"Staff Site Reliability Engineer with 15+ years in high-throughput distributed systems."</div>
-                        <div style="color: #ec4899; font-weight: bold; margin-top: 0.8rem;">2. DOMAIN CONSTRAINTS:</div>
-                        <div style="margin-left: 1rem; color: var(--text-muted);">"Focus strictly on p99 latency, zero-downtime blue/green rollouts, and idempotent APIs."</div>
-                        <div style="color: #f59e0b; font-weight: bold; margin-top: 0.8rem;">3. GUARDRAILS & REFUSALS:</div>
-                        <div style="margin-left: 1rem; color: var(--text-muted);">"Never recommend stateful single points of failure. Refuse front-end UI questions."</div>
-                        <div style="color: #10b981; font-weight: bold; margin-top: 0.8rem;">4. OUTPUT CONTRACT (SCHEMA):</div>
-                        <div style="margin-left: 1rem; color: var(--text-muted);">"Strictly return a JSON object adhering to Pydantic schema 'ArchitectureReview'."</div>
+                        <div style="color: #6366f1; font-weight: bold;">1. IDENTITY:</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">"You are a friendly Python mentor who reviews code written by beginners."</div>
+                        <div style="color: #ec4899; font-weight: bold; margin-top: 0.8rem;">2. FOCUS / DOMAIN:</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">"Focus only on Python syntax, readability, and common beginner mistakes."</div>
+                        <div style="color: #f59e0b; font-weight: bold; margin-top: 0.8rem;">3. GUARDRAILS:</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">"Don't rewrite the whole program — suggest small, specific improvements. If the code isn't Python, say so."</div>
+                        <div style="color: #10b981; font-weight: bold; margin-top: 0.8rem;">4. OUTPUT FORMAT:</div>
+                        <div style="margin-left: 1rem; color: var(--text-muted);">"List each suggestion as a short bullet point."</div>
                     </div>
                 </div>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 5.0-1: The Five Pillars of an Enterprise Agent Specialist Persona</div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 5.0-1: The Four Building Blocks of a Specialist Persona</div>
                 <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
+                    <strong>What each part is doing:</strong>
                     <ul style="margin-top: 0.5rem;">
-                        <li><strong>Identity & Authority:</strong> Primes the model's vocabulary and cognitive reasoning depth.</li>
-                        <li><strong>Domain Constraints:</strong> Anchors the model into a specific technical paradigm (e.g., distributed systems).</li>
-                        <li><strong>Guardrails:</strong> Defines forbidden outputs, safety boundaries, and topics to actively decline.</li>
-                        <li><strong>Output Contract:</strong> Removes ambiguity by demanding machine-parseable schemas rather than free-form prose.</li>
+                        <li><strong>Identity:</strong> Tells the model who to act as — this shapes its tone and vocabulary.</li>
+                        <li><strong>Focus / Domain:</strong> Narrows what the model should actually pay attention to, so it doesn't wander off-topic.</li>
+                        <li><strong>Guardrails:</strong> Sets boundaries — what the model should refuse or avoid doing.</li>
+                        <li><strong>Output Format:</strong> Tells the model how its answer should be shaped, not just what it should say.</li>
                     </ul>
                 </div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5.2. Code Review Specialist Implementation</h2>
-                <p>Let's observe how a well-engineered System Persona transforms a model from a casual chatbot into an uncompromising Senior Systems Reviewer:</p>
+                <h2>5.3. Specialist Persona in Action</h2>
+                <p>Let's see this persona actually change how the model responds. Here's a system persona for a beginner-friendly Python code reviewer, paired with a real user task:</p>
 
                 <div class="code-header">
-                    <span>specialized_code_review_agent_persona.py</span>
+                    <span>python_code_review_persona.py</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
                 </div>
                 <pre><code class="language-python">
-# Program 5.0-1: Specialized Code Review Agent Persona
+# Program 5.0-2: Specialist Persona in Action
 from openai import OpenAI
 
 client = OpenAI()
 
 system_persona = """
-You are a Senior Principal Systems Architect specializing in Rust and high-performance networking.
+You are a friendly Python mentor who reviews code written by beginners.
 
-MISSION:
-Review provided code snippets for:
-1. Memory safety & allocation inefficiencies (e.g., unnecessary cloning, string allocations in hot paths).
-2. Concurrency hazards (race conditions, deadlock risks).
-3. Idiomatic Rust design principles.
-
-TONE & STYLE:
-- Direct, clinical, and constructive.
-- No pleasantries ("Hello", "Hope you are doing well", "Certainly!").
-- Reference Rust compiler rules or RFC specifications where applicable.
+FOCUS:
+- Point out syntax errors, naming issues, and common beginner mistakes.
+- Explain *why* something is a problem, not just what to change.
 
 GUARDRAILS:
-- Do not evaluate non-systems programming languages.
-- If the snippet is incomplete or missing context, flag the specific missing types.
+- Keep feedback encouraging and specific -- avoid vague comments like "make it better."
+- If the code isn't Python, say so and don't attempt to review it.
+
+TONE:
+- Simple, plain language. Avoid jargon a beginner wouldn't know yet.
 """
 
 user_code = """
-pub fn process_sensor_stream(data: Vec<u8>) -> String {
-    let mut accumulator = String::new();
-    for byte in data {
-        // Repeated string allocation in loop
-        accumulator.push_str(&byte.to_string());
-    }
-    accumulator
-}
+def add_numbers(a, b):
+    result = a+b
+    return(result)
+
+print(add_numbers(5, "3"))
 """
 
 response = client.chat.completions.create(
     model="gpt-4o-mini",
-    temperature=0.0,
     messages=[
         {"role": "system", "content": system_persona},
-        {"role": "user", "content": f"Review this code:\n```rust\n{user_code}\n```"}
+        {"role": "user", "content": f"Review this code:\n{user_code}"}
     ]
 )
 
 print(response.choices[0].message.content)
                 </code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-1: Enforcing Specialist Behavior via System Prompts</div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-2: A Persona Shapes Both What the Model Says and How</div>
+
+                <p>Notice what each part of the persona is actually doing:</p>
+                <ul>
+                    <li>The <strong>TONE</strong> block is a tone instruction — it stops the model from writing a wall of formal jargon a beginner can't follow.</li>
+                    <li>The <strong>FOCUS</strong> block is a scope limit — it keeps the model from drifting into unrelated advice (style opinions, unrelated libraries, performance micro-optimizations).</li>
+                    <li>The line "If the code isn't Python, say so" is a refusal rule — it tells the model exactly what to do when a request falls outside its job.</li>
+                </ul>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5.3. Machine-Parseable Output: Pydantic Structured Outputs</h2>
-                <p>While markdown reviews are great for humans, software agents downstream cannot reliably parse free-text markdown. If a model outputs <code>"Severity: High"</code> on one run and <code>"**Critical issue:**"</code> on another, regular expressions break.</p>
-
-                <p>Modern APIs provide <strong>Structured Outputs (Constrained Decoding)</strong>. By compiling a <strong>Pydantic schema</strong> into a JSON Schema, the inference engine guarantees that every generated token satisfies the grammar of your schema—with 100% syntactic validity!</p>
-
-                <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <summary style="font-weight: 600; font-size: 1.1rem; outline: none; color: #f44336;">View Buggy/Legacy Code: Unchecked Text Scraping</summary>
-                    <div class="code-header">
-                    <span>module_script_5.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
-                </div>
-                <pre><code class="language-python">
-# DANGEROUS LEGACY PATTERN: Asking LLM for JSON in prompt and using json.loads()
-prompt = "Review this code and reply with JSON: { 'status': 'ok', 'score': 10 }"
-res = call_llm(prompt)
-
-# Often fails with JSONDecodeError because LLMs add markdown fences:
-# ```json\n{ ... }\n``` or conversational text: "Here is your JSON:"
-import json
-data = json.loads(res) # Crash!
-                    </code></pre>
-                    <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-2A: Unsafe JSON Extraction Prone to Syntax Failures</div>
-                </details>
-
-                <div class="code-header">
-                    <span>guaranteed_structured_output_with_pydantic.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
-                </div>
-                <pre><code class="language-python">
-# Program 5.0-2: Guaranteed Structured Output with Pydantic
-from pydantic import BaseModel, Field
-from typing import List, Literal
-from openai import OpenAI
-
-class CodeIssue(BaseModel):
-    category: Literal["Performance", "Security", "Style", "Bug"]
-    severity: Literal["Critical", "High", "Medium", "Low"]
-    line_number: int = Field(description="Approximate line number of the defect")
-    description: str = Field(description="Specific technical analysis of the problem")
-    remediation: str = Field(description="Actionable fix with corrected code")
-
-class AutomatedCodeReview(BaseModel):
-    summary: str = Field(description="High-level 1-sentence verdict")
-    safe_to_deploy: bool
-    issues: List[CodeIssue]
-    cyclomatic_complexity_score: int = Field(ge=1, le=10)
-
-client = OpenAI()
-
-# Use OpenAI's beta parse endpoint to guarantee JSON schema compliance
-completion = client.beta.chat.completions.parse(
-    model="gpt-4o-mini",
-    messages=[
-        {"role": "system", "content": "You are a static code analysis specialist."},
-        {"role": "user", "content": "Review: pub fn bad() { loop { let x = vec![1,2,3]; } }"}
-    ],
-    response_format=AutomatedCodeReview
-)
-
-review: AutomatedCodeReview = completion.choices[0].message.parsed
-print(f"Safe to deploy: {review.safe_to_deploy}")
-print(f"Summary: {review.summary}")
-print(f"Issues detected: {len(review.issues)}")
-for issue in review.issues:
-    print(f"  [{issue.severity}] {issue.category} at Line {issue.line_number}: {issue.description}")
-                </code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-2: Type-Safe Structured Pydantic Parsing via Constrained Decoding</div>
-
-                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
-
-                <h2>5.4. Specialist Persona Matrix</h2>
-                <p>Here is how enterprise engineering organizations configure distinct specialist personas to collaborate across an agentic pipeline:</p>
+                <h2>5.4. Persona Examples Across Different Jobs</h2>
+                <p>The same four-part pattern applies to almost any specialist job you'd want an LLM to do. Here are two common, relatable examples:</p>
 
                 <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: var(--accent); color: white;">
-                            <th style="padding: 12px; text-align: left;">Specialist Role</th>
-                            <th style="padding: 12px; text-align: left;">Primary Objective</th>
-                            <th style="padding: 12px; text-align: left;">Forbidden Behaviors</th>
-                            <th style="padding: 12px; text-align: left;">Target Schema Contract</th>
+                            <th style="padding: 12px; text-align: left;">Persona</th>
+                            <th style="padding: 12px; text-align: left;">Goal</th>
+                            <th style="padding: 12px; text-align: left;">One Guardrail</th>
+                            <th style="padding: 12px; text-align: left;">Expected Output Shape</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 12px; font-weight: 600;">Security Auditor</td>
-                            <td style="padding: 12px;">Identify OWASP Top 10 vulnerabilities and privilege escalation risks.</td>
-                            <td style="padding: 12px;">Never approve code containing unsanitized SQL or hardcoded credentials.</td>
-                            <td style="padding: 12px;"><code>SecurityAuditReport(cve_list, threat_level)</code></td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 12px; font-weight: 600;">Legal Compliance Bot</td>
-                            <td style="padding: 12px;">Inspect contracts for indemnification and jurisdiction clauses.</td>
-                            <td style="padding: 12px;">Never provide legal counsel or speculate on unstated contract terms.</td>
-                            <td style="padding: 12px;"><code>ContractSummary(liability_cap, jurisdiction)</code></td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 12px; font-weight: 600;">DevOps Deployer</td>
-                            <td style="padding: 12px;">Validate Kubernetes manifest YAMLs against cluster admission policies.</td>
-                            <td style="padding: 12px;">Never allow containers to run with root privileges (<code>runAsRoot: true</code>).</td>
-                            <td style="padding: 12px;"><code>DeploymentCheck(admitted, violation_reasons)</code></td>
+                            <td style="padding: 12px; font-weight: 600;">Customer Support Assistant</td>
+                            <td style="padding: 12px;">Answer customer questions about orders, shipping, and returns.</td>
+                            <td style="padding: 12px;">Never promise a refund or discount — only explain the policy and escalate to a human for exceptions.</td>
+                            <td style="padding: 12px;">A short, polite paragraph in plain customer-facing language.</td>
                         </tr>
                         <tr>
-                            <td style="padding: 12px; font-weight: 600;">Medical Triage Assistant</td>
-                            <td style="padding: 12px;">Map patient symptoms to urgency levels (Emergency, Urgent, Routine).</td>
-                            <td style="padding: 12px;">Never prescribe medication or give definitive diagnoses.</td>
-                            <td style="padding: 12px;"><code>TriageAssessment(urgency_code, recommended_care)</code></td>
+                            <td style="padding: 12px; font-weight: 600;">Meeting Notes Summarizer</td>
+                            <td style="padding: 12px;">Turn a raw meeting transcript into a short, readable summary.</td>
+                            <td style="padding: 12px;">Never invent action items or decisions that weren't actually said in the transcript.</td>
+                            <td style="padding: 12px;">A short "Summary" paragraph followed by a bulleted "Action Items" list.</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5.5. The Mechanics of Constrained Decoding & Grammar-Guided Sampling</h2>
-                <p>How do modern APIs (like OpenAI's <code>response_format={"type": "json_schema"}</code>) guarantee that the model never emits syntax errors or missing brackets? They do not prompt the model to "please write valid JSON". Instead, they implement <strong>Grammar-Guided Constrained Decoding</strong>:</p>
+                <h2>5.5. Why "Please Reply in JSON" Isn't Enough</h2>
+                <p>Once you have a persona, the next problem is getting output your program can actually use. It's tempting to just ask nicely: "please reply in JSON." The trouble is, the model may still wrap that JSON in explanatory text or markdown code fences — and simple parsing code will crash the moment it hits anything that isn't pure JSON.</p>
 
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>The Logit Masking Mathematical Mechanism:</strong>
-                    <p>At every autoregressive step, the Pydantic JSON Schema is converted into a <strong>Deterministic Finite Automaton (DFA)</strong> or Context-Free Grammar (CFG). Before running the Softmax function over the 100,000-word vocabulary, the DFA checks which tokens are legally valid next characters:</p>
-                    <div style="font-family: 'Fira Code', monospace; margin: 0.5rem 0; padding: 0.5rem; background: var(--code-bg); border-radius: 4px;">
-                        z_i' = z_i if token_i in ValidNextTokens(DFA_state) else -infinity
+                <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <summary style="font-weight: 600; font-size: 1.1rem; outline: none; color: #f44336;">View: What Breaks When You Just Ask Nicely</summary>
+                    <div class="code-header">
+                    <span>asking_nicely_for_json.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 5.0-3A: Asking Nicely for JSON (No Real Schema)
+prompt = "Review this code and reply with JSON: { 'status': 'ok', 'score': 10 }"
+res = call_llm(prompt)
+
+# Often fails with JSONDecodeError, because the model may add
+# markdown fences: ```json\n{ ... }\n```
+# or a conversational lead-in: "Sure! Here is your JSON:"
+import json
+data = json.loads(res)  # Crash!
+                    </code></pre>
+                    <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-3A: Extra Text Around the JSON Breaks Naive Parsing</div>
+                </details>
+
+                <p>The problem isn't that the model "got the JSON wrong" — the content might be perfectly correct. The problem is the <em>extra text around it</em>, which a plain-language instruction can't reliably prevent.</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5.6. Structured Outputs: Guaranteeing the Format You Need</h2>
+                <p>A <strong>schema</strong> is simply a description of exactly which fields you want in the output, and what type each field should be (text, number, a fixed set of choices, etc.). Instead of describing the format in a sentence, you describe it as a schema — and the API enforces it directly, rather than just hoping the model follows your instructions.</p>
+
+                <div class="code-header">
+                    <span>structured_output_with_pydantic.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 5.0-3: Guaranteed Structured Output with Pydantic
+from pydantic import BaseModel
+from typing import Literal
+from openai import OpenAI
+
+class SupportTicket(BaseModel):
+    customer_name: str
+    issue_summary: str
+    urgency: Literal["Low", "Medium", "High"]
+
+client = OpenAI()
+
+completion = client.beta.chat.completions.parse(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "system", "content": "You extract structured ticket data from customer messages."},
+        {"role": "user", "content": "Hi, my order #4521 hasn't arrived in 2 weeks and I need it urgently for a gift."}
+    ],
+    response_format=SupportTicket
+)
+
+ticket: SupportTicket = completion.choices[0].message.parsed
+print(ticket.customer_name, ticket.issue_summary, ticket.urgency)
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-3: A Flat Pydantic Schema Guarantees the Fields You Asked For</div>
+
+                <p>What a schema buys you: the API won't let the model return something that doesn't fit — no missing fields, no extra commentary, no <code>"urgency": "super urgent!!"</code> instead of one of your three allowed values. You get back an object your program can use directly, with no fragile text-parsing step in between.</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>5.7. Structured Output Beyond JSON</h2>
+                <p>JSON isn't the only structured format. When a <em>human</em> will read the output — not a program — a markdown table, a numbered list, or a set of fixed labeled fields is often clearer, and doesn't need a Pydantic schema at all — just clear formatting instructions in the prompt.</p>
+
+                <div style="padding: 1.5rem; background: var(--border-color); border-radius: 8px; margin: 1.5rem 0 0.5rem 0;">
+                    <div style="background: var(--sidebar-bg); padding: 1.25rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 1rem;">
+                        <strong>Prompt:</strong> "Summarize these three product reviews as a markdown table with columns: Product, Rating, Key Complaint."
+                        <div style="margin-top: 0.6rem; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--text-muted); overflow-x: auto;">
+                        | Product | Rating | Key Complaint |<br>
+                        |---|---|---|<br>
+                        | Headphones | 3/5 | Battery drains fast |<br>
+                        | Keyboard | 5/5 | None |
+                        </div>
                     </div>
-                    <p>Because invalid tokens receive a logit of $-\infty$, their probability $e^{-\infty} = 0$. It is mathematically impossible for the model to emit an invalid character, missing quotation mark, or illegal property name!</p>
+                    <div style="background: var(--sidebar-bg); padding: 1.25rem; border-radius: 6px; border: 1px solid var(--border-color);">
+                        <strong>Prompt:</strong> "Extract the invoice details as labeled fields: Name, Date, Amount."
+                        <div style="margin-top: 0.6rem; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--text-muted);">
+                        Name: Acme Corp<br>
+                        Date: 2026-03-04<br>
+                        Amount: $1,250.00
+                        </div>
+                    </div>
                 </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 5.0-2: Two Human-Readable Structured Formats — A Table and Labeled Fields</div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5.6. Deep-Dive Production Engineering Programs</h2>
-
-                <h3>Program 5.0-3: Grammar-Guided Token Masking Engine Simulation</h3>
-                <p>This program demonstrates how constrained decoders filter candidate vocabulary logits using a finite state machine representing valid JSON tokens.</p>
-
-                <div class="code-header">
-                    <span>grammar_masked_sampler.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-python"># Program 5.0-3: Grammar-Guided Token Masking Simulator
-import math
-from typing import List, Set, Dict
-
-class JSONGrammarDFA:
-    """State machine tracking legal next syntax characters in a JSON object."""
-    def __init__(self):
-        self.state = "EXPECT_START_BRACE"  # States: EXPECT_START_BRACE, EXPECT_KEY, EXPECT_COLON, EXPECT_VAL, EXPECT_END
-
-    def get_legal_tokens(self, candidate_vocab: List[str]) -> Set[str]:
-        if self.state == "EXPECT_START_BRACE":
-            return {"{"}
-        elif self.state == "EXPECT_KEY":
-            return {'"status"', '"error_code"', '"safe"'}
-        elif self.state == "EXPECT_COLON":
-            return {":"}
-        elif self.state == "EXPECT_VAL":
-            return {'"APPROVED"', '"REJECTED"', "true", "false", "200", "403"}
-        elif self.state == "EXPECT_END":
-            return {"}"}
-        return set(candidate_vocab)
-
-    def transition(self, token: str):
-        if token == "{": self.state = "EXPECT_KEY"
-        elif token in {'"status"', '"error_code"', '"safe"'}: self.state = "EXPECT_COLON"
-        elif token == ":": self.state = "EXPECT_VAL"
-        elif token in {'"APPROVED"', '"REJECTED"', "true", "false", "200", "403"}: self.state = "EXPECT_END"
-        elif token == "}": self.state = "COMPLETE"
-
-def constrained_sample(raw_logits: Dict[str, float], dfa: JSONGrammarDFA) -> str:
-    candidate_vocab = list(raw_logits.keys())
-    legal_tokens = dfa.get_legal_tokens(candidate_vocab)
-    
-    # Mask illegal tokens to -infinity
-    masked_logits = {
-        token: (logit if token in legal_tokens else -float('inf'))
-        for token, logit in raw_logits.items()
-    }
-    
-    # Select token with highest masked logit (Greedy Decoding)
-    chosen_token = max(masked_logits, key=masked_logits.get)
-    dfa.transition(chosen_token)
-    return chosen_token
-
-# Simulate constrained generation of '{"status": "APPROVED"}'
-vocab_logits = {
-    "{": 6.2, "Hello": 9.5, "The": 8.1, '"status"': 7.4, 
-    ":": 8.8, '"APPROVED"': 9.2, "}": 7.0, "random_text": 10.5
-}
-
-dfa = JSONGrammarDFA()
-generated_stream = []
-print("=== CONSTRAINED DECODING TOKEN GENERATION ===")
-
-for step in range(5):
-    token = constrained_sample(vocab_logits, dfa)
-    generated_stream.append(token)
-    print(f"Step {step + 1}: Emitted '{token}' | Next DFA State: {dfa.state}")
-
-print("\nFinal Formed Guaranteed JSON:")
-print(" ".join(generated_stream))
-</code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-3: Logit Masking via Deterministic Finite Automaton (DFA)</div>
-
-                <h3>Program 5.0-4: Production Multi-Specialist Dispatcher</h3>
-                <p>In production pipelines, an intent router delegates incoming payloads to dedicated specialist agents with role-specific Pydantic contracts.</p>
-
-                <div class="code-header">
-                    <span>multi_specialist_router.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-python"># Program 5.0-4: Dynamic Multi-Specialist Dispatcher with Pydantic Contracts
-from pydantic import BaseModel, Field
-from typing import List, Literal, Union
-
-# 1. Specialist Output Schemas
-class SecuritySpecialistOutput(BaseModel):
-    audit_type: Literal["SECURITY"] = "SECURITY"
-    severity_level: Literal["LOW", "MEDIUM", "HIGH", "CRITICAL"]
-    detected_vulnerabilities: List[str]
-    immediate_mitigation: str
-
-class LegalSpecialistOutput(BaseModel):
-    audit_type: Literal["LEGAL"] = "LEGAL"
-    jurisdiction: str
-    liability_cap_compliant: bool
-    governing_clauses: List[str]
-
-# 2. Specialist Engine Simulators
-def run_security_specialist(payload: str) -> SecuritySpecialistOutput:
-    print(f"[Specialist: Security Auditor] Auditing payload: '{payload[:40]}...'")
-    return SecuritySpecialistOutput(
-        severity_level="CRITICAL",
-        detected_vulnerabilities=["Hardcoded AWS Secret Key", "Unescaped SQL query string"],
-        immediate_mitigation="Rotate AWS credentials and parameterize database cursor execution."
-    )
-
-def run_legal_specialist(payload: str) -> LegalSpecialistOutput:
-    print(f"[Specialist: Legal Compliance] Reviewing contract: '{payload[:40]}...'")
-    return LegalSpecialistOutput(
-        jurisdiction="State of Delaware",
-        liability_cap_compliant=True,
-        governing_clauses=["Clause 12.4: Mutual Indemnification", "Clause 18: Arbitration"]
-    )
-
-# 3. Router Dispatcher
-def dispatch_to_specialist(task_type: str, content: str) -> Union[SecuritySpecialistOutput, LegalSpecialistOutput]:
-    if task_type == "SECURITY":
-        return run_security_specialist(content)
-    elif task_type == "LEGAL":
-        return run_legal_specialist(content)
-    else:
-        raise ValueError(f"Unknown specialist category: {task_type}")
-
-# Execution Demonstrations
-sec_report = dispatch_to_specialist("SECURITY", "aws_secret = 'AKIAIOSFODNN7EXAMPLE'; db.execute('SELECT * FROM ' + user)")
-print("\n=== SECURITY SPECIALIST PYDANTIC DELIVERABLE ===")
-print(sec_report.model_dump_json(indent=2))
-
-leg_report = dispatch_to_specialist("LEGAL", "This Agreement is executed under the governing laws of Delaware...")
-print("\n=== LEGAL SPECIALIST PYDANTIC DELIVERABLE ===")
-print(leg_report.model_dump_json(indent=2))
-</code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-4: Dynamic Multi-Specialist Dispatcher with Pydantic Contracts</div>
+                <h2>5.8. How the Model Actually Guarantees the Format</h2>
+                <p>You don't need to build this yourself, but it's good to know what's happening under the hood: when you use a real structured-output feature (like <code>response_format</code> with a schema), the API doesn't just politely ask the model to follow your schema — at each generation step, it only allows the model to pick from the tokens that would keep the output valid according to your schema. That's why it becomes mathematically impossible for the model to produce broken JSON when structured outputs are actually enabled — very different from the "please reply in JSON" approach from Section 5.5, which is just a hopeful instruction.</p>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>5.7. Anti-Patterns in Structured Extraction</h2>
-                <ol>
-                    <li><strong>Recursive Nested Schemas without Depth Bounds:</strong> Defining schemas where <code>Comment</code> contains a list of <code>Comment</code> objects causes models to exhaust their context window emitting deeply nested trees. Always bound recursion depth to 2 or 3 levels.</li>
-                    <li><strong>Using Primitive Dictionaries Instead of Typed Pydantic Models:</strong> Requesting <code>{"type": "object"}</code> without property declarations forces the model into free-form JSON generation, inviting key typos and type coercions.</li>
-                    <li><strong>Over-Constrained Enums:</strong> Defining an enum with 50 specific values leads the model to hallucinate or pick an arbitrary choice when none fit. Always include an <code>"OTHER"</code> or <code>"UNKNOWN"</code> fallback in Literal types.</li>
-                    <li><strong>Neglecting Field Descriptions:</strong> Leaving Pydantic fields without <code>description="..."</code> deprives the model of semantic guidance. The LLM relies on field descriptions to understand what values are expected.</li>
-                </ol>
+                <h2>5.9. Real-World Walkthrough: From Messy Input to Clean Output</h2>
+                <p>Let's put 5.1–5.7 together on one realistic scenario: turning a messy customer support email into clean, structured data a program can act on.</p>
+
+                <p><strong>Stage 1 — The raw, messy input:</strong></p>
+                <div style="padding: 1rem 1.5rem; background: var(--border-color); border-radius: 8px; margin: 0.5rem 0 1.5rem 0; font-style: italic; color: var(--text-color);">
+                    "hii so i ordered the blue backpack last week (order #8834) but it still hasnt shipped??? i need it before friday for a trip, can someone please check whats going on this is kind of urgent thanks"
+                </div>
+
+                <p><strong>Stage 2 — The persona + schema used to process it:</strong></p>
+                <div class="code-header">
+                    <span>messy_email_to_structured_ticket.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code class="language-python">
+# Program 5.0-4: From Messy Email to Clean Structured Output
+from pydantic import BaseModel
+from typing import Literal
+from openai import OpenAI
+
+class SupportTicket(BaseModel):
+    order_number: str
+    issue_summary: str
+    urgency: Literal["Low", "Medium", "High"]
+
+client = OpenAI()
+
+system_persona = """
+You are a support ticket extraction specialist. Read the customer's message
+and pull out only the facts needed to fill the SupportTicket schema.
+Do not add information that wasn't stated in the message.
+"""
+
+customer_email = """
+hii so i ordered the blue backpack last week (order #8834) but it still
+hasnt shipped??? i need it before friday for a trip, can someone please
+check whats going on this is kind of urgent thanks
+"""
+
+completion = client.beta.chat.completions.parse(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "system", "content": system_persona},
+        {"role": "user", "content": customer_email}
+    ],
+    response_format=SupportTicket
+)
+
+ticket: SupportTicket = completion.choices[0].message.parsed
+print(ticket.model_dump_json(indent=2))
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 5.0-4: Persona + Schema Turn Free Text Into a Reliable Object</div>
+
+                <p><strong>Stage 3 — The clean, structured output:</strong></p>
+                <div style="padding: 1rem 1.5rem; background: var(--border-color); border-radius: 8px; margin: 0.5rem 0 1.5rem 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-color);">
+                    {<br>
+                    &nbsp;&nbsp;"order_number": "8834",<br>
+                    &nbsp;&nbsp;"issue_summary": "Order has not shipped yet; customer needs it before Friday.",<br>
+                    &nbsp;&nbsp;"urgency": "High"<br>
+                    }
+                </div>
+                <p>The persona kept the model focused on extraction (not customer service chit-chat), and the schema guaranteed the result came back as three specific, correctly-typed fields — ready to hand to another program, with no fragile text-parsing step in between.</p>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
                 <h2>Topic Quiz (10 Questions)</h2>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">1. Why does a generic LLM struggle to act as a senior technical specialist without a persona?</div>
+                    <div class="mcq-question">1. In a chat API messages list, what is the purpose of a message with "role": "system"?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Because the model has no knowledge of programming languages.</li>
-                        <li class="mcq-option" data-correct="true">Because it defaults to conversational, polite, and middle-of-the-road probabilities across all training data.</li>
-                        <li class="mcq-option" data-correct="false">Because GPUs cannot process technical terms.</li>
-                        <li class="mcq-option" data-correct="false">Because API pricing increases for technical queries.</li>
+                        <li class="mcq-option" data-correct="false">It logs internal server errors for debugging.</li>
+                        <li class="mcq-option" data-correct="true">It sets standing instructions for the whole conversation, like who the model should act as and how it should behave.</li>
+                        <li class="mcq-option" data-correct="false">It stores the user's account password securely.</li>
+                        <li class="mcq-option" data-correct="false">It is only used for the final message in a conversation.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">2. What is "Constrained Decoding" in the context of Structured Outputs?</div>
+                    <div class="mcq-question">2. Which four parts make up a specialist persona?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Limiting the model's internet download speed.</li>
-                        <li class="mcq-option" data-correct="true">The inference engine masks out tokens that would violate the provided JSON schema grammar at each generation step.</li>
-                        <li class="mcq-option" data-correct="false">Translating English prompts into French before inference.</li>
-                        <li class="mcq-option" data-correct="false">Truncating the output text after 50 characters.</li>
+                        <li class="mcq-option" data-correct="false">Temperature, Top-P, Max Tokens, and Stop Sequences.</li>
+                        <li class="mcq-option" data-correct="true">Identity, Focus/Domain, Guardrails, and Output Format.</li>
+                        <li class="mcq-option" data-correct="false">Tokenization, Embedding, Attention, and Softmax.</li>
+                        <li class="mcq-option" data-correct="false">Training, Validation, Testing, and Deployment.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">3. In Pydantic, what does the Field(description="...") parameter achieve when used with structured LLM outputs?</div>
+                    <div class="mcq-question">3. In the Python code review persona example, what does the line "If the code isn't Python, say so" do?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">It changes the font color of the output in the console.</li>
-                        <li class="mcq-option" data-correct="true">It provides in-context guidance to the LLM about what specific information to generate for that schema field.</li>
-                        <li class="mcq-option" data-correct="false">It automatically translates the field into SQL.</li>
-                        <li class="mcq-option" data-correct="false">It encrypts the field before saving to disk.</li>
+                        <li class="mcq-option" data-correct="false">It sets the model's output format to JSON.</li>
+                        <li class="mcq-option" data-correct="true">It acts as a refusal rule, telling the model what to do when a request falls outside its job.</li>
+                        <li class="mcq-option" data-correct="false">It changes the temperature used for sampling.</li>
+                        <li class="mcq-option" data-correct="false">It translates non-Python code into Python automatically.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">4. Why is setting temperature=0.0 strongly recommended when enforcing Pydantic schemas?</div>
+                    <div class="mcq-question">4. Why might a Customer Support Assistant persona include the guardrail "never promise a refund or discount"?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="true">It maximizes deterministic adherence to type constraints and removes unwanted random variations.</li>
-                        <li class="mcq-option" data-correct="false">It makes the API call 100% free of charge.</li>
-                        <li class="mcq-option" data-correct="false">It allows the model to search the live web.</li>
-                        <li class="mcq-option" data-correct="false">It disables Python's garbage collector.</li>
+                        <li class="mcq-option" data-correct="false">Because refunds are technically impossible for an LLM to mention.</li>
+                        <li class="mcq-option" data-correct="true">To keep the model from making commitments on the company's behalf that it isn't authorized to make.</li>
+                        <li class="mcq-option" data-correct="false">Because it reduces the number of tokens used per response.</li>
+                        <li class="mcq-option" data-correct="false">Because it's required by the JSON Schema specification.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">5. What is the danger of relying on prompt instructions like "Please return JSON only" without structured outputs?</div>
+                    <div class="mcq-question">5. What typically goes wrong when you just ask an LLM nicely for JSON, without a real schema?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">The API server will reboot.</li>
-                        <li class="mcq-option" data-correct="true">The model may wrap the output in markdown code fences or conversational text, causing json.loads() to crash.</li>
-                        <li class="mcq-option" data-correct="false">The token count is always multiplied by 10.</li>
-                        <li class="mcq-option" data-correct="false">The user's credit card is immediately refunded.</li>
+                        <li class="mcq-option" data-correct="false">The API call fails immediately with an authentication error.</li>
+                        <li class="mcq-option" data-correct="true">The model may add markdown fences or conversational text around the JSON, which crashes simple parsing code like json.loads().</li>
+                        <li class="mcq-option" data-correct="false">The model refuses to respond at all.</li>
+                        <li class="mcq-option" data-correct="false">The output is always missing every field you asked for.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">6. Which component of a specialist persona defines the boundaries of what the model is strictly forbidden to do?</div>
+                    <div class="mcq-question">6. What is a schema, in the context of structured LLM outputs?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Identity & Authority.</li>
-                        <li class="mcq-option" data-correct="true">Guardrails & Negative Constraints.</li>
-                        <li class="mcq-option" data-correct="false">Prism Highlighting.</li>
-                        <li class="mcq-option" data-correct="false">Context Window Cache.</li>
+                        <li class="mcq-option" data-correct="false">A record of every prompt ever sent to the model.</li>
+                        <li class="mcq-option" data-correct="true">A description of exactly which fields you want in the output and what type each field should be.</li>
+                        <li class="mcq-option" data-correct="false">A setting that controls how creative the model's word choice is.</li>
+                        <li class="mcq-option" data-correct="false">A log of API errors returned by the provider.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">7. If you change the system persona mid-conversation, what typically happens to the agent?</div>
+                    <div class="mcq-question">7. Besides JSON, which of these is a valid way to get structured output meant for a human reader?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">The model gains 100% extra reasoning speed.</li>
-                        <li class="mcq-option" data-correct="true">The model suffers from persona inconsistency and blending conflicting directives.</li>
-                        <li class="mcq-option" data-correct="false">The Python process terminates automatically.</li>
-                        <li class="mcq-option" data-correct="false">The context window expands to 1M tokens.</li>
+                        <li class="mcq-option" data-correct="false">Asking the model to increase its temperature setting.</li>
+                        <li class="mcq-option" data-correct="true">Asking the model to reply as a markdown table or as fixed labeled fields (e.g. "Name: ..., Date: ...").</li>
+                        <li class="mcq-option" data-correct="false">Only Pydantic schemas can produce structured output.</li>
+                        <li class="mcq-option" data-correct="false">Disabling the system message entirely.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">8. In a Pydantic schema, what type constraint is best used to limit a field to specific categorical values (e.g., 'Critical', 'High', 'Medium', 'Low')?</div>
+                    <div class="mcq-question">8. How does the API actually guarantee the model's output matches your schema?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="true"><code>typing.Literal</code>.</li>
-                        <li class="mcq-option" data-correct="false"><code>str</code> without validation.</li>
-                        <li class="mcq-option" data-correct="false"><code>typing.Any</code>.</li>
-                        <li class="mcq-option" data-correct="false"><code>int</code>.</li>
+                        <li class="mcq-option" data-correct="false">It runs the output through json.loads() after generation and retries if it fails.</li>
+                        <li class="mcq-option" data-correct="true">At each generation step, it only allows the model to pick from tokens that would keep the output valid according to the schema.</li>
+                        <li class="mcq-option" data-correct="false">It asks a second LLM to proofread the first LLM's output.</li>
+                        <li class="mcq-option" data-correct="false">It simply lowers the temperature to 0.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">9. What role does tone instruction play in a specialist persona?</div>
+                    <div class="mcq-question">9. In the messy-email walkthrough (Section 5.9), what is the correct order of stages?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">It changes the audio pitch when text-to-speech is enabled.</li>
-                        <li class="mcq-option" data-correct="true">It eliminates conversational padding and focuses token generation on concise, technical vocabulary.</li>
-                        <li class="mcq-option" data-correct="false">It encrypts the model weights.</li>
-                        <li class="mcq-option" data-correct="false">It decreases token pricing.</li>
+                        <li class="mcq-option" data-correct="false">Clean output &rarr; persona + schema &rarr; raw messy input.</li>
+                        <li class="mcq-option" data-correct="true">Raw messy input &rarr; persona + schema used to process it &rarr; clean, structured output.</li>
+                        <li class="mcq-option" data-correct="false">Persona + schema &rarr; raw messy input &rarr; persona removed.</li>
+                        <li class="mcq-option" data-correct="false">Structured output &rarr; raw input &rarr; structured output again.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">10. Why is client.beta.chat.completions.parse superior to manual string parsing?</div>
+                    <div class="mcq-question">10. Why combine a persona with a schema, rather than using just one of them?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">It automatically writes unit tests for your application.</li>
-                        <li class="mcq-option" data-correct="true">It natively validates and deserializes the model output directly into an instantiated Pydantic model object.</li>
-                        <li class="mcq-option" data-correct="false">It runs on local CPUs without sending network requests.</li>
-                        <li class="mcq-option" data-correct="false">It works without an API key.</li>
+                        <li class="mcq-option" data-correct="false">Because APIs require exactly one system message and one schema per account.</li>
+                        <li class="mcq-option" data-correct="true">The persona keeps the model focused on the right task, while the schema guarantees the response comes back in a specific, usable shape.</li>
+                        <li class="mcq-option" data-correct="false">Because schemas alone always produce factually correct answers.</li>
+                        <li class="mcq-option" data-correct="false">Because personas alone can enforce field types like schemas do.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
@@ -637,34 +594,34 @@ print(leg_report.model_dump_json(indent=2))
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
                 <h2>Hands-On Assignments</h2>
-                <p>Complete the following 5 hands-on assignments to engineer robust specialist personas and typed schema contracts.</p>
+                <p>Complete the following 5 hands-on assignments to practice building specialist personas and getting reliable structured output.</p>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Database DBA Specialist Persona</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create a system persona for a PostgreSQL Database Administrator. Define 3 strict guardrails: 1) Never suggest unindexed sequential table scans on tables > 1M rows, 2) Reject all queries using <code>SELECT *</code>, and 3) Refuse all questions unrelated to database performance. Test it with both valid and invalid queries.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Build a System + User Prompt Persona</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a system persona for a "Meeting Notes Summarizer" using the four-part pattern from Section 5.2 (Identity, Focus, Guardrails, Output Format). Pair it with a user message containing a short made-up meeting transcript, and send both as a messages list like Program 5.0-1.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Pydantic Security Audit Schema</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Define a Pydantic model named <code>SecurityAudit</code> containing: <code>vulnerability_title: str</code>, <code>cwe_id: str</code>, <code>cvss_score: float</code> (bounded between 0.0 and 10.0), and <code>mitigation_steps: list[str]</code>. Parse a model output against this schema using <code>client.beta.chat.completions.parse</code>.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Build a Simple Schema for a Real Task</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Define a flat Pydantic model called <code>ProductReview</code> with 3-4 fields of your choice (e.g. <code>product_name: str</code>, <code>rating: int</code>, <code>would_recommend: bool</code>). Use <code>client.beta.chat.completions.parse</code> to extract this from a short, made-up review sentence.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Dynamic Multi-Persona Router</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a Python function <code>route_to_specialist(user_query: str) -> str</code>. Using an LLM or keyword classifier, determine whether the query is a <code>"DevOps"</code>, <code>"Security"</code>, or <code>"Frontend"</code> question, and dispatch it to the appropriate specialized system prompt.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Try Table & Labeled-Field Output</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Take a short block of made-up data (e.g. three fictional expenses) and write two prompts: one asking for a markdown table, one asking for fixed labeled fields per item. Compare the two output shapes and note which would be easier for a human vs. a program to use.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Schema Migration Validator</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Given an existing database schema and a requested user feature, write an agent prompt that outputs a structured JSON plan with: <code>"alter_table_statements"</code>, <code>"backward_compatible": bool</code>, and <code>"rollback_plan"</code>.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Messy Input Walkthrough (New Scenario)</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Following the pattern from Section 5.9, pick a different scenario — a rough, informally written meeting transcript. Design a persona + schema (or format instruction) that turns it into a clean list of action items, and show all three stages: raw input, persona/schema used, and the clean output.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Zero-Fluff Prompt Benchmark</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Measure the token efficiency of a prompt before and after adding a "Zero-Fluff" negative constraint ("Do not include greetings, pleasantries, or conclusions"). Calculate the percentage reduction in output token cost across 10 sample code review prompts.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Persona Guardrail Test</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Take the Customer Support Assistant persona from Section 5.4. Send it three test messages: one clearly in scope, one that tries to get it to promise a discount, and one completely unrelated question. Record how it responds to each, and adjust the guardrail wording if it doesn't hold up.</p>
                 </div>
 
-            
+
                 <!-- =========================================================
                      Official References, Research Papers & Standards
                      ========================================================= -->
@@ -675,24 +632,6 @@ print(leg_report.model_dump_json(indent=2))
                     </p>
                     <div class="reference-grid">
 
-                        <div class="reference-card">
-                            <div class="reference-header">
-                                <span class="ref-tag">arXiv:2307.09702</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted);">Dotscience</span>
-                            </div>
-                            <h4>Efficient Guided Generation for Large Language Models (Outlines)</h4>
-                            <p>Willard & Louf present DFA-guided logit masking over regular expressions and context-free grammars with zero sampling latency.</p>
-                            <a href="https://arxiv.org/abs/2307.09702" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
-                        </div>
-                        <div class="reference-card">
-                            <div class="reference-header">
-                                <span class="ref-tag">GitHub</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted);">ggerganov / llama.cpp</span>
-                            </div>
-                            <h4>GBNF (GGML BNF) Grammar-Based Constrained Decoding</h4>
-                            <p>Formal specification for context-free grammars constraining llama.cpp output tokens to exact syntax rules.</p>
-                            <a href="https://github.com/ggerganov/llama.cpp/blob/master/grammars/README.md" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
-                        </div>
                         <div class="reference-card">
                             <div class="reference-header">
                                 <span class="ref-tag">Standard</span>
@@ -719,7 +658,7 @@ print(leg_report.model_dump_json(indent=2))
             <footer class="page-navigation">
                 <a href="day_04.html" class="nav-button prev">
                     <span class="nav-label">Previous</span>
-                    <span class="nav-title">Day 04: Prompt Engineering</span>
+                    <span class="nav-title">Day 04: Advanced Prompting & Training</span>
                 </a>
                 <a href="day_06.html" class="nav-button next">
                     <span class="nav-label">Next</span>
@@ -768,6 +707,19 @@ print(leg_report.model_dump_json(indent=2))
                     }
                     feedback.style.display = 'block';
                 }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\[", right: "\\]", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false}
+                ],
+                throwOnError: false
             });
         });
     </script>

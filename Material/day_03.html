@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3: LLMs Under the Hood</title>
+    <title>Day 3: LLM & Prompting Basics</title>
     <link rel="stylesheet" href="styles.css">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- PrismJS CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    
+
     <!-- Theme Toggle Script -->
     <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -27,11 +31,11 @@
             <div class="sidebar-content">
                 <ul class="toc">
                     <li><a href="index.html">Course Overview</a></li>
-                    
+
                     <li><a href="day_01.html">Day 1: The AI Landscape</a></li>
                     <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
-                    <li class="active"><a href="day_03.html">Day 3: LLMs Under the Hood</a></li>
-                    <li><a href="day_04.html">Day 4: Prompt Engineering</a></li>
+                    <li class="active"><a href="day_03.html">Day 3: LLM & Prompting Basics</a></li>
+                    <li><a href="day_04.html">Day 4: Advanced Prompting & Training</a></li>
                     <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
                     <li><a href="day_06.html">Day 6: Tool Execution</a></li>
                     <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
@@ -70,7 +74,7 @@
                         </svg>
                     </button>
                 </div>
-                
+
                 <!-- Right Nav Actions -->
                 <div class="nav-actions">
                     <div class="completeness-badge">
@@ -104,10 +108,10 @@
 
             <article class="book-page">
                 <span class="chapter-number">Session 3.0</span>
-                <h1>Day 3: What is an LLM Actually Doing Under the Hood?</h1>
+                <h1>Day 3: How LLMs Work — And How to Prompt Them Well</h1>
 
                 <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>Problem Statement:</strong> You ask an AI a question, but it hallucinates, wanders off-topic, or fails at basic counting. Why doesn't it "think" the way a human engineer thinks, and how does it actually generate its responses? Understanding the mechanical reality of LLMs helps you write robust agentic prompts, manage context windows efficiently, and set realistic architectural expectations.
+                    <strong>Problem Statement:</strong> You ask an AI a question, but it hallucinates, wanders off-topic, or gives a wildly different answer depending on how you phrased the request. Understanding what's happening inside an LLM — and learning to structure your prompts deliberately — are two sides of the same skill. In this session, you'll learn both: how an LLM turns your text into a response, and how to write clear, structured prompts that get you reliable results.
                 </div>
 
                 <!-- =========================================================
@@ -128,30 +132,30 @@
                         <div class="plan-col">
                             <h4>🎯 Today's Mission & Relevance</h4>
                             <ul>
-                                <li>Deconstruct the mechanical reality of tokenization: why LLMs struggle with character manipulation and spelling.</li><li>Calculate exact GPU VRAM footprints for Transformer KV Caches across varying sequence lengths and batch sizes.</li><li>Simulate and mitigate 'Lost in the Middle' context degradation in long-horizon agent reasoning chains.</li>
+                                <li>Trace the full journey of text through an LLM: tokens &rarr; token IDs &rarr; embeddings &rarr; Transformer &rarr; next-token prediction.</li><li>Understand what a context window is and why self-attention matters.</li><li>Learn what prompt engineering is, and structure a prompt using the RCTNO framework.</li><li>Practice zero-shot and few-shot prompting on real workplace tasks.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
                             <h4>📐 Theoretical Milestones</h4>
                             <ul>
-                                <li>Byte Pair Encoding (BPE) iterative frequency merging algorithms and vocabulary construction.</li><li>KV Cache memory sizing formulation: $	ext{Bytes} = 2 	imes b 	imes s 	imes l 	imes h 	imes p$.</li><li>U-shaped attention distribution curves and contextual attention decay over long context windows.</li>
+                                <li>Subword tokenization, token IDs, and dense embedding vectors as the model's numerical view of language.</li><li>Context windows and self-attention.</li><li>Structured prompting (RCTNO), clear instructions, context vs. constraints vs. boundaries, and output formatting.</li><li>Zero-shot vs. few-shot prompting.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
                             <h4>💻 Hands-On Blueprint</h4>
                             <ul>
-                                <li>Program 3.1: Pure Python Byte Pair Encoding (BPE) Tokenizer from Scratch.</li><li>Program 3.2: Enterprise KV Cache VRAM Sizing & Headroom Profiler.</li><li>Program 3.3: 'Lost in the Middle' Contextual Retrieval Degradation Simulator.</li>
+                                <li>Program 3.1: Tokenization Inspector with <code>tiktoken</code>.</li><li>Program 3.2: 2D Embedding Space Visualizer.</li><li>Rewrite vague prompts using RCTNO; compare zero-shot vs. few-shot results.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
-                            <h4>🛡️ Production Failure Modes</h4>
+                            <h4>🛡️ Common Beginner Pitfalls</h4>
                             <ul>
-                                <li>Token Fragmentation Trap: Assuming 1 word = 1 token, leading to silent prompt truncation in non-English texts.</li><li>KV Cache OOM Catastrophe: Underestimating VRAM requirements during multi-turn agent conversations, crashing worker pods.</li>
+                                <li>Token Fragmentation Trap: Assuming 1 word = 1 token, leading to surprising token counts on non-English or code-heavy text.</li><li>Vague Task Trap: Asking for "analysis" or "a summary" without specifying scope, audience, or success criteria.</li>
                             </ul>
                         </div>
                     </div>
                     <div class="daily-plan-footer">
-                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Pure Python BPE Tokenizer & VRAM Sizer • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Tokenization Inspector, Embedding Visualizer & Structured Prompt Templates • 10 Interactive MCQs • 5 Hands-On Assignments</span>
                     </div>
                 </div>
 
@@ -218,23 +222,41 @@ for tid in token_ids:
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
                 <h2>3.3. Embeddings: Giving Geometry to Meaning</h2>
-                <p>Once text is converted into token IDs, how does the model know that "cat" is related to "kitten", or that "Paris" relates to "France" the same way "Tokyo" relates to "Japan"? The answer lies in <strong>Dense Vector Embeddings</strong>.</p>
+                <p>Once text is converted into token IDs, how does the model know that "cat" is related to "kitten", or that "Paris" relates to "France" the same way "Tokyo" relates to "Japan"? The answer lies in <strong>dense vector embeddings</strong>.</p>
 
-                <p>An embedding converts an integer token ID into a vector of floating-point numbers in a high-dimensional continuous space (e.g., 1,536 dimensions in OpenAI <code>text-embedding-3-small</code>, or 4,096 in LLaMA-3). Tokens with similar semantic meanings or grammatical functions are placed close to one another in this high-dimensional space.</p>
+                <h3>Token IDs vs. Embeddings</h3>
+                <p>These two ideas look similar but mean very different things, and it's easy to mix them up as a beginner:</p>
+                <ul>
+                    <li><strong>Token ID</strong> — a plain integer that identifies a token in the model's vocabulary table. It carries no meaning by itself; it's just an index.</li>
+                    <li><strong>Embedding</strong> — a dense vector of floating-point numbers that the model looks up (and refines during training) for each token ID. This vector is what actually carries learned meaning.</li>
+                </ul>
+
+                <div style="padding: 1.5rem; background: var(--border-color); border-radius: 8px; margin: 1rem 0 1.5rem 0;">
+                    <div style="background: var(--sidebar-bg); padding: 1rem 1.5rem; border-radius: 6px; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.95rem; border: 1px solid var(--border-color); margin-bottom: 0.75rem;">"cat" &rarr; 1234 <span style="color: var(--text-muted);">&nbsp;(token ID — just an integer)</span></div>
+                    <div style="background: var(--sidebar-bg); padding: 1rem 1.5rem; border-radius: 6px; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.95rem; border: 1px solid var(--border-color);">1234 &rarr; [0.12, -0.45, 0.83, ...] <span style="color: var(--text-muted);">&nbsp;(embedding — a vector carrying meaning)</span></div>
+                </div>
+
+                <p>Here is the full pipeline from raw text to something the Transformer can actually compute with:</p>
+                <div style="padding: 1.5rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1rem 0 1.5rem 0; color: var(--text-color); font-family: 'Fira Code', monospace; font-size: 0.9rem;">
+                    Text &rarr; Tokens &rarr; Token IDs &rarr; Embedding Vectors &rarr; Transformer &rarr; Contextual Representations
+                </div>
+
+                <p>An embedding places a token ID into a high-dimensional continuous space — real models commonly use hundreds or even thousands of dimensions. Tokens with similar semantic meaning or grammatical function tend to end up close to one another in that space, once the model has been trained.</p>
 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
                     <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 6px; display: inline-block; text-align: left; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.95rem; border: 1px solid var(--border-color);">
                         <div>Vector("King")   - Vector("Man") + Vector("Woman") &approx; Vector("Queen")</div>
-                        <div style="color: var(--accent); margin-top: 0.5rem;">Cosine Distance("king", "queen") = 0.89 (Very Close)</div>
-                        <div style="color: #ef4444;">Cosine Distance("king", "airplane") = 0.12 (Distant)</div>
+                        <div style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.85rem;">(a classic illustrative example — not a guarantee that holds exactly in every modern embedding model)</div>
+                        <div style="color: var(--accent); margin-top: 0.5rem;">"king" and "queen" sit relatively close together in embedding space</div>
+                        <div style="color: #ef4444;">"king" and "airplane" sit much farther apart</div>
                     </div>
                 </div>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-2: Semantic Vector Arithmetic in High-Dimensional Embedding Space</div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-2: Semantic Relationships in High-Dimensional Embedding Space</div>
                 <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
                     <strong>Figure Parameters Explained:</strong>
                     <ul style="margin-top: 0.5rem;">
-                        <li><strong>Geometric Relationships:</strong> Relationships like gender, tense, capital cities, and synonyms are encoded as geometric direction vectors across dimensions.</li>
-                        <li><strong>Cosine Similarity:</strong> Measures the cosine of the angle between two multi-dimensional vectors. A score of <code>1.0</code> represents identical direction, while <code>0.0</code> represents complete orthogonality (no semantic correlation).</li>
+                        <li><strong>Geometric Relationships:</strong> Relationships like gender, tense, capital cities, and synonyms can be reflected as geometric directions across dimensions. Some embedding spaces show this clearly; others only approximately.</li>
+                        <li><strong>Cosine Similarity:</strong> Measures the cosine of the angle between two multi-dimensional vectors. A score of <code>1.0</code> represents identical direction, while <code>0.0</code> represents complete orthogonality (no correlation). What counts as "close" depends on the specific embedding model and dataset — there is no single universal cutoff score.</li>
                     </ul>
                 </div>
 
@@ -264,16 +286,99 @@ print(f"  king vs apple:   {cosine_similarity(embeddings['king'], embeddings['ap
                 </code></pre>
                 <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-2: Calculating Cosine Similarity Between Dense Vectors</div>
 
+                <h3>2D Embedding Space Visualization</h3>
+                <p>Real embeddings live in hundreds or thousands of dimensions, which humans cannot picture directly. A simplified 2D view helps build the right intuition: semantically related concepts tend to cluster together.</p>
+
+                <div style="padding: 1.5rem; background: var(--border-color); border-radius: 8px; margin: 1rem 0 0.5rem 0; overflow-x: auto;">
+                    <svg viewBox="0 0 420 300" style="width: 100%; max-width: 480px; height: auto; display: block; margin: 0 auto; background: var(--sidebar-bg); border-radius: 6px; border: 1px solid var(--border-color);" role="img" aria-label="2D scatter plot showing animal, fruit, and vehicle word clusters positioned by similarity">
+                        <line x1="30" y1="270" x2="405" y2="270" stroke="var(--text-muted)" stroke-width="1.5"></line>
+                        <line x1="30" y1="270" x2="30" y2="18" stroke="var(--text-muted)" stroke-width="1.5"></line>
+                        <text x="375" y="264" font-size="11" fill="var(--text-muted)">dim 1 &rarr;</text>
+                        <text x="34" y="26" font-size="11" fill="var(--text-muted)">dim 2 &uarr;</text>
+
+                        <circle cx="90" cy="90" r="5" fill="#2563eb"></circle>
+                        <text x="98" y="94" font-size="12" fill="var(--text-color)">cat</text>
+                        <circle cx="120" cy="70" r="5" fill="#2563eb"></circle>
+                        <text x="128" y="74" font-size="12" fill="var(--text-color)">dog</text>
+                        <circle cx="80" cy="130" r="5" fill="#2563eb"></circle>
+                        <text x="88" y="134" font-size="12" fill="var(--text-color)">lion</text>
+                        <circle cx="125" cy="120" r="5" fill="#2563eb"></circle>
+                        <text x="133" y="124" font-size="12" fill="var(--text-color)">tiger</text>
+
+                        <circle cx="240" cy="220" r="5" fill="#059669"></circle>
+                        <text x="248" y="224" font-size="12" fill="var(--text-color)">apple</text>
+                        <circle cx="275" cy="235" r="5" fill="#059669"></circle>
+                        <text x="283" y="239" font-size="12" fill="var(--text-color)">banana</text>
+
+                        <circle cx="350" cy="80" r="5" fill="#d97706"></circle>
+                        <text x="358" y="84" font-size="12" fill="var(--text-color)">car</text>
+                        <circle cx="375" cy="105" r="5" fill="#d97706"></circle>
+                        <text x="383" y="109" font-size="12" fill="var(--text-color)">truck</text>
+                    </svg>
+                    <div style="text-align: center; margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-color);">
+                        <span style="color: #2563eb; font-weight: 700;">&#9679;</span> animals&nbsp;&nbsp;&nbsp;
+                        <span style="color: #059669; font-weight: 700;">&#9679;</span> fruits&nbsp;&nbsp;&nbsp;
+                        <span style="color: #d97706; font-weight: 700;">&#9679;</span> vehicles
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 0.75rem; font-size: 0.9rem;">Figure 3.0-3: A Simplified 2D Embedding Space</div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem;">In a simplified 2D representation, similar concepts can appear closer together. Real embeddings usually have hundreds or thousands of dimensions, not just two — this picture is a teaching simplification, not a literal LLM embedding.</p>
+
+                <h3>3D Embedding Space Visualization</h3>
+                <p>Adding a third dimension makes the idea of "distance = similarity" a little more tangible. Drag inside the box below to rotate the scene and see how the animal, fruit, and vehicle clusters occupy different regions of the space.</p>
+
+                <style>
+                    .embed3d-pt { position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+                    .embed3d-pt span { position: absolute; left: 18px; top: -6px; white-space: nowrap; color: var(--text-color); font-size: 12px; background: var(--sidebar-bg); padding: 1px 5px; border-radius: 3px; border: 1px solid var(--border-color); }
+                    .embed3d-axis { position: absolute; top: 50%; left: 50%; width: 190px; height: 2px; background: var(--text-muted); opacity: 0.55; transform-origin: center; }
+                    .embed3d-axis-label { position: absolute; top: 50%; left: 50%; font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+                </style>
+                <div style="padding: 1.5rem; background: var(--border-color); border-radius: 8px; margin: 1rem 0 0.5rem 0; display: flex; justify-content: center;">
+                    <div id="embed3d-viewport" style="width: 100%; max-width: 420px; aspect-ratio: 1 / 1; perspective: 900px; touch-action: none; cursor: grab;">
+                        <div id="embed3d-scene" style="width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-18deg) rotateY(-28deg);">
+                            <!-- Axis lines -->
+                            <div class="embed3d-axis" style="transform: translate(-50%,-50%);"></div>
+                            <div class="embed3d-axis" style="transform: translate(-50%,-50%) rotateZ(90deg);"></div>
+                            <div class="embed3d-axis" style="transform: translate(-50%,-50%) rotateY(90deg);"></div>
+                            <div class="embed3d-axis-label" style="transform: translate3d(92px,-14px,0);">dim 1</div>
+                            <div class="embed3d-axis-label" style="transform: translate3d(6px,-100px,0);">dim 2</div>
+                            <div class="embed3d-axis-label" style="transform: translate3d(-30px,-12px,92px);">dim 3</div>
+
+                            <!-- Points -->
+                            <div class="embed3d-pt" style="background: #2563eb; transform: translate3d(-60px,-30px,20px);"><span>cat</span></div>
+                            <div class="embed3d-pt" style="background: #2563eb; transform: translate3d(-40px,-55px,-10px);"><span>dog</span></div>
+                            <div class="embed3d-pt" style="background: #2563eb; transform: translate3d(-75px,5px,40px);"><span>lion</span></div>
+                            <div class="embed3d-pt" style="background: #2563eb; transform: translate3d(-30px,-15px,-35px);"><span>tiger</span></div>
+
+                            <div class="embed3d-pt" style="background: #059669; transform: translate3d(50px,60px,10px);"><span>apple</span></div>
+                            <div class="embed3d-pt" style="background: #059669; transform: translate3d(70px,80px,-20px);"><span>banana</span></div>
+
+                            <div class="embed3d-pt" style="background: #d97706; transform: translate3d(90px,-45px,-10px);"><span>car</span></div>
+                            <div class="embed3d-pt" style="background: #d97706; transform: translate3d(115px,-25px,30px);"><span>truck</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: -0.25rem; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-color);">
+                    <span style="color: #2563eb; font-weight: 700;">&#9679;</span> animals&nbsp;&nbsp;&nbsp;
+                    <span style="color: #059669; font-weight: 700;">&#9679;</span> fruits&nbsp;&nbsp;&nbsp;
+                    <span style="color: #d97706; font-weight: 700;">&#9679;</span> vehicles
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-4: A Simplified, Interactive 3D Embedding Space (drag to rotate). Axes ("dim 1/2/3") represent embedding dimensions, not literal spatial directions.</div>
+
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
                 <h2>3.4. Context Windows & The Attention Bottleneck</h2>
                 <p>Every language model is bound by a <strong>Context Window</strong> (e.g., 8k, 32k, 128k, or 1M tokens). The context window is the maximum number of tokens the model can "see" at any single moment, including both your input prompt and the output it is currently generating.</p>
 
-                <p>Inside the transformer, the <strong>Self-Attention Mechanism</strong> allows every token in the context window to attend to (look at) every other token to compute contextual relevance. However, this comes with computational trade-offs:</p>
+                <p>Inside the transformer, the <strong>Self-Attention Mechanism</strong> allows every token in the context window to attend to (look at) every other token and weigh how relevant each one is — this is how the model figures out that "it" in a sentence refers to "the cat" mentioned three words earlier. However, this comes with computational trade-offs:</p>
                 <ul>
                     <li><strong>$O(N^2)$ Complexity:</strong> Standard naive attention scales quadratically with sequence length $N$. Doubling the context window quadruples the memory and computation required for the attention matrix.</li>
-                    <li><strong>Lost in the Middle Phenomenon:</strong> Research has proven that models retrieve information located at the very beginning or the very end of a context window with high precision, but frequently ignore or miss crucial instructions placed in the middle of long prompts (80k+ tokens).</li>
+                    <li><strong>Lost in the Middle Phenomenon:</strong> Research has shown that models tend to retrieve information located at the very beginning or the very end of a context window more reliably than information placed in the middle of very long prompts.</li>
                 </ul>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 0.85rem 1rem; border-left-width: 4px; border-left-style: solid; margin: 1rem 0 1.5rem 0; border-radius: 4px; font-size: 0.92rem;">
+                    <strong>Coming later:</strong> When we study production LLM serving, we will explore KV caches, GPU memory, batching, and inference optimization — the engineering side of making attention fast and affordable at scale.
+                </div>
 
                 <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                     <summary style="font-weight: 600; font-size: 1.1rem; outline: none; color: #f44336;">View Buggy/Legacy Code: Unchecked Prompt Concatenation</summary>
@@ -284,7 +389,7 @@ conversation_history = []
 def chat_naive(user_message: str):
     # DANGER: Appending indefinitely without checking token limits
     conversation_history.append({"role": "user", "content": user_message})
-    
+
     # When conversation_history exceeds model context (e.g., 128k tokens),
     # the API throws a 400 ContextWindowExceeded error and halts the entire agent!
     response = call_llm(conversation_history)
@@ -294,296 +399,281 @@ def chat_naive(user_message: str):
                     <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-3A: Dangerous Infinite Context Accumulation</div>
                 </details>
 
-                <pre><code class="language-python">
-# Program 3.0-3: Temperature Sampling & Softmax Distribution
-import numpy as np
-
-def sample_next_token(logits: dict, temperature: float = 1.0) -> str:
-    """
-    Simulates how an LLM applies Temperature scaling to raw logits (scores)
-    before calculating probabilities with Softmax.
-    """
-    words = list(logits.keys())
-    raw_scores = np.array(list(logits.values()), dtype=float)
-    
-    # Scale logits by temperature (preventing divide-by-zero)
-    scaled_scores = raw_scores / max(temperature, 1e-5)
-    
-    # Apply Softmax to convert scores to probabilities that sum to 1.0
-    exp_scores = np.exp(scaled_scores - np.max(scaled_scores))
-    probabilities = exp_scores / np.sum(exp_scores)
-    
-    # Sample from the resulting probability distribution
-    chosen_word = np.random.choice(words, p=probabilities)
-    return chosen_word, dict(zip(words, probabilities.round(4)))
-
-# Example model output scores for the next word after: "The sky is..."
-raw_logits = {"blue": 8.0, "clear": 6.5, "dark": 5.0, "green": 0.5}
-
-print("--- Temperature 0.1 (Deterministic / Low Entropy) ---")
-word, probs = sample_next_token(raw_logits, temperature=0.1)
-print(f"Probabilities: {probs}")
-print(f"Selected: '{word}'\n")
-
-print("--- Temperature 1.2 (Creative / High Entropy) ---")
-word, probs = sample_next_token(raw_logits, temperature=1.2)
-print(f"Probabilities: {probs}")
-print(f"Selected: '{word}'")
-                </code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-3: Temperature and Softmax Probability Sampling</div>
-
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3.5. Temperature and Hyperparameters Reference Guide</h2>
-                <p>When engineering autonomous agents, choosing the correct inference hyperparameters determines whether your agent executes deterministic tool calls or hallucinates invalid arguments.</p>
+                <h2>3.5. What Is Prompt Engineering?</h2>
+                <p>A <strong>prompt</strong> is the text you send to an LLM: your instructions, any background information, and your question or task. <strong>Prompt engineering</strong> is the practice of designing that input deliberately — choosing the wording, structure, and information you provide — so the model produces the response you actually need.</p>
 
-                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
-                    <thead>
-                        <tr style="background: var(--accent); color: white;">
-                            <th style="padding: 12px; text-align: left;">Hyperparameter</th>
-                            <th style="padding: 12px; text-align: left;">Typical Range</th>
-                            <th style="padding: 12px; text-align: left;">Mechanism</th>
-                            <th style="padding: 12px; text-align: left;">Best Used For</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 12px; font-weight: 600;">Temperature</td>
-                            <td style="padding: 12px;">0.0 – 1.5</td>
-                            <td style="padding: 12px;">Divides raw logits before Softmax. Lower values flatten rare tokens to zero.</td>
-                            <td style="padding: 12px;"><code>0.0</code> for JSON extraction & SQL generation; <code>0.7</code> for open-ended conversation.</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 12px; font-weight: 600;">Top-P (Nucleus)</td>
-                            <td style="padding: 12px;">0.1 – 1.0</td>
-                            <td style="padding: 12px;">Cuts off sampling to the smallest pool of tokens whose cumulative probability exceeds P.</td>
-                            <td style="padding: 12px;">Alternative to temperature; controls vocabulary diversity without flattening peaks.</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 12px; font-weight: 600;">Max Tokens</td>
-                            <td style="padding: 12px;">1 – 16,384</td>
-                            <td style="padding: 12px;">Hard ceiling on generated output tokens. Halts generation regardless of stop tokens.</td>
-                            <td style="padding: 12px;">Preventing runaway reasoning loops and managing API token costs.</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 12px; font-weight: 600;">Stop Sequences</td>
-                            <td style="padding: 12px;">List of strings</td>
-                            <td style="padding: 12px;">Tells the generation loop to stop emitting tokens as soon as a marker appears.</td>
-                            <td style="padding: 12px;">ReAct patterns (e.g. <code>["Observation:", "\nUser:"]</code>) to hand control back to code.</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <p>It helps to be precise about what prompt engineering is <em>not</em>: it does not change the model's learned weights — those were fixed during training, as you saw in the sections above. What you are changing is the <strong>input</strong> — the instructions, context, and constraints supplied to the model at inference time. Two different prompts sent to the exact same model can produce dramatically different results, because you are steering the same underlying prediction engine toward a more specific target.</p>
 
-                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
-
-                <h2>3.6. Tokenization Mechanics: Byte Pair Encoding (BPE) from Scratch</h2>
-                <p>LLMs cannot read characters directly; they operate on numerical token IDs. The dominant tokenization algorithm across GPT-4, Llama 3, and Claude is <strong>Byte Pair Encoding (BPE)</strong>. BPE operates at the subword level, finding the optimal balance between character-level vocabularies (which require too many tokens per sentence) and word-level vocabularies (which suffer from Out-Of-Vocabulary errors on rare words and code identifiers).</p>
-
-                <div class="code-header">
-                    <span>bpe_tokenizer_from_scratch.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 6px; display: inline-block; text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.95rem; border: 1px solid var(--border-color); min-width: 220px;">
+                        <div>User Request</div>
+                        <div style="color: var(--text-muted); margin: 0.4rem 0;">&darr;</div>
+                        <div style="color: var(--accent); font-weight: 600;">Prompt</div>
+                        <div style="color: var(--text-muted); margin: 0.4rem 0;">&darr;</div>
+                        <div>LLM</div>
+                        <div style="color: var(--text-muted); margin: 0.4rem 0;">&darr;</div>
+                        <div>Response</div>
+                    </div>
                 </div>
-                <pre><code class="language-python"># Program 3.0-5: Byte Pair Encoding (BPE) Tokenizer from Scratch
-from collections import defaultdict
-from typing import List, Dict, Tuple
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-5: Prompt Engineering Shapes What Happens Between Request and Response</div>
 
-class SimpleBPETokenizer:
-    """Implements core subword Byte Pair Encoding merge algorithm."""
-    
-    def __init__(self, vocab_size: int = 300):
-        self.target_vocab_size = vocab_size
-        self.merges: Dict[Tuple[str, str], str] = {}
-        self.vocab: Dict[int, str] = {}
-        self.inverse_vocab: Dict[str, int] = {}
-        
-    def _get_stats(self, words: List[List[str]]) -> Dict[Tuple[str, str], int]:
-        """Count frequencies of adjacent symbol pairs."""
-        pairs = defaultdict(int)
-        for word in words:
-            for i in range(len(word) - 1):
-                pairs[(word[i], word[i + 1])] += 1
-        return pairs
+                <p>Why does this matter so much? Because the same underlying model can look "smart" or "useless" depending entirely on how it's asked. Compare these two prompts:</p>
 
-    def _merge_pair(self, pair: Tuple[str, str], words: List[List[str]]) -> List[List[str]]:
-        """Replaces occurrences of pair with merged token."""
-        new_words = []
-        bigram = list(pair)
-        merged_token = "".join(pair)
-        for word in words:
-            new_word = []
-            i = 0
-            while i < len(word):
-                if i < len(word) - 1 and word[i] == bigram[0] and word[i + 1] == bigram[1]:
-                    new_word.append(merged_token)
-                    i += 2
-                else:
-                    new_word.append(word[i])
-                    i += 1
-            new_words.append(new_word)
-        return new_words
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #ef4444; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Bad Prompt:</strong>
+                    <div style="font-family: 'Fira Code', monospace; margin-top: 0.5rem;">"Explain AI."</div>
+                </div>
 
-    def train(self, corpus: str, num_merges: int = 15):
-        """Learns subword merge rules from raw training text."""
-        # Initialize base character tokens
-        words = [list(word) + ["</w>"] for word in corpus.split()]
-        
-        print(f"Initial Corpus Words: {words[:3]}")
-        for step in range(num_merges):
-            pairs = self._get_stats(words)
-            if not pairs:
-                break
-            best_pair = max(pairs, key=pairs.get)
-            self.merges[best_pair] = "".join(best_pair)
-            words = self._merge_pair(best_pair, words)
-            print(f"Merge #{step + 1}: Combined '{best_pair[0]}' + '{best_pair[1]}' -> '{self.merges[best_pair]}' (Count: {pairs[best_pair]})")
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #10b981; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Improved Prompt:</strong>
+                    <div style="font-family: 'Fira Code', monospace; margin-top: 0.5rem;">"Explain artificial intelligence to a software developer who has no machine-learning background. Use one practical example and keep the explanation under 300 words."</div>
+                </div>
 
-    def encode(self, text: str) -> List[str]:
-        """Encodes incoming string into learned subword units."""
-        words = [list(word) + ["</w>"] for word in text.split()]
-        for pair, merged in self.merges.items():
-            words = self._merge_pair(pair, words)
-        flattened = [token for word in words for token in word]
-        return flattened
-
-# Demonstrate BPE training on domain text
-sample_corpus = "low lower newest widest wider lowest newer low low lower"
-tokenizer = SimpleBPETokenizer()
-print("=== TRAINING SUBWORD BPE TOKENIZER ===")
-tokenizer.train(sample_corpus, num_merges=6)
-
-test_sentence = "lowest newer"
-encoded_tokens = tokenizer.encode(test_sentence)
-print(f"\nEncoding test sentence '{test_sentence}':")
-print(f"Tokens: {encoded_tokens}")
-</code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-5: Byte Pair Encoding (BPE) Subword Tokenizer from Scratch</div>
+                <p>The second prompt is better for three concrete reasons:</p>
+                <ul>
+                    <li><strong>Audience:</strong> "a software developer with no ML background" tells the model what to assume the reader already knows.</li>
+                    <li><strong>Scope:</strong> "one practical example" and "under 300 words" give the model a clear boundary, instead of leaving length and depth to guesswork.</li>
+                    <li><strong>Removed ambiguity:</strong> "Explain AI" could mean a one-line definition, a history lesson, or a technical deep dive — the model has to guess which one you want, and it will often guess wrong.</li>
+                </ul>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3.7. GPU Hardware Physics: The Key-Value (KV) Cache Mathematical Sizing</h2>
-                <p>When an agent runs a long multi-turn dialogue with 10 documents in context, the primary memory bottleneck on GPUs is <strong>not the model weights</strong>—it is the <strong>KV Cache</strong>. In standard autoregressive generation, past Key and Value attention matrices are cached in GPU VRAM so earlier tokens are not redundantly recomputed.</p>
+                <h2>3.6. How Prompting Works With an LLM</h2>
+                <p>In the sections above, you learned what happens inside an LLM, from raw text to next-token prediction. Prompting sits right at the front of that pipeline: your prompt is simply the text that gets tokenized and fed in.</p>
 
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 6px; display: inline-block; text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.9rem; border: 1px solid var(--border-color);">
+                        <div>Prompt</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>Tokenization</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>Token IDs</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>Embeddings</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>Transformer</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>Next-Token Prediction</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div style="color: var(--accent); font-weight: 600;">Response</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-6: Your Prompt Enters the Same Pipeline Described Above</div>
+
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    Prompt engineering does not retrain the LLM. The model's learned weights remain unchanged during ordinary prompting. We are changing the information and instructions supplied to the model at inference time — not the model itself.
+                </div>
+
+                <p>That's the whole idea in one sentence: since the weights are fixed, everything you can influence has to travel through the prompt. This is exactly why the wording, structure, and completeness of your prompt matter so much.</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3.7. Anatomy of a Good Prompt — RCTNO</h2>
+                <p>Rather than writing prompts from scratch every time, it helps to use a repeatable structure. A well-structured prompt generally includes five components, remembered with the acronym <strong>RCTNO</strong>: <strong>R</strong>ole, <strong>C</strong>ontext, <strong>T</strong>ask, co<strong>N</strong>straints, and <strong>O</strong>utput.</p>
+
+                <div style="padding: 2rem 1rem; background: var(--border-color); border-radius: 8px; margin: 1.5rem 0 0.5rem 0; text-align: center;">
+                    <div style="display: inline-block; background: var(--accent); color: #fff; padding: 0.6rem 1.5rem; border-radius: 6px; font-weight: 700; letter-spacing: 0.04em; font-family: 'Fira Code', monospace;">STRUCTURED PROMPT</div>
+                    <div style="color: var(--text-muted); margin: 0.6rem 0; font-size: 1.2rem;">&darr;</div>
+                    <div style="display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap; margin-bottom: 0.6rem;">
+                        <div style="background: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; font-family: 'Fira Code', monospace; color: var(--text-color);">ROLE</div>
+                        <div style="background: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; font-family: 'Fira Code', monospace; color: var(--text-color);">CONTEXT</div>
+                        <div style="background: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; font-family: 'Fira Code', monospace; color: var(--text-color);">TASK</div>
+                    </div>
+                    <div style="color: var(--text-muted); margin: 0.6rem 0; font-size: 1.2rem;">&darr;</div>
+                    <div style="display: inline-block; background: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 0.6rem 1.5rem; border-radius: 6px; font-weight: 600; font-family: 'Fira Code', monospace; color: var(--text-color);">CONSTRAINTS</div>
+                    <div style="color: var(--text-muted); margin: 0.6rem 0; font-size: 1.2rem;">&darr;</div>
+                    <div style="display: inline-block; background: #059669; color: #fff; padding: 0.6rem 1.5rem; border-radius: 6px; font-weight: 700; font-family: 'Fira Code', monospace;">OUTPUT</div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-7: The RCTNO Structured Prompt Framework</div>
+
+                <p>Let's walk through each component: what it means, why it matters, and how a weaker version compares to a stronger one.</p>
+
+                <h3>R — Role</h3>
+                <p><strong>Definition:</strong> The perspective or persona you want the model to adopt when answering.</p>
+                <p><strong>Why it matters:</strong> A role narrows the model's vocabulary, tone, and assumptions. "Explain like a security auditor" produces a very different answer than "explain like a marketing writer," even for the exact same question.</p>
+                <p style="margin-bottom: 0.3rem;"><strong style="color: #ef4444;">Bad:</strong> <code>"Review this code."</code></p>
+                <p><strong style="color: #10b981;">Better:</strong> <code>"You are a senior Python code reviewer focused on security and readability. Review this code."</code></p>
+
+                <h3>C — Context</h3>
+                <p><strong>Definition:</strong> The background information the model needs — documents, data, prior conversation, or business rules.</p>
+                <p><strong>Why it matters:</strong> Without relevant context, the model can only draw on general patterns learned in training — exactly the situation that leads to guessing (you'll see this formalized as "grounding" in Day 4's Hallucinations & Grounding section).</p>
+                <p style="margin-bottom: 0.3rem;"><strong style="color: #ef4444;">Bad:</strong> <code>"What's our refund policy?"</code></p>
+                <p><strong style="color: #10b981;">Better:</strong> <code>"Using the refund policy text below, answer the question. [policy text] What's our refund policy for damaged items?"</code></p>
+
+                <h3>T — Task</h3>
+                <p><strong>Definition:</strong> The specific action you want performed, stated as a clear instruction.</p>
+                <p><strong>Why it matters:</strong> A vague task leaves the model to guess what "done" looks like — Section 3.8 covers this in depth.</p>
+                <p style="margin-bottom: 0.3rem;"><strong style="color: #ef4444;">Bad:</strong> <code>"Sales data."</code></p>
+                <p><strong style="color: #10b981;">Better:</strong> <code>"Identify the three products with the largest month-over-month sales decline."</code></p>
+
+                <h3>N — Constraints</h3>
+                <p><strong>Definition:</strong> The rules the model should follow while completing the task — length limits, tone, what to include or exclude, what it must not assume.</p>
+                <p><strong>Why it matters:</strong> Without constraints, a technically correct answer can still be unusable — too long, too speculative, or in the wrong tone for its audience.</p>
+                <p style="margin-bottom: 0.3rem;"><strong style="color: #ef4444;">Bad:</strong> <em>(no constraints given)</em> — the model may write a full page when you needed three sentences.</p>
+                <p><strong style="color: #10b981;">Better:</strong> <code>"Answer in exactly 3 bullet points. Do not include information that isn't in the source text."</code></p>
+
+                <h3>O — Output</h3>
+                <p><strong>Definition:</strong> The format the response should take — plain text, bullet points, a table, JSON, and so on (Section 3.10 goes deeper).</p>
+                <p><strong>Why it matters:</strong> Software downstream of the model usually needs a predictable shape, not just correct content.</p>
+                <p style="margin-bottom: 0.3rem;"><strong style="color: #ef4444;">Bad:</strong> <em>(format unspecified)</em> — the shape of the answer changes every time you run it.</p>
+                <p><strong style="color: #10b981;">Better:</strong> <code>"Return the result as a JSON object with fields: summary, priority, recommended_action."</code></p>
+
+                <p>Not every prompt needs all five components spelled out — a quick one-off question may only need a Task. But for anything that needs to be reliable, reusable, or consumed by other software, filling in all five is the difference between a prompt that "usually works" and one you can depend on.</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3.8. Writing Clear Instructions</h2>
+                <p>The Task component deserves a closer look on its own, because vague instructions are the single most common cause of disappointing LLM output. A clear instruction usually:</p>
+                <ul>
+                    <li>starts with a clear action verb (<em>summarize, classify, extract, compare, rewrite</em> — not just "look at" or "help with")</li>
+                    <li>specifies exactly what the task is</li>
+                    <li>defines the scope (how much, which part, what time range)</li>
+                    <li>identifies the target audience</li>
+                    <li>specifies success criteria — what a good answer looks like</li>
+                    <li>avoids vague requests that could reasonably mean five different things</li>
+                </ul>
+
+                <p style="margin-bottom: 0.3rem;"><strong style="color: #ef4444;">Weak:</strong> <code>"Analyze this sales data."</code></p>
+                <p><strong style="color: #10b981;">Better:</strong> <code>"Analyze the sales data and identify the three products with the largest month-over-month decline. Explain the likely trend for each product."</code></p>
+
+                <p>Here's the same pattern applied across three common workplace tasks:</p>
+
+                <div style="background-color: var(--sidebar-bg); padding: 1.2rem 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent);">
+                    <strong>Data Analysis</strong>
+                    <p style="margin: 0.5rem 0 0.3rem;"><strong style="color: #ef4444;">Weak:</strong> <code>"Analyze this report."</code></p>
+                    <p style="margin: 0;"><strong style="color: #10b981;">Better:</strong> <code>"Review this quarterly report and list the top 3 metrics that changed the most, with a one-sentence explanation for each."</code></p>
+                </div>
+                <div style="background-color: var(--sidebar-bg); padding: 1.2rem 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--accent);">
+                    <strong>Code Review</strong>
+                    <p style="margin: 0.5rem 0 0.3rem;"><strong style="color: #ef4444;">Weak:</strong> <code>"Check this code."</code></p>
+                    <p style="margin: 0;"><strong style="color: #10b981;">Better:</strong> <code>"Review this Python function for security issues and unhandled edge cases. List each issue with the line number and a suggested fix."</code></p>
+                </div>
+                <div style="background-color: var(--sidebar-bg); padding: 1.2rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
+                    <strong>Document Summarization</strong>
+                    <p style="margin: 0.5rem 0 0.3rem;"><strong style="color: #ef4444;">Weak:</strong> <code>"Summarize this report."</code></p>
+                    <p style="margin: 0;"><strong style="color: #10b981;">Better:</strong> <code>"Summarize this incident report for an engineering manager in 5 bullet points, focused on root cause and remediation steps."</code></p>
+                </div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3.9. Context, Constraints & Boundaries</h2>
+                <p>Four related but distinct ideas are easy to blur together. Keeping them separate makes prompts much easier to write and debug:</p>
+                <ul>
+                    <li><strong>Instruction</strong> — what should the model do?</li>
+                    <li><strong>Context</strong> — what information does the model need to do it?</li>
+                    <li><strong>Constraint</strong> — what rules should it follow while doing it?</li>
+                    <li><strong>Boundary</strong> — what should it NOT assume, invent, or do?</li>
+                </ul>
+
+                <div style="padding: 1.5rem; background: var(--border-color); border-radius: 8px; margin: 1.5rem 0 0.5rem 0;">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.9rem; border: 1px solid var(--border-color);">
+                        <div style="color: #3b82f6; font-weight: 700;">Instruction:</div>
+                        <div style="margin: 0.25rem 0 0.75rem;">Summarize the company leave policy.</div>
+                        <div style="color: #10b981; font-weight: 700;">Context:</div>
+                        <div style="margin: 0.25rem 0 0.75rem; color: var(--text-muted);">[Company Leave Policy]</div>
+                        <div style="color: #f59e0b; font-weight: 700;">Constraints:</div>
+                        <div style="margin: 0.25rem 0 0.75rem;">Use only information contained in the policy.</div>
+                        <div style="color: #ef4444; font-weight: 700;">Missing information:</div>
+                        <div style="margin: 0.25rem 0 0.75rem;">If the answer is not present, say: "Not specified in the provided policy."</div>
+                        <div style="color: var(--accent); font-weight: 700;">Output:</div>
+                        <div>Return 5 concise bullet points.</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-8: A Fully Specified, Grounded Prompt</div>
+
+                <p>Notice that context should be <strong>relevant and sufficient — not simply large</strong>. Pasting an entire 40-page handbook when only one section applies wastes tokens, can crowd out other important instructions, and doesn't automatically make the answer better (recall the context-window discussion in Section 3.4 above).</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3.10. Output Formatting</h2>
+                <p>You can tell an LLM exactly how its response should be structured — this becomes essential once you start building software, and later agents, around LLM output.</p>
+
+                <p style="margin-bottom: 0.3rem;"><strong>Plain text:</strong> <code>"Explain the result."</code></p>
+                <p style="margin-bottom: 0.3rem;"><strong>Bullet points:</strong> <code>"Return the result as 5 bullet points."</code></p>
+                <p style="margin-bottom: 0.75rem;"><strong>Table:</strong> <code>"Return the comparison as a table."</code></p>
+                <p style="margin-bottom: 0.5rem;"><strong>JSON:</strong> <code>"Return the result as JSON with the fields shown below."</code></p>
+                <div style="background: var(--sidebar-bg); padding: 1rem 1.5rem; border-radius: 8px; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.9rem; border: 1px solid var(--border-color); margin-bottom: 1.5rem; white-space: pre;">{
+  "summary": "...",
+  "priority": "...",
+  "recommended_action": "..."
+}</div>
+
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 6px; display: inline-block; text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.9rem; border: 1px solid var(--border-color);">
+                        <div>LLM</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div style="color: var(--accent); font-weight: 600;">Structured Output</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>Application / Python</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>Database / API / Agent</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-9: Structured Output Is What Lets Software Consume an LLM's Response</div>
+
+                <p>Predictable output matters because software downstream of the model — a database write, an API call, another function — usually needs to parse the response automatically. A response that's sometimes a paragraph, sometimes a list, and sometimes a table will break that code. Asking explicitly for a format turns "usually parseable" into "reliably parseable."</p>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>3.11. Zero-Shot Prompting</h2>
                 <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>KV Cache VRAM Footprint Equation:</strong>
-                    <div style="font-family: 'Fira Code', monospace; margin: 0.75rem 0; font-size: 1.05rem; color: var(--text-color);">
-                        KV_bytes = 2 (K & V) × 2 (FP16 bytes) × n_layers × n_heads × d_head × seq_len × batch_size
-                    </div>
-                    <em>Example:</em> For a 70B model with 80 layers, 64 attention heads, head dimension 128, processing a 32,768 context window across 16 concurrent users:
-                    <div style="font-family: 'Fira Code', monospace; margin: 0.5rem 0; font-size: 0.95rem;">
-                        KV_bytes = 4 × 80 × 64 × 128 × 32,768 × 16 ≈ 1,374,389,534,720 bytes ≈ 1,374 GB of pure VRAM!
-                    </div>
-                    This is why Grouped-Query Attention (GQA) and vLLM PagedAttention are essential for modern production agent serving!
+                    <strong>Zero-shot prompting</strong> means asking the model to perform a task without providing demonstration examples.
                 </div>
 
-                <div class="code-header">
-                    <span>kv_cache_calculator.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-python"># Program 3.0-6: KV-Cache & VRAM Hardware Budget Calculator
-def calculate_agent_gpu_vram(
-    param_billions: float,
-    weight_precision_bytes: int,  # 2 for FP16, 1 for INT8, 0.5 for INT4
-    layers: int,
-    kv_heads: int,                # 8 for Llama-3 70B (Grouped-Query Attention)
-    head_dim: int,                # 128
-    context_tokens: int,
-    concurrent_sessions: int
-) -> dict:
-    """Calculates exact GPU VRAM allocation required for agent deployments."""
-    
-    # 1. Model Weights Memory
-    model_weight_gb = (param_billions * 1e9 * weight_precision_bytes) / (1024 ** 3)
-    
-    # 2. KV Cache Memory (Key + Value matrices in FP16 = 4 bytes per element)
-    kv_bytes_per_token_session = 2 * 2 * layers * kv_heads * head_dim
-    total_kv_bytes = kv_bytes_per_token_session * context_tokens * concurrent_sessions
-    kv_cache_gb = total_kv_bytes / (1024 ** 3)
-    
-    # 3. CUDA runtime & activation overhead buffer (~20%)
-    activation_overhead_gb = (model_weight_gb + kv_cache_gb) * 0.20
-    
-    total_vram_required = model_weight_gb + kv_cache_gb + activation_overhead_gb
-    h100_gpus_needed = -(-int(total_vram_required) // 80)  # Ceiling division for 80GB H100s
-    
-    return {
-        "model_weights_gb": round(model_weight_gb, 2),
-        "kv_cache_gb": round(kv_cache_gb, 2),
-        "total_vram_gb": round(total_vram_required, 2),
-        "80GB_GPUs_required": h100_gpus_needed
-    }
+                <div style="background: var(--sidebar-bg); padding: 1.25rem 1.5rem; border-radius: 8px; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.9rem; border: 1px solid var(--border-color); margin-bottom: 1.5rem; white-space: pre-wrap;">Classify this customer complaint as:
+Billing, Technical, or Shipping.
 
-# Benchmark: Llama-3 70B (GQA: 8 KV heads) serving 50 concurrent agents at 16k context
-stats = calculate_agent_gpu_vram(
-    param_billions=70.0,
-    weight_precision_bytes=2,  # FP16
-    layers=80,
-    kv_heads=8,
-    head_dim=128,
-    context_tokens=16384,
-    concurrent_sessions=50
-)
+Complaint:
+"My package has not arrived yet."</div>
 
-print("=== AGENT CLUSTER VRAM SIZING REPORT ===")
-for k, v in stats.items():
-    print(f"  {k.ljust(25)}: {v}")
-</code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-6: GPU VRAM & KV-Cache Sizing Calculator</div>
+                <p><strong>Use zero-shot when:</strong></p>
+                <ul>
+                    <li>the task is straightforward</li>
+                    <li>your instructions are sufficient on their own</li>
+                    <li>the expected output behavior is fairly standard</li>
+                </ul>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>3.8. Context Window Attention Physics: The "Lost in the Middle" Trap</h2>
-                <p>Stanford researchers (Liu et al., 2023) proved that LLM performance follows a U-shaped retrieval curve: models recall information placed at the <strong>very beginning (primacy effect)</strong> or the <strong>very end (recency effect)</strong> of a prompt with near 100% accuracy. When critical facts are placed in the middle 50% of an 80,000-token prompt, retrieval accuracy degrades by up to <strong>40%</strong>!</p>
-
-                <div class="code-header">
-                    <span>lost_in_the_middle_profiler.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <h2>3.12. Few-Shot Prompting</h2>
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    <strong>Few-shot prompting</strong> provides examples of the desired input-output behavior before asking the model to process a new input.
                 </div>
-                <pre><code class="language-python"># Program 3.0-7: Lost in the Middle Needle-in-a-Haystack Simulator
-from typing import List
 
-def build_needle_prompt(distractor_count: int, needle_position_ratio: float) -> str:
-    """
-    Constructs an adversarial benchmark placing a critical secret at a specific depth.
-    needle_position_ratio: 0.0 (top), 0.5 (dead center), 1.0 (bottom)
-    """
-    distractor_text = "The quick brown fox jumps over the lazy dog. Standard boilerplate context clause."
-    needle = "CRITICAL FACT: The server root SSH port is 8222 and API secret is OMEGA-99."
-    
-    docs = [f"Doc #{i}: {distractor_text}" for i in range(distractor_count)]
-    
-    # Calculate index to inject the needle
-    target_idx = int(distractor_count * needle_position_ratio)
-    docs.insert(target_idx, f"*** {needle} ***")
-    
-    prompt = f"""You are a security auditor. Analyze the following {len(docs)} system log documents:
+                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
+                    <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 6px; display: inline-block; text-align: center; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.9rem; border: 1px solid var(--border-color);">
+                        <div>Example 1</div>
+                        <div>Example 2</div>
+                        <div>Example 3</div>
+                        <div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>New Input</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div>LLM</div><div style="color: var(--text-muted); margin: 0.35rem 0;">&darr;</div>
+                        <div style="color: var(--accent); font-weight: 600;">Output</div>
+                    </div>
+                </div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 3.0-10: Few-Shot Examples Condition the Model Before the New Input</div>
 
-Context:
-{"\n".join(docs)}
+                <div style="background: var(--sidebar-bg); padding: 1.25rem 1.5rem; border-radius: 8px; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 0.9rem; border: 1px solid var(--border-color); margin-bottom: 1.5rem; white-space: pre-wrap;">Example 1
+Complaint: "I was charged twice for my subscription."
+Category: Billing
 
-Question: What is the server root SSH port and API secret?"""
-    return prompt
+Example 2
+Complaint: "The app crashes every time I open it."
+Category: Technical
 
-# Test generation
-prompt_top = build_needle_prompt(distractor_count=20, needle_position_ratio=0.0)
-prompt_middle = build_needle_prompt(distractor_count=20, needle_position_ratio=0.5)
+Example 3
+Complaint: "My order shows delivered but I never received it."
+Category: Shipping
 
-print("=== NEEDLE-IN-A-HAYSTACK PROMPT CONSTRUCTED ===")
-print(f"Top-positioned prompt length: {len(prompt_top)} characters")
-print(f"Center-positioned prompt length: {len(prompt_middle)} characters")
-print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so the most relevant chunk is either at the VERY TOP or VERY BOTTOM of the context window!")
-</code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 3.0-7: Lost-in-the-Middle Needle Placement Profiler</div>
+New Input
+Complaint: "My package has not arrived yet."
+Category:</div>
 
-                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+                <p><strong>Few-shot prompting is especially useful when:</strong></p>
+                <ul>
+                    <li>you need custom classification labels the model wouldn't guess on its own</li>
+                    <li>you need a specific output format</li>
+                    <li>you need to match a particular style or tone</li>
+                    <li>the task behavior is unusual or non-obvious</li>
+                    <li>you want to demonstrate edge-case behavior, like what to do when data is missing</li>
+                </ul>
 
-                <h2>3.9. Production Debugging Playbook: Solving 5 Core LLM Failure Modes</h2>
-                <ol>
-                    <li><strong>Hallucination of Non-Existent APIs:</strong> Cause: High temperature and unconstrained next-token sampling. <em>Fix:</em> Set temperature to <code>0.0</code> and bind tools to strict Pydantic JSON schemas.</li>
-                    <li><strong>Runaway Verbosity & Repetition Loops:</strong> Cause: Token transition probabilities loop on common n-grams. <em>Fix:</em> Set <code>frequency_penalty=0.5</code> and define explicit stop sequences (<code>["\n\nUser:", "Observation:"]</code>).</li>
-                    <li><strong>Ignoring Crucial System Directives:</strong> Cause: Massive user input pushes system prompt tokens out of the model's high-attention window. <em>Fix:</em> Place key constraints at BOTH the beginning of the system prompt and the very end of the user prompt.</li>
-                    <li><strong>Random JSON Parse Failures:</strong> Cause: Model emits preamble commentary before emitting JSON. <em>Fix:</em> Use OpenAI <code>response_format={"type": "json_object"}</code> or Hugging Face grammar-guided decoders (Outlines).</li>
-                    <li><strong>Stalling and Timeouts on Large Prompts:</strong> Cause: Prefill phase quadratic attention bottleneck on dense contexts. <em>Fix:</em> Implement semantic chunk pruning and prompt caching.</li>
-                </ol>
+                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
+                    Few-shot prompting does <strong>NOT</strong> update or retrain the model's weights. The examples condition the model's behavior for this one request, at inference time — the model's weights simply aren't touched. Close the session, and the model "forgets" your examples entirely. We'll formalize this training/inference distinction in Day 4.
+                </div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
@@ -602,11 +692,11 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">2. In Byte Pair Encoding (BPE), what is a token?</div>
+                    <div class="mcq-question">2. What is a token?</div>
                     <ul class="mcq-options">
                         <li class="mcq-option" data-correct="false">Always an entire complete English word.</li>
-                        <li class="mcq-option" data-correct="false">Strictly a single character.</li>
-                        <li class="mcq-option" data-correct="true">A subword chunk representing frequently co-occurring byte or character sequences.</li>
+                        <li class="mcq-option" data-correct="false">Always a single character.</li>
+                        <li class="mcq-option" data-correct="true">A subword unit — a chunk of text the model reads and generates as one piece.</li>
                         <li class="mcq-option" data-correct="false">An encrypted cryptographic hash representing an API user session.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
@@ -614,96 +704,96 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">3. What does setting Temperature to 0.0 achieve during model inference?</div>
+                    <div class="mcq-question">3. What is the difference between a token ID and an embedding?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">The model generates entirely random tokens across its entire vocabulary.</li>
-                        <li class="mcq-option" data-correct="true">Greedy sampling: the model always picks the single token with the highest probability.</li>
-                        <li class="mcq-option" data-correct="false">The model halves its token generation speed to save GPU power.</li>
-                        <li class="mcq-option" data-correct="false">The model ignores the system prompt entirely.</li>
+                        <li class="mcq-option" data-correct="false">They are two names for exactly the same thing.</li>
+                        <li class="mcq-option" data-correct="true">A token ID is just an integer index; an embedding is a dense vector that carries learned meaning.</li>
+                        <li class="mcq-option" data-correct="false">A token ID is a vector of floats, while an embedding is a plain integer.</li>
+                        <li class="mcq-option" data-correct="false">Token IDs are used only during training, and embeddings are used only during inference.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">4. Why are dense vector embeddings used instead of raw text characters?</div>
+                    <div class="mcq-question">4. Why does the context window matter?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Because floating-point numbers compress text to take up zero hard drive space.</li>
-                        <li class="mcq-option" data-correct="true">Because high-dimensional coordinates capture semantic relationships geometrically.</li>
-                        <li class="mcq-option" data-correct="false">Because GPUs are incapable of multiplying matrices.</li>
-                        <li class="mcq-option" data-correct="false">Because embeddings prevent any prompt injection attacks.</li>
+                        <li class="mcq-option" data-correct="false">It determines how many API keys a user can register.</li>
+                        <li class="mcq-option" data-correct="true">It's the maximum amount of text (input plus output) the model can consider at once — anything beyond it is not visible to the model.</li>
+                        <li class="mcq-option" data-correct="false">It controls how much the model is allowed to charge per token.</li>
+                        <li class="mcq-option" data-correct="false">It sets the model's release date.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">5. What is the "Lost in the Middle" phenomenon in long context windows?</div>
+                    <div class="mcq-question">5. What is prompt engineering?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">The middle layers of a neural network being pruned away during fine-tuning.</li>
-                        <li class="mcq-option" data-correct="true">Models tending to ignore or poorly recall information placed in the middle of a large prompt.</li>
-                        <li class="mcq-option" data-correct="false">When the user stops typing midway through a sentence.</li>
-                        <li class="mcq-option" data-correct="false">The loss of floating-point precision during 8-bit quantization.</li>
+                        <li class="mcq-option" data-correct="false">Writing Python code that trains a new neural network from scratch.</li>
+                        <li class="mcq-option" data-correct="true">Deliberately designing the instructions, context, and structure of the input given to an LLM to get a better result.</li>
+                        <li class="mcq-option" data-correct="false">Installing and configuring GPU drivers for model inference.</li>
+                        <li class="mcq-option" data-correct="false">A synonym for building a chatbot user interface.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">6. If you need an agent to output strictly valid JSON matching a database schema, what temperature should you choose?</div>
+                    <div class="mcq-question">6. Does writing a good prompt update the model's weights?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">1.5</li>
-                        <li class="mcq-option" data-correct="false">0.8</li>
-                        <li class="mcq-option" data-correct="true">0.0</li>
-                        <li class="mcq-option" data-correct="false">2.0</li>
+                        <li class="mcq-option" data-correct="false">Yes, every prompt slightly retrains the model.</li>
+                        <li class="mcq-option" data-correct="true">No — ordinary prompting only changes the input at inference time; the model's learned weights stay the same.</li>
+                        <li class="mcq-option" data-correct="false">Yes, but only when the prompt exceeds 500 tokens.</li>
+                        <li class="mcq-option" data-correct="false">Only system prompts update weights; user prompts do not.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">7. What metric is commonly used to measure the semantic similarity between two embedding vectors?</div>
+                    <div class="mcq-question">7. What is structured prompting?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="true">Cosine Similarity.</li>
-                        <li class="mcq-option" data-correct="false">Hamming Distance on ASCII bytes.</li>
-                        <li class="mcq-option" data-correct="false">MD5 Checksum difference.</li>
-                        <li class="mcq-option" data-correct="false">Levenshtein Edit Distance.</li>
+                        <li class="mcq-option" data-correct="false">Writing a prompt using only valid JSON syntax.</li>
+                        <li class="mcq-option" data-correct="true">Organizing a prompt into clear components — such as role, context, task, constraints, and output — instead of one vague block of text.</li>
+                        <li class="mcq-option" data-correct="false">A technique that only works with programming-related questions.</li>
+                        <li class="mcq-option" data-correct="false">Sending the same prompt to multiple models at once.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">8. What happens when an input prompt plus generated output exceeds the model's context window limit?</div>
+                    <div class="mcq-question">8. What is the role of context in a prompt?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">The model automatically upgrades itself to a bigger model.</li>
-                        <li class="mcq-option" data-correct="true">The API throws a context length exceeded error or silently drops earlier tokens.</li>
-                        <li class="mcq-option" data-correct="false">The prompt is cached permanently on disk.</li>
-                        <li class="mcq-option" data-correct="false">The output is automatically summarized into 10 tokens.</li>
+                        <li class="mcq-option" data-correct="false">It sets the model's temperature value.</li>
+                        <li class="mcq-option" data-correct="true">It supplies the background information the model needs to answer accurately, instead of relying on general training patterns.</li>
+                        <li class="mcq-option" data-correct="false">It has no measurable effect on the response.</li>
+                        <li class="mcq-option" data-correct="false">It determines how many tokens the response will cost.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">9. Approximately how many words does 100 English tokens represent?</div>
+                    <div class="mcq-question">9. What is zero-shot prompting?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Around 20 words.</li>
-                        <li class="mcq-option" data-correct="true">Around 75 words.</li>
-                        <li class="mcq-option" data-correct="false">Around 300 words.</li>
-                        <li class="mcq-option" data-correct="false">Exactly 100 words in all languages.</li>
+                        <li class="mcq-option" data-correct="false">Sending an empty prompt to test the model's default behavior.</li>
+                        <li class="mcq-option" data-correct="true">Asking the model to perform a task without providing any demonstration examples.</li>
+                        <li class="mcq-option" data-correct="false">A prompting technique that requires fine-tuning first.</li>
+                        <li class="mcq-option" data-correct="false">Running the same prompt zero times before deploying it.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">10. In an agentic ReAct loop, why are stop sequences used?</div>
+                    <div class="mcq-question">10. What is few-shot prompting?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">To shut down the computer when an error occurs.</li>
-                        <li class="mcq-option" data-correct="true">To stop generation immediately when the LLM outputs a tool call marker so code can execute it.</li>
-                        <li class="mcq-option" data-correct="false">To delete previous user inputs from memory.</li>
-                        <li class="mcq-option" data-correct="false">To prevent the model from using GPU memory.</li>
+                        <li class="mcq-option" data-correct="false">Fine-tuning the model on a small dataset of a few hundred examples.</li>
+                        <li class="mcq-option" data-correct="true">Providing a small number of input-output examples in the prompt before asking the model to handle a new input.</li>
+                        <li class="mcq-option" data-correct="false">Limiting the model to a "few" possible output tokens.</li>
+                        <li class="mcq-option" data-correct="false">Asking the same question multiple times and averaging the answers.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
@@ -712,34 +802,41 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
                 <h2>Hands-On Assignments</h2>
-                <p>Complete the following 5 hands-on assignments to master token mechanics and model control parameters.</p>
+                <p>Complete the following 5 hands-on assignments to master token mechanics and the basics of structured prompting.</p>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Tokenizer Fragmentation Inspector</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Install <code>tiktoken</code>. Write a Python script that takes three inputs: 1) Standard English text, 2) A snippet of Python code with indentation, and 3) A non-English sentence (e.g., Hindi, Spanish, or German). Compare the ratio of characters to tokens for all three. Which input exhibits the highest token fragmentation?</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Tokenization Inspector</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Install <code>tiktoken</code>. Write a Python script that takes a piece of text and prints: the original text, the list of tokens, the list of token IDs, and the total token count. Try it on a plain English sentence, a snippet of code, and a non-English sentence, and compare the token counts.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Sliding Window Token Trimmer</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a Python function <code>trim_messages_to_budget(messages: list[dict], max_tokens: int)</code>. The function should calculate the token count of a chat message list and drop the oldest non-system messages first until the total token count is below <code>max_tokens</code>.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Embedding Visualization</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Using Matplotlib, plot the following simplified 2D vectors and visually confirm that the animal-related words cluster separately from the fruit-related words. This is purely a visualization exercise — these are not real LLM embeddings.</p>
+                    <pre style="margin-top: 0.75rem;"><code class="language-python">embeddings = {
+    "cat": [1.0, 2.0],
+    "dog": [1.2, 2.1],
+    "lion": [1.4, 2.4],
+    "apple": [5.0, 1.0],
+    "banana": [5.2, 1.2],
+}</code></pre>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: 3D Vector Geometry Simulator</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Using NumPy, define 3D vectors for: "doctor", "hospital", "nurse", "guitar", and "piano". Write a function that calculates the pairwise cosine distance matrix and proves that musical terms cluster together and medical terms cluster together.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Rewrite a Bad Prompt</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> You are given 5 vague workplace prompts, for example: <code>"Analyze this report."</code>, <code>"Write an email about the delay."</code>, <code>"Summarize the meeting."</code>, <code>"Review this code."</code>, <code>"Explain the incident."</code> Rewrite each one using the RCTNO framework (Role, Context, Task, Constraints, Output) from Section 3.7.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Temperature Sensitivity Experiment</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Run Program 3.0-3 with 5 different temperature values: <code>[0.01, 0.3, 0.7, 1.0, 1.8]</code>. Run each simulation 100 times and plot or print a frequency histogram showing how often the least probable word ("green") gets chosen under each temperature.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Zero-Shot vs. Few-Shot</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Take a customer-complaint classification task (Billing / Technical / Shipping). Solve it once with a zero-shot prompt and once with a few-shot prompt (3 examples). Run each on 5 new complaints, compare how consistent the classifications are, and explain which approach worked better and why.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Stop Sequence Interceptor</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a small simulation loop in Python that generates text token-by-token from a predefined list of words. Configure a stop sequence <code>"PAUSE"</code>. When the loop encounters that token, it must halt generation, print an observation prompt, and simulate passing control back to an external agent.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Structured Output</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Given an unstructured customer complaint, write a prompt that extracts: customer, issue, priority, category, and recommended action. Require the model to return the result as JSON matching those exact field names.</p>
                 </div>
 
-            
+
                 <!-- =========================================================
                      Official References, Research Papers & Standards
                      ========================================================= -->
@@ -761,6 +858,15 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
                         </div>
                         <div class="reference-card">
                             <div class="reference-header">
+                                <span class="ref-tag">arXiv:1706.03762</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">NeurIPS 2017</span>
+                            </div>
+                            <h4>Attention Is All You Need</h4>
+                            <p>Vaswani et al. introduce the Transformer architecture and the self-attention mechanism that modern LLMs are built on.</p>
+                            <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
                                 <span class="ref-tag">arXiv:2307.03172</span>
                                 <span style="font-size: 0.75rem; color: var(--text-muted);">Stanford / TACL</span>
                             </div>
@@ -770,21 +876,21 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
                         </div>
                         <div class="reference-card">
                             <div class="reference-header">
-                                <span class="ref-tag">arXiv:2309.06180</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted);">SOSP 2023</span>
-                            </div>
-                            <h4>Efficient Memory Management for Large Language Model Serving with PagedAttention</h4>
-                            <p>Kwon et al. introduce vLLM and PagedAttention, resolving KV cache fragmentation and enabling 2-4x higher throughput.</p>
-                            <a href="https://arxiv.org/abs/2309.06180" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
-                        </div>
-                        <div class="reference-card">
-                            <div class="reference-header">
                                 <span class="ref-tag">Tiktoken</span>
                                 <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI</span>
                             </div>
                             <h4>Tiktoken BPE Tokenizer Implementation</h4>
                             <p>Fast Byte Pair Encoding tokenizer library used across GPT models with cl100k_base and o200k_base encodings.</p>
                             <a href="https://github.com/openai/tiktoken" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                        </div>
+                        <div class="reference-card">
+                            <div class="reference-header">
+                                <span class="ref-tag">Guide</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">DAIR.AI</span>
+                            </div>
+                            <h4>Prompt Engineering Guide & Taxonomy</h4>
+                            <p>Comprehensive, practical guide cataloging zero-shot, few-shot, Chain-of-Thought, and other prompting techniques.</p>
+                            <a href="https://www.promptingguide.ai/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
                         </div>
                     </div>
                 </div>
@@ -798,7 +904,7 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
                 </a>
                 <a href="day_04.html" class="nav-button next">
                     <span class="nav-label">Next</span>
-                    <span class="nav-title">Day 04: Prompt Engineering</span>
+                    <span class="nav-title">Day 04: Advanced Prompting & Training</span>
                 </a>
             </footer>
 
@@ -826,13 +932,13 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
                 container.querySelector('.mcq-submit').disabled = false;
             });
         });
-        
+
         document.querySelectorAll('.mcq-submit').forEach(button => {
             button.addEventListener('click', function() {
                 const container = this.closest('.mcq-container');
                 const selected = container.querySelector('.mcq-option.selected');
                 const feedback = container.querySelector('.mcq-feedback');
-                
+
                 if (selected) {
                     if (selected.getAttribute('data-correct') === 'true') {
                         feedback.textContent = 'Correct answer! Great job!';
@@ -843,6 +949,64 @@ print("Architectural Lesson: In RAG pipelines, always sort top-ranked chunks so 
                     }
                     feedback.style.display = 'block';
                 }
+            });
+        });
+    </script>
+    <script>
+        // 3D Embedding Space Visualization: drag-to-rotate
+        (function() {
+            const viewport = document.getElementById('embed3d-viewport');
+            const scene = document.getElementById('embed3d-scene');
+            if (!viewport || !scene) return;
+
+            let isDragging = false;
+            let startX = 0, startY = 0;
+            let rotX = -18, rotY = -28;
+
+            function applyRotation() {
+                scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            }
+
+            function startDrag(e) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                viewport.style.cursor = 'grabbing';
+                viewport.setPointerCapture(e.pointerId);
+            }
+
+            function moveDrag(e) {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                rotY += dx * 0.4;
+                rotX = Math.max(-80, Math.min(80, rotX - dy * 0.4));
+                startX = e.clientX;
+                startY = e.clientY;
+                applyRotation();
+            }
+
+            function stopDrag() {
+                isDragging = false;
+                viewport.style.cursor = 'grab';
+            }
+
+            viewport.addEventListener('pointerdown', startDrag);
+            viewport.addEventListener('pointermove', moveDrag);
+            viewport.addEventListener('pointerup', stopDrag);
+            viewport.addEventListener('pointerleave', stopDrag);
+        })();
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\[", right: "\\]", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false}
+                ],
+                throwOnError: false
             });
         });
     </script>
