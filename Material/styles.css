@@ -141,6 +141,144 @@ body {
     font-weight: 500;
 }
 
+/* Disabled TOC items in vertical tabs (unreleased days) */
+.toc li.disabled,
+.toc li:has(> a.disabled),
+.toc li:has(a[href^="day_05"]),
+.toc li:has(a[href^="day_06"]),
+.toc li:has(a[href^="day_07"]),
+.toc li:has(a[href^="day_08"]),
+.toc li:has(a[href^="day_09"]),
+.toc li:has(a[href^="day_1"]),
+.toc li:has(a[href^="day_2"]) {
+    cursor: not-allowed;
+}
+
+.toc li.disabled > a,
+.toc li.disabled a,
+.toc li a.disabled,
+.toc li:has(a[href^="day_05"]) > a,
+.toc li:has(a[href^="day_06"]) > a,
+.toc li:has(a[href^="day_07"]) > a,
+.toc li:has(a[href^="day_08"]) > a,
+.toc li:has(a[href^="day_09"]) > a,
+.toc li:has(a[href^="day_1"]) > a,
+.toc li:has(a[href^="day_2"]) > a {
+    color: var(--text-muted) !important;
+    opacity: 0.45;
+    cursor: not-allowed !important;
+    user-select: none;
+    border-left-color: transparent !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: auto;
+}
+
+.toc li.disabled a:hover,
+.toc li.disabled:hover > a,
+.toc li a.disabled:hover,
+.toc li:has(a[href^="day_05"]) > a:hover,
+.toc li:has(a[href^="day_06"]) > a:hover,
+.toc li:has(a[href^="day_07"]) > a:hover,
+.toc li:has(a[href^="day_08"]) > a:hover,
+.toc li:has(a[href^="day_09"]) > a:hover,
+.toc li:has(a[href^="day_1"]) > a:hover,
+.toc li:has(a[href^="day_2"]) > a:hover {
+    color: var(--text-muted) !important;
+    background-color: transparent !important;
+    border-left-color: transparent !important;
+    opacity: 0.55;
+}
+
+.toc-status-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    background-color: var(--border-color);
+    color: var(--text-muted);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    opacity: 0.85;
+}
+
+/* Search modal disabled item */
+.search-result-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.search-result-item.disabled:hover {
+    background-color: transparent !important;
+}
+
+/* Disabled page navigation button (e.g. Next on Day 4) */
+.nav-button.disabled-nav {
+    opacity: 0.45;
+    cursor: not-allowed !important;
+}
+
+.nav-button.disabled-nav:hover {
+    border-color: var(--border-color) !important;
+    background-color: transparent !important;
+    transform: none !important;
+}
+
+/* Floating Toast Notification */
+.course-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 99999;
+    background: var(--card-bg, #1e293b);
+    color: var(--text-color, #f8fafc);
+    border: 1px solid var(--border-color, #334155);
+    border-left: 4px solid #f59e0b;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 360px;
+}
+
+.course-toast.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.course-toast .toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f59e0b;
+    flex-shrink: 0;
+}
+
+.course-toast .toast-message {
+    line-height: 1.4;
+    color: var(--text-color, #f8fafc);
+}
+
+@media (max-width: 600px) {
+    .course-toast {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1.5rem;
+        max-width: none;
+    }
+}
+
 .toc-main {
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
@@ -460,9 +598,9 @@ body {
 }
 
 @keyframes gentleFloat {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0); }
+    0% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-8px); opacity: 1; }
+    100% { transform: translateY(0); opacity: 1; }
 }
 
 .book-page img, .book-page table, .book-page pre, .mcq-container {
@@ -482,6 +620,7 @@ body {
 }
 
 .book-page img:hover {
+    opacity: 1;
     animation: gentleFloat 3s ease-in-out infinite;
     box-shadow: 0 12px 24px rgba(240, 81, 35, 0.2) !important; /* Accent colored glow */
 }

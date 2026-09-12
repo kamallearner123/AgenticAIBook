@@ -3,27 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 1: The AI Landscape</title>
-    <link rel="stylesheet" href="styles.css">
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- PrismJS CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <title>Day 1: Python Fundamentals for Agentic AI</title>
     
     <!-- Theme Toggle Script -->
     <script>const savedTheme = localStorage.getItem('rust-book-theme'); if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
-    <!-- KaTeX for Math Rendering -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS CSS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar / Table of Contents -->
+        <!-- Sidebar Navigation -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2>Agentic AI Course</h2>
@@ -32,39 +28,39 @@
                 <ul class="toc">
                     <li><a href="index.html">Course Overview</a></li>
                     
-                    <li class="active"><a href="day_01.html">Day 1: The AI Landscape</a></li>
-                    <li><a href="day_02.html">Day 2: Python Fundamentals</a></li>
+                    <li class="active"><a href="day_01.html">Day 1: Python Fundamentals</a></li>
+                    <li><a href="day_02.html">Day 2: The AI Landscape</a></li>
                     <li><a href="day_03.html">Day 3: LLM & Prompting Basics</a></li>
                     <li><a href="day_04.html">Day 4: Advanced Prompting & Training</a></li>
-                    <li><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
-                    <li><a href="day_06.html">Day 6: Tool Execution</a></li>
-                    <li><a href="day_07.html">Day 7: Repeatable Processes</a></li>
-                    <li><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
+                    <li class="disabled"><a href="day_05.html">Day 5: LLM Specialist Behavior</a></li>
+                    <li class="disabled"><a href="day_06.html">Day 6: Tool Execution</a></li>
+                    <li class="disabled"><a href="day_07.html">Day 7: Repeatable Processes</a></li>
+                    <li class="disabled"><a href="day_08.html">Day 8: Project: AI Problem Solver</a></li>
 
-                    <li><a href="day_09.html">Day 9: Agentic Mindset</a></li>
-                    <li><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
-                    <li><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
-                    <li><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
-                    <li><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
-                    <li><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
-                    <li><a href="day_15.html">Day 15: RAG + Tools</a></li>
-                    <li><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
+                    <li class="disabled"><a href="day_09.html">Day 9: Agentic Mindset</a></li>
+                    <li class="disabled"><a href="day_10.html">Day 10: Tool Selection (ReAct)</a></li>
+                    <li class="disabled"><a href="day_11.html">Day 11: Intro to RAG Pipelines</a></li>
+                    <li class="disabled"><a href="day_12.html">Day 12: Improving Retrieval Quality</a></li>
+                    <li class="disabled"><a href="day_13.html">Day 13: LangChain Abstractions</a></li>
+                    <li class="disabled"><a href="day_14.html">Day 14: n8n Visual Automation</a></li>
+                    <li class="disabled"><a href="day_15.html">Day 15: RAG + Tools</a></li>
+                    <li class="disabled"><a href="day_16.html">Day 16: Project: Company Knowledge Agent</a></li>
 
-                    <li><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
-                    <li><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
-                    <li><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
-                    <li><a href="day_20.html">Day 20: Security & Guardrails</a></li>
-                    <li><a href="day_21.html">Day 21: UI & Productionization</a></li>
-                    <li><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
-                    <li><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
-                    <li><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
+                    <li class="disabled"><a href="day_17.html">Day 17: LangGraph Fundamentals</a></li>
+                    <li class="disabled"><a href="day_18.html">Day 18: Agent Persistence & State</a></li>
+                    <li class="disabled"><a href="day_19.html">Day 19: Multi-Agent Systems</a></li>
+                    <li class="disabled"><a href="day_20.html">Day 20: Security & Guardrails</a></li>
+                    <li class="disabled"><a href="day_21.html">Day 21: UI & Productionization</a></li>
+                    <li class="disabled"><a href="day_22.html">Day 22: Shipping Real Agents</a></li>
+                    <li class="disabled"><a href="day_23.html">Day 23: Project: Recoverable Agent</a></li>
+                    <li class="disabled"><a href="day_24.html">Day 24: Capstone: Automotive Agent</a></li>
                 </ul>
             </div>
         </nav>
 
+        <!-- Main Content Area -->
         <main class="main-content">
             <header class="top-nav" id="top-nav">
-                <!-- Left Nav (Hamburger) -->
                 <div class="nav-left">
                     <button class="menu-toggle" aria-label="Toggle Menu">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -74,8 +70,6 @@
                         </svg>
                     </button>
                 </div>
-                
-                <!-- Right Nav Actions -->
                 <div class="nav-actions">
                     <div class="completeness-badge">
                         Completeness: <span>4%</span>
@@ -85,34 +79,12 @@
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                         </svg>
                     </button>
-                    <button class="icon-btn" aria-label="Search">
-                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
-                    <button class="icon-btn" aria-label="Print">
-                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                            <rect x="6" y="14" width="12" height="8"></rect>
-                        </svg>
-                    </button>
-                    <button class="icon-btn" aria-label="GitHub">
-                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-                        </svg>
-                    </button>
                 </div>
             </header>
 
             <article class="book-page">
                 <span class="chapter-number">Session 1.0</span>
-                <h1>Day 1: The AI Landscape: From Basic ML to LLMs</h1>
-
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--text-muted); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>Problem Statement:</strong> We constantly hear buzzwords like Machine Learning, Deep Learning, Transformers, and Large Language Models. Without understanding the foundational differences between them, it is impossible to engineer systems that utilize them effectively. How do they connect, and why are LLMs structurally different from what came before?
-                </div>
+                <h1>Day 1: Python Fundamentals for Agentic AI</h1>
 
                 <!-- =========================================================
                      Daily Plan & Learning Architecture
@@ -124,865 +96,573 @@
                         </div>
                         <div class="daily-plan-badges">
                             <span class="plan-badge plan-badge-primary">Session 1.0</span>
-                            <span class="plan-badge plan-badge-secondary">Week 1</span>
-                            <span class="plan-badge plan-badge-secondary">Estimated: 3.5 hrs</span>
+                            <span class="plan-badge plan-badge-secondary">Module 1</span>
+                            <span class="plan-badge plan-badge-secondary">Estimated: 4.0 hrs</span>
                         </div>
                     </div>
                     <div class="daily-plan-grid">
                         <div class="plan-col">
                             <h4>🎯 Today's Mission & Relevance</h4>
                             <ul>
-                                <li>Demystify the operational and structural differences between Classical ML, Deep Learning, and Generative Transformers.</li><li>Establish the engineering rationale for transitioning from single-prompt LLMs to autonomous, closed-loop Agentic Systems.</li><li>Profile real-world latency dynamics (TTFT vs. TPOT) to design cost-effective production architectures.</li>
+                                <li>Harden Python 3.12 primitives to create bug-free, type-safe agent state containers.</li><li>Master Pydantic v2 schema validation to eliminate ill-formed LLM JSON hallucinations before execution.</li><li>Build asynchronous concurrency pipelines with full-jitter exponential backoff to survive API outages.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
                             <h4>📐 Theoretical Milestones</h4>
                             <ul>
-                                <li>Chinchilla compute-optimal scaling laws ($6ND$ total training FLOPs vs. $2N$ forward inference FLOPs).</li><li>The 5 Levels of AI Autonomy: from Rule-based automation to full Context-Aware Multi-Agent Swarms.</li><li>Logit probability distributions, temperature sampling, and cumulative token cost thermodynamics.</li>
+                                <li>Algebraic Type Systems in Python: `TypedDict`, `Annotated`, and runtime type introspection.</li><li>Pydantic v2 Rust core validation engine (`pydantic-core`) and serialization performance.</li><li>Network resilience dynamics: Full-jitter exponential backoff vs. naive linear retry storms.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
                             <h4>💻 Hands-On Blueprint</h4>
                             <ul>
-                                <li>Program 1.1: Multi-Model Architecture Classifier (Classical vs. Deep Learning vs. Transformer).</li><li>Program 1.2: Production TTFT vs. TPOT Latency & Inter-Token Jitter Profiler.</li><li>Program 1.3: Enterprise Model Selection & Total Cost of Ownership (TCO) Calculator.</li>
+                                <li>Program 1.1: Production Type-Safe Agent State Container with `Annotated` and `TypedDict`.</li><li>Program 1.2: Pydantic v2 Automated Tool Schema Extractor with strict Field validation.</li><li>Program 1.3: Asynchronous Multi-Agent Execution Engine with Semaphores and Full-Jitter Backoff.</li>
                             </ul>
                         </div>
                         <div class="plan-col">
                             <h4>🛡️ Production Failure Modes</h4>
                             <ul>
-                                <li>The 'LLM-for-Everything' Anti-Pattern: Using a 70B LLM for deterministic tabular math or rule checks.</li><li>Unbounded Token Cost Explosion: Forgetting rate limits and context expansion guards in enterprise pipelines.</li>
+                                <li>Silent Type Coercion: Passing unvalidated dictionaries between agent nodes causing downstream runtime crashes.</li><li>Thundering Herd Outages: Retrying failed LLM requests at fixed intervals, amplifying upstream rate-limit errors.</li>
                             </ul>
                         </div>
                     </div>
                     <div class="daily-plan-footer">
-                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Complete Latency & TCO Profiler Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
+                        <span>🏁 <strong>Daily Milestone Deliverables:</strong> Async Resilient Agent Gateway Engine • 10 Interactive MCQs • 5 Hands-On Assignments</span>
                     </div>
                 </div>
 
 
-                <h2>1.1. Traditional Programming vs. Machine Learning</h2>
-                <p>To understand AI, we must first look at how software was historically built. In <strong>Traditional Programming</strong>, a human developer analyzes a problem and writes explicit, step-by-step instructions (rules or algorithms) for the computer to follow. The computer takes the <em>Data</em> and the <em>Rules</em> to produce an <em>Output</em>.</p>
-                
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>Real World Example:</strong> A basic spam filter. A programmer writes a rule: <code>IF email contains "free money" THEN classify as SPAM</code>. If spammers change their tactic to "fr33 m0ney", the programmer must manually rewrite the code.
-                </div>
-
-                <p><strong>Machine Learning (ML)</strong> flips this paradigm completely. Instead of providing the rules, you provide the computer with historical <em>Data</em> and the expected <em>Outputs</em> (often called labels). The machine learning algorithm uses statistical mathematics to autonomously figure out the <em>Rules</em>. Once the rules are learned (a phase called "training"), the resulting "Model" can apply those rules to brand new, unseen data.</p>
-                <p><em>Reference: Arthur Samuel coined the term "Machine Learning" in 1959, defining it as a "field of study that gives computers the ability to learn without being explicitly programmed." (<a href="https://ieeexplore.ieee.org/document/5392560" target="_blank" style="color: var(--accent);">Samuel, A. L., 1959</a>).</em></p>
+                <p><strong>The Problem:</strong> Building an AI Agent requires connecting an LLM to the outside world. Your code must sanitize user inputs, loop through multi-step reasoning, ingest unstructured PDFs/CSVs, parse JSON, query databases, and save state. If you don't understand core Python fundamentals like data types, file reading, JSON, database queries, and search logic, you cannot build a functional agent.</p>
+                <p><strong>The Solution:</strong> In this session, we will master Python fundamentals built specifically for Agentic workflows—covering Python history, data types & operations, word searching in lists and dictionaries, file I/O, CSV parsing, JSON serialization, and database CRUD operations.</p>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>1.2. The Four Pillars of Machine Learning</h2>
-                <p>Machine Learning is not a monolith; it is categorized into distinct paradigms based on how the algorithms receive feedback and learn from data.</p>
+                <h2>1.0. History & Evolution of Python in AI</h2>
+                <p>Python was created by <strong>Guido van Rossum</strong> in 1989 (first released in 1991) as a successor to the ABC language. Over three decades, Python evolved through major milestones:</p>
+                <ul>
+                    <li><strong>Python 1.0 (1994):</strong> Introduced functional programming tools like <code>lambda</code>, <code>map</code>, <code>filter</code>, and <code>reduce</code>.</li>
+                    <li><strong>Python 2.0 (2000):</strong> Added list comprehensions, garbage collection with cycle detection, and Unicode support.</li>
+                    <li><strong>Python 3.0 (2008):</strong> Cleaned up string/byte distinction (UTF-8 default), print function syntax, and integer division logic.</li>
+                    <li><strong>Python 3.12+ (Present):</strong> High-performance CPython C-extensions, GIL removal experiments, and native typing features (`TypedDict`, `Annotated`).</li>
+                </ul>
+                <p><strong>Why Python is the Lingua Franca of Agentic AI:</strong></p>
+                <ul>
+                    <li><strong>Rich Ecosystem:</strong> Libraries like PyTorch, NumPy, Pydantic, LangChain, and Asyncio make building AI workflows effortless.</li>
+                    <li><strong>Glue Language:</strong> Easily binds high-speed C/C++ and Rust engines (`pydantic-core`, `llama.cpp`) with Python interface abstractions.</li>
+                    <li><strong>Readability & Dynamic Typing:</strong> Enables rapid prototyping of complex prompt chains and tool execution graphs.</li>
+                </ul>
 
-                <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
-                    <img src="assets/four_pillars_ml_diagram_1788556680946.png" alt="Four Pillars of Machine Learning Diagram" style="max-width: 100%; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                </div>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-2A: The Four Core Paradigms of Machine Learning</div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>Supervised Learning:</strong> Task-driven models requiring labeled input-output pairs to make predictions (e.g., Classification & Regression).</li>
-                        <li><strong>Unsupervised Learning:</strong> Data-driven models exploring unlabeled data to discover hidden structures and groupings (e.g., Clustering).</li>
-                        <li><strong>Reinforcement Learning:</strong> Interaction-based models where an agent learns to make decisions to maximize a cumulative reward (e.g., Gaming & Robotics).</li>
-                        <li><strong>Generative AI:</strong> Creative models that learn massive datasets to generate entirely new content based on patterns (e.g., LLMs & Image Generation).</li>
-                    </ul>
-                </div>
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h3>Pillar 1: Supervised Learning</h3>
-                <p><strong>Goal:</strong> Learn a mapping from inputs to outputs using a fully labeled dataset.</p>
-                <p>In Supervised Learning, a "supervisor" (the human) provides the exact answers during training. For example, providing 10,000 images of cats and dogs, where every single image is explicitly labeled as "Cat" or "Dog". The algorithm learns the mapping of pixels to the label. If the output is a continuous number (like house prices), it is called <strong>Regression</strong>. If it's a category (like Cat vs Dog), it is called <strong>Classification</strong>.</p>
+                <h2>1.1. Variables, Data Types & Operations</h2>
                 
                 <div style="padding: 2rem; background: var(--border-color); text-align: center; border-radius: 8px; margin: 1.5rem 0 0.5rem 0; color: var(--text-muted);">
-                    <img src="assets/linear_regression_graph_1788557246067.png" alt="Linear Regression Graph y=wx+c" style="max-width: 100%; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <img src="assets/python_variables_diagram_1788556494180.png" alt="Python Variables Diagram" style="max-width: 100%; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 </div>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-1A: Linear Regression (y = wx + c)</div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained (The Math Behind Learning):</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>Scatter Plot Data (Orange Points):</strong> The historical labeled dataset. E.g., X = Study Hours, Y = Exam Score.</li>
-                        <li><strong>Regression Line:</strong> The algorithm's "prediction rule", represented mathematically as a straight line of best fit.</li>
-                        <li><strong>y = wx + c:</strong> The mathematical equation the algorithm learns. <strong>y</strong> is the target prediction. <strong>x</strong> is the input feature. <strong>w (weight)</strong> is the slope of the line, and <strong>c (bias/intercept)</strong> is where it crosses the axis.</li>
-                        <li><strong>Residuals (Errors):</strong> The vertical distance between the actual data points and the predicted line. The algorithm "learns" by continuously adjusting <em>w</em> and <em>c</em> to minimize these errors as much as possible!</li>
-                    </ul>
-                </div>
-                
-                <img src="assets/supervised_learning_diagram_1788552559950.png" alt="Supervised Learning Diagram" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0 0.5rem 0;">
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-1: Supervised Learning Process</div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>Labeled Data (Features + Labels):</strong> The historical input data provided to the algorithm (e.g., square footage of a house) mapped to the correct answer (e.g., price).</li>
-                        <li><strong>Model / Algorithm:</strong> The mathematical engine (like Random Forest or Linear Regression) that finds the patterns connecting the features to the labels during the <em>Training Phase</em>.</li>
-                        <li><strong>Prediction / Output:</strong> When given completely <em>Unlabeled Input</em> (New Data), the trained model calculates the most statistically probable label (e.g., classifying a new image as a "Dog" with 94% confidence).</li>
-                    </ul>
-                </div>
-                
-                <p><em>Reference: The `scikit-learn` library is the industry standard for traditional supervised learning in Python. (<a href="https://scikit-learn.org/stable/supervised_learning.html" target="_blank" style="color: var(--accent);">Scikit-learn Documentation</a>).</em></p>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 2.0-1: Python Variables and Basic Data Types in Memory</div>
+
+                <p>Variables hold state. Python provides core primitive types (<code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code>) and composite collection types (<code>list</code>, <code>tuple</code>, <code>set</code>, <code>dict</code>).</p>
 
                 <pre><code class="language-python">
-# Supervised Learning: Linear Regression
-# We know the size of the house (X) AND the final price (y).
-import numpy as np
-from sklearn.linear_model import LinearRegression
+# Program 1.0-1: Data Types, Interactive User Input & String Operations
+agent_name: str = "DataBot-X"         # String (str)
+temperature: float = 0.7              # Float (float)
+max_iterations: int = 5               # Integer (int)
+is_active: bool = True                # Boolean (bool)
 
-# Training Data: House Sizes in 1000s of sq ft
-X_train = np.array([[1], [2], [3], [4]]) 
-# Labels: Actual sold prices in $1000s
-y_train = np.array([200, 400, 600, 800]) 
+# Interactive User Input (Prompts user in browser runtime)
+raw_user_input = input("Enter prompt for Agent: ")
 
-# The model autonomously figures out the rule (Price = Size * 200)
-model = LinearRegression()
-model.fit(X_train, y_train)
+# String Operations: Sanitization & Slicing
+sanitized_input = raw_user_input.strip().lower() # Cleaning whitespace and casing
+short_summary = sanitized_input[:16]             # String Slicing [start:end]
+replaced_text = sanitized_input.replace("summarize", "analyze")
 
-# Predict a completely unseen house size
-predicted_price = model.predict([[5]])[0]
-print(f"Predicted price for 5k sq ft house: ${predicted_price:.2f}k")
+print(f"Cleaned Input: '{sanitized_input}'")
+print(f"Replaced Action: '{replaced_text}'")
                 </code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-1: Supervised Learning (Regression)</div>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-1: Interactive User Input & String Operations</div>
 
-                <h3>Pillar 2: Unsupervised Learning</h3>
-                <p><strong>Goal:</strong> Find hidden patterns, groupings, or structures in raw, unlabeled data.</p>
-                <p>Here, the algorithm is given data without any correct answers. It must rely on measuring the mathematical distances between data points to find natural structures. The most common technique is <strong>Clustering</strong>.</p>
-                
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>Real World Example:</strong> Netflix recommendation systems analyzing viewing habits. They don't have predefined labels for every user, but they can group users into clusters who watch similar shows.
-                </div>
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <img src="assets/unsupervised_learning_diagram_1788552571815.png" alt="Unsupervised Learning Diagram" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0 0.5rem 0;">
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-2: Unsupervised Learning (Clustering)</div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>Unlabeled Data Input:</strong> Raw data points entering the system with no predefined "correct answers" or categories (represented by mixed shapes).</li>
-                        <li><strong>Clustering Algorithm:</strong> The model (e.g., K-Means or DBSCAN) mathematically calculates the distances and similarities between every raw data point.</li>
-                        <li><strong>Clustered Data Output:</strong> The model groups the data into distinct categories based purely on hidden similarities it discovered (e.g., separating circles, squares, and triangles into separate clusters).</li>
-                    </ul>
-                </div>
+                <h2>1.2. Collections & Searching for Words (List, Dict, String)</h2>
+                <p>Agents process large collections of text, tools, and message histories. Searching efficiently inside <strong>Lists</strong>, <strong>Dictionaries</strong>, and <strong>Strings</strong> is a core agentic requirement.</p>
 
                 <pre><code class="language-python">
-# Unsupervised Learning: K-Means Clustering
-# We have coordinates of data, but we don't know what they represent.
-from sklearn.cluster import KMeans
-import numpy as np
+# Program 1.0-2: Searching for Words in Lists, Dictionaries, and Strings
 
-# Notice there are no 'y' labels here!
-X_unlabeled = np.array([
-    [1.1, 2.0], [1.0, 4.1], [1.2, 0.5], # Cluster A (bottom left)
-    [10.2, 2.1], [10.0, 4.0], [10.3, 0.8] # Cluster B (bottom right)
-])
+# 1. SEARCHING IN A STRING
+prompt_text = "The user requested an urgent financial refund for order #9921."
+target_word = "refund"
 
-# Tell the model to find 2 distinct groups
-kmeans = KMeans(n_clusters=2, random_state=42, n_init="auto")
-kmeans.fit(X_unlabeled)
+if target_word in prompt_text.lower():
+    print(f"✓ Found target word '{target_word}' at index: {prompt_text.find(target_word)}")
 
-print(f"The model grouped the data points as follows:")
-print(f"Cluster assignments: {kmeans.labels_}")
-                </code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-2: Unsupervised Learning (Clustering)</div>
+# 2. SEARCHING IN A LIST
+tool_registry = ["web_search", "calculator", "sql_database", "pdf_parser", "email_sender"]
+query_tool = "sql_database"
 
-                <h3>Pillar 3: Reinforcement Learning (RL)</h3>
-                <p><strong>Goal:</strong> Learn the optimal sequence of decisions by interacting with an environment through trial and error.</p>
-                <p>In RL, an <em>Agent</em> observes the <em>State</em> of an <em>Environment</em> and takes an <em>Action</em>. The environment returns a <em>Reward</em> (positive or negative). The agent updates its internal "Policy" to maximize long-term rewards. This is heavily used in robotics, self-driving cars, and game-playing AI (like DeepMind's AlphaGo).</p>
-                <p><em>Reference: "Reinforcement Learning: An Introduction" by Richard S. Sutton and Andrew G. Barto is the definitive textbook on this topic.</em></p>
+# Exact Search using 'in' operator
+if query_tool in tool_registry:
+    tool_index = tool_registry.index(query_tool)
+    print(f"✓ Tool '{query_tool}' is registered at position #{tool_index}")
 
-                <img src="assets/reinforcement_learning_diagram_1788552581854.png" alt="Reinforcement Learning Diagram" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0 0.5rem 0;">
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-3: Reinforcement Learning (RL) Cycle <span style="font-size: 0.8rem;">(Ref: Sutton & Barto, 2018)</span></div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>Agent:</strong> The AI entity making decisions based on its "Policy, &pi;" (the strategy determining its behavior).</li>
-                        <li><strong>Environment:</strong> The world or system the Agent is interacting with (e.g., a chessboard or a simulated physics engine).</li>
-                        <li><strong>State (s<sub>t</sub>):</strong> The current snapshot or observation of the Environment at time <em>t</em>.</li>
-                        <li><strong>Action (a<sub>t</sub>):</strong> The move the Agent decides to make in the environment.</li>
-                        <li><strong>Reward (r<sub>t</sub>):</strong> The immediate feedback (+ or -) the Environment returns after an action, which the Agent uses to update its Policy.</li>
-                    </ul>
-                </div>
+# Search using List Comprehension (Filter words matching pattern)
+search_keyword = "sql"
+matching_tools = [tool for tool in tool_registry if search_keyword in tool]
+print(f"Matching tools for keyword '{search_keyword}': {matching_tools}")
 
-                <pre><code class="language-python">
-# Reinforcement Learning (Conceptual Policy Update)
-# The Q-Table represents the Agent's "brain" or Policy.
-q_table = {
-    "state_Intersection": {"action_go": 0.0, "action_stop": 0.0}
+# 3. SEARCHING IN A DICTIONARY (Keys & Values)
+agent_knowledge_base = {
+    "pricing_policy": "All enterprise plans include unlimited API calls.",
+    "refund_policy": "Refunds are processed within 5 business days.",
+    "support_hours": "24/7 technical assistance for tier 1 accounts."
 }
 
-# The agent tries going at a red light and crashes (Negative Reward)
-reward = -100 
-learning_rate = 0.1
+# Search by Key
+if "refund_policy" in agent_knowledge_base:
+    print(f"✓ Key found! Policy content: {agent_knowledge_base['refund_policy']}")
 
-# The agent updates its policy based on the penalty
-q_table["state_Intersection"]["action_go"] += learning_rate * reward 
-
-print(f"After the crash, the Agent's brain learned:")
-print(f"Updated Q-Table: {q_table}")
-# Next time it is at state_Intersection, it will avoid action_go.
+# Search by Value Content
+search_term = "unlimited"
+found_topics = [key for key, val in agent_knowledge_base.items() if search_term in val.lower()]
+print(f"Topics mentioning '{search_term}': {found_topics}")
                 </code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-3: Reinforcement Learning (Policy Update)</div>
-
-                <h3>Summary Comparison: Supervised vs. Unsupervised Learning</h3>
-                <p>The two most common pillars in enterprise AI are Supervised and Unsupervised learning. Here is a direct comparison of their differences:</p>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem; background-color: var(--sidebar-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <thead>
-                        <tr style="background-color: var(--accent); color: white; text-align: left;">
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Feature</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Supervised Learning</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Unsupervised Learning</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Data Type</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Labeled (Inputs matched with known answers)</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Unlabeled (Only inputs, no answers provided)</td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Primary Goal</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Predicting future outcomes based on history</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Discovering hidden patterns and groupings</td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Human Effort</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">High (Requires humans to manually label data)</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Low (Algorithm groups raw data autonomously)</td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Algorithms</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Linear Regression, Random Forest, SVM</td><td style="padding: 1rem; border: 1px solid var(--border-color);">K-Means, DBSCAN, Principal Component Analysis</td></tr>
-                    </tbody>
-                </table>
-
-                <h3>Most Frequently Used ML Models Reference Table</h3>
-                <p>Below is a reference guide for the most common traditional Machine Learning algorithms used in the industry today:</p>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem; background-color: var(--sidebar-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <thead>
-                        <tr style="background-color: var(--accent); color: white; text-align: left;">
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Model Name</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Type</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Core Mechanism</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Top 3 Real-World Examples</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Linear Regression</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Supervised</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Draws a straight "line of best fit" through data.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>House price estimation</li><li>Sales revenue forecasting</li><li>Salary prediction based on experience</li></ul></td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Logistic Regression</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Supervised</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Estimates probability using a sigmoid curve.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Email spam detection</li><li>Disease probability prediction</li><li>Loan approval/rejection</li></ul></td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Random Forest</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Supervised</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Creates hundreds of Decision Trees and averages their votes.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Credit score risk assessment</li><li>Fraudulent transaction detection</li><li>E-commerce product recommendation</li></ul></td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Support Vector Machine (SVM)</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Supervised</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Finds the optimal mathematical boundary (hyperplane) between classes.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Text classification (news categories)</li><li>Bioinformatics (protein classification)</li><li>Face detection systems</li></ul></td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>K-Means</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Unsupervised</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Iteratively groups data into 'K' centroids based on distance.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Customer market segmentation</li><li>Document clustering</li><li>Fraud detection (spotting anomalies)</li></ul></td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Principal Component Analysis (PCA)</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Unsupervised</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Condenses many variables into a few key "principal" variables.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Image data compression</li><li>Feature reduction for complex datasets</li><li>Financial market index generation</li></ul></td></tr>
-                    </tbody>
-                </table>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-2: Word Search Algorithms in Lists, Dicts & Strings</div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>1.3. Deep Learning & Neural Networks</h2>
-                <p>For decades, traditional machine learning required human engineers to perform <strong>Feature Extraction</strong>. For example, to predict house prices, a human had to explicitly tell the algorithm to look at "Square Footage" and "Number of Bedrooms".</p>
-                
-                <p><strong>Deep Learning</strong> is a powerful subset of machine learning inspired by the human brain. Instead of humans defining the features, Deep Learning uses multi-layered mathematical structures called <strong>Neural Networks</strong> to automatically discover the features on its own. Let's explore the three foundational architectures.</p>
-
-                <h3>3.1. Standard Artificial Neural Networks (ANNs)</h3>
-                <p>An Artificial Neural Network (ANN), often called a Multi-Layer Perceptron (MLP), is the most basic form. Data passes straight through from left to right (feedforward).</p>
-                <ul>
-                    <li><strong>Input Layer:</strong> Receives raw numerical data (e.g., patient age, blood pressure).</li>
-                    <li><strong>Hidden Layers:</strong> These layers perform mathematical transformations (using "weights" and "biases") to find non-linear patterns. Deep learning simply means there are <em>many</em> hidden layers.</li>
-                    <li><strong>Output Layer:</strong> Produces the final prediction (e.g., probability of disease).</li>
-                </ul>
-                <img src="assets/standard_neural_network_diagram_1788554963627.png" alt="Standard Artificial Neural Network Diagram" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0 0.5rem 0;">
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-4: Standard Artificial Neural Network (ANN)</div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub> (Input Nodes):</strong> Numerical representations of raw data entering the network.</li>
-                        <li><strong>Hidden Layers:</strong> Intermediate nodes where calculations occur. Each line represents a <em>Weight</em> (importance) connecting nodes. The "+" inside nodes indicates the summation of inputs and application of an Activation Function.</li>
-                        <li><strong>y<sub>1</sub>, y<sub>2</sub> (Output Nodes):</strong> The final predictions produced by the network (e.g., probabilities for a binary classification).</li>
-                    </ul>
-                </div>
-                
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>5 Real-World Examples of ANNs:</strong>
-                    <ol>
-                        <li><strong>Credit Card Fraud Detection:</strong> Analyzing transaction amounts, locations, and times to flag anomalies.</li>
-                        <li><strong>Medical Diagnosis:</strong> Predicting the likelihood of diabetes based on a patient's lab test numbers.</li>
-                        <li><strong>Customer Churn Prediction:</strong> Telecom companies using account age and usage stats to guess if a customer will cancel.</li>
-                        <li><strong>Real Estate Valuation:</strong> Estimating a home's price based on numeric features like ZIP code and square footage.</li>
-                        <li><strong>Loan Default Risk:</strong> Banks determining the probability that an applicant will fail to repay a loan.</li>
-                    </ol>
-                </div>
-
-                <h3>3.2. Convolutional Neural Networks (CNNs)</h3>
-                <p>While standard ANNs are great for numbers, they are terrible at images because they ignore spatial relationships. A CNN solves this by using "Convolutional Filters"—essentially small mathematical grids that slide over an image to detect spatial patterns.</p>
-                <p>The first layers detect simple edges (lines), deeper layers combine edges into shapes (circles/squares), and the final layers combine shapes into objects (a dog's face). This spatial awareness revolutionized computer vision.</p>
-                
-                <img src="assets/cnn_diagram_1788554973368.png" alt="Convolutional Neural Network Diagram" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0 0.5rem 0;">
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-5: Convolutional Neural Network (CNN) Flow</div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>Input Image:</strong> The raw image data (width &times; height &times; RGB color channels).</li>
-                        <li><strong>Filters (Kernels):</strong> Small mathematical grids (e.g., 3x3) that slide over the image to detect visual features.</li>
-                        <li><strong>Activation Maps:</strong> The output from the filters highlighting extracted features (like low-level edges or high-level abstracted shapes).</li>
-                        <li><strong>Max-Pooling:</strong> A downsampling step that reduces the spatial size of the maps, keeping only the most important features.</li>
-                        <li><strong>Feature Vector:</strong> The final flat array of numbers representing all high-level features, fed into a Fully Connected Layer to predict final labels.</li>
-                    </ul>
-                </div>
-
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>5 Real-World Examples of CNNs:</strong>
-                    <ol>
-                        <li><strong>Facial Recognition:</strong> Unlocking your smartphone by mapping the spatial features of your face.</li>
-                        <li><strong>Medical Imaging:</strong> Detecting cancerous tumors in X-rays or MRI scans better than human doctors.</li>
-                        <li><strong>Self-Driving Cars (Perception):</strong> Processing live camera feeds to detect stop signs, pedestrians, and lane markings.</li>
-                        <li><strong>Satellite Imagery Analysis:</strong> Counting the number of solar panels or tracking deforestation from orbit.</li>
-                        <li><strong>Optical Character Recognition (OCR):</strong> Converting a photo of a physical receipt into digital text.</li>
-                    </ol>
-                </div>
-
-                <h3>3.3. Recurrent Neural Networks (RNNs)</h3>
-                <p>Standard ANNs and CNNs have a major flaw: they have no memory. If you feed them the word "bark", they don't know if you are talking about a dog or a tree because they didn't remember the previous word in the sentence.</p>
-                <p>A Recurrent Neural Network (RNN) solves this by processing data <em>sequentially</em> over time. It has a "Memory Loop" (a hidden state) that takes information from Step 1 and passes it into Step 2. This makes RNNs ideal for text, audio, and time-series data where the order of information is critical.</p>
-
-                <img src="assets/rnn_diagram_1788554987349.png" alt="Recurrent Neural Network Diagram" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0 0.5rem 0;">
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-6: Recurrent Neural Network (RNN) Unrolled Through Time</div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>x<sub>t</sub> (Input at Time t):</strong> The data point entering the network at a specific time step (e.g., the first word of a sentence).</li>
-                        <li><strong>RNN Node (h<sub>t</sub>):</strong> The calculation node processing the current input combined with the previous memory.</li>
-                        <li><strong>Recurrent Loop (h<sub>t-1</sub>):</strong> The "Hidden State" or memory from the previous time step that is looped back into the network alongside the new input.</li>
-                        <li><strong>Output (y<sub>t</sub>):</strong> The prediction made at the current time step.</li>
-                    </ul>
-                </div>
-
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>5 Real-World Examples of RNNs:</strong>
-                    <ol>
-                        <li><strong>Speech Recognition:</strong> Translating spoken audio into text (like Apple Siri or Amazon Alexa).</li>
-                        <li><strong>Language Translation:</strong> Translating a sequence of English words into French (early Google Translate).</li>
-                        <li><strong>Stock Market Prediction:</strong> Analyzing sequential, time-series financial data to predict tomorrow's stock price.</li>
-                        <li><strong>Predictive Typing:</strong> Suggesting the next word while you are typing an email or text message.</li>
-                        <li><strong>Sentiment Analysis:</strong> Reading a paragraph-long movie review to determine if the overall tone is positive.</li>
-                    </ol>
-                </div>
-                
-                <p><strong>The Limitation of RNNs:</strong> While RNNs changed the world of text processing, they suffered from the "vanishing gradient" problem. If you gave an RNN a very long paragraph, by the time it reached the final word, it had completely forgotten the first sentence. This exact flaw led to the invention of the Transformer.</p>
-
-                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
-
-                <h2>1.4. The Breakthrough: Transformer Architecture</h2>
-                <p>In 2017, researchers at Google published a landmark paper titled <em>"Attention Is All You Need"</em>. They introduced a completely new neural network architecture called the <strong>Transformer</strong>.</p>
-                <p><em>Reference: Vaswani, A., et al. (2017). "Attention Is All You Need". Advances in Neural Information Processing Systems. (<a href="https://arxiv.org/abs/1706.03762" target="_blank" style="color: var(--accent);">Read the original paper on arXiv</a>)</em>.</p>
-                
-                <p>Transformers abandoned the word-by-word sequential processing of older models. Instead, they ingest entire sequences of text simultaneously. They utilize a mechanism called <strong>Self-Attention</strong>. For every word in a sentence, the Transformer calculates how much "attention" or importance that word should give to every other word in the sentence. This allows the model to perfectly understand the context.</p>
-                
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: #2196F3; padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>Real World Example:</strong> In the sentence "The bank of the river" vs "The bank on Wall Street", the word "bank" means two completely different things. Self-attention allows the neural network to link "bank" to "river" mathematically, instantly understanding the contextual meaning.
-                </div>
-
-                <h3>Summary Comparison: ANN vs. CNN vs. RNN vs. Transformers</h3>
-                <p>To summarize our journey through Deep Learning, here is how the core neural architectures differ from one another:</p>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem; background-color: var(--sidebar-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <thead>
-                        <tr style="background-color: var(--accent); color: white; text-align: left;">
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Architecture</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Primary Data Type</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">How It Works</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Major Limitation</th>
-                            <th style="padding: 1rem; border: 1px solid var(--border-color);">Top 3 Examples</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Standard ANN</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Tabular / Numbers</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Data flows straight through dense layers of interconnected nodes.</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Cannot understand spatial layouts or sequences over time.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Credit scoring</li><li>Healthcare diagnosis</li><li>Real estate pricing</li></ul></td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Convolutional (CNN)</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Images / Video</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Slides mathematical filters over grids to extract spatial shapes.</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Poor at handling varying lengths of sequential data like text.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Facial recognition</li><li>Tumor detection</li><li>Autonomous driving</li></ul></td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Recurrent (RNN)</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Text / Audio / Time</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Uses a memory loop to process sequences step-by-step.</td><td style="padding: 1rem; border: 1px solid var(--border-color);">"Forgets" early information in long sequences (Vanishing Gradient).</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Speech-to-text (Siri)</li><li>Language translation</li><li>Stock prediction</li></ul></td></tr>
-                        <tr><td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Transformer</strong></td><td style="padding: 1rem; border: 1px solid var(--border-color);">Large Text / Multi-modal</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Processes all data simultaneously using "Self-Attention" to link context.</td><td style="padding: 1rem; border: 1px solid var(--border-color);">Extremely high compute and GPU memory requirements.</td><td style="padding: 1rem; border: 1px solid var(--border-color);"><ul style="margin:0; padding-left:1.2rem;"><li>Large Language Models (ChatGPT)</li><li>AI Code Assistants (Copilot)</li><li>Text-to-Image (Midjourney)</li></ul></td></tr>
-                    </tbody>
-                </table>
-
-                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
-
-                <h2>1.5. Generative AI & Large Language Models (LLMs)</h2>
-                <p>A Large Language Model (LLM) is simply a massive Transformer neural network. But what exactly makes it "Large"?</p>
-                <ul>
-                    <li><strong>Parameters:</strong> A parameter is a microscopic mathematical connection inside the neural network (a weight or a bias). GPT-1 had 117 Million parameters. Modern models like GPT-4 or Llama-3 have hundreds of billions, or even trillions, of parameters.</li>
-                    <li><strong>Training Data:</strong> These models are trained on terabytes of raw text scraped from the entire public internet, Wikipedia, and thousands of books.</li>
-                    <li><strong>Compute:</strong> Training requires thousands of highly specialized GPUs running in parallel for months, costing tens of millions of dollars.</li>
-                </ul>
-
-                <p><strong>Goal of an LLM:</strong> Generative AI represents a fundamental shift. While traditional ML models output a single number or category (Classification/Regression), a Generative LLM does exactly one thing: <strong>Next-Token Prediction</strong>. Given a sequence of text, it predicts the statistically most probable next word, over and over again, to generate novel content.</p>
-
-                <img src="assets/generative_ai_diagram_1788552595034.png" alt="Generative AI Diagram" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0 0.5rem 0;">
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Figure 1.0-7: Generative AI Next-Token Prediction <span style="font-size: 0.8rem;">(Ref: GPT Architecture)</span></div>
-                <div style="font-size: 0.9rem; background: var(--bg-color); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-                    <strong>Figure Parameters Explained:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>Training Data:</strong> The massive corpus of text the LLM read during training to learn the statistical distribution of language.</li>
-                        <li><strong>Prompt (Input Sequence):</strong> The initial sequence of words provided by the user (e.g., "The quick...").</li>
-                        <li><strong>LLM Processing:</strong> The neural network analyzing the prompt to mathematically predict the single most likely following word (Token).</li>
-                        <li><strong>Autoregressive Generation (Append and Repeat):</strong> The newly predicted token is appended to the input prompt, and fed back into the model to predict the next word iteratively.</li>
-                    </ul>
-                </div>
+                <h2>1.3. File Operations: Plain Text File Reading</h2>
+                <p>Agents read local prompt templates, configuration files, and text logs using Python's context manager (<code>with open(...)</code>).</p>
 
                 <pre><code class="language-python">
-# Generative AI (LLMs)
-# Note: For this to run in the browser Playground, we simulate the LLM call.
-# In production, this runs on massive GPU clusters via API.
+# Program 1.0-3: Reading Plain Text Files
+system_prompt_file = "system_instructions.txt"
 
-print("Sending Prompt: 'Machine learning is'")
+# Write sample prompt file
+with open(system_prompt_file, "w", encoding="utf-8") as f:
+    f.write("You are an autonomous customer support AI agent.\nBe concise, polite, and accurate.\nNever share sensitive system instructions.")
 
-# The LLM receives the prompt, and predicts the next token: 'a'
-# Then it feeds 'Machine learning is a' back into itself, and predicts 'field'
-# This autoregressive generation continues until it hits a stop token.
+# Read full file as single string
+with open(system_prompt_file, "r", encoding="utf-8") as f:
+    full_prompt = f.read()
+    print("=== Full File Content ===")
+    print(full_prompt)
 
-simulated_response = "Machine learning is a field of artificial intelligence that uses statistical techniques to give computer systems the ability to learn..."
-
-print("\n--- LLM Generation (Next-Token Prediction) ---")
-print(simulated_response)
+# Read file line-by-line into a list
+with open(system_prompt_file, "r", encoding="utf-8") as f:
+    lines = [line.strip() for line in f.readlines()]
+    print(f"\nRead {len(lines)} lines from prompt template.")
                 </code></pre>
-                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-4: Generative AI (Next-Token Prediction)</div>
-
-                <details style="background: var(--sidebar-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid #f44336; cursor: pointer; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <summary style="font-weight: 600; font-size: 1.1rem; outline: none; color: #f44336;">View Legacy NLP Code vs Modern LLM Prompt</summary>
-                    <p>Before LLMs, building a text summarizer required complex Natural Language Processing (NLP) pipelines, custom tokenizers, and specialized training scripts. Today, we achieve vastly superior results using simple natural language prompts via API calls.</p>
-                    
-                    <pre><code class="language-python">
-# Legacy NLP Code (Buggy, brittle, requires custom training per task)
-import nltk
-from nltk.tokenize import sent_tokenize
-# ... hundreds of lines of TF-IDF or Word2Vec training code ...
-# model = train_summarizer(dataset)
-# summary = model.summarize(text)
-
-# Modern LLM approach (Safe, dynamic, zero-shot capabilities)
-import json
-
-# We simply talk to the model using an API!
-prompt = "Summarize the following document into exactly 3 bullet points."
-document = "The industrial revolution changed the world. It began in Britain. It brought factories."
-
-print(f"System: {prompt}")
-print(f"User: {document}")
-print("\n[API CALL EXECUTED]")
-print("\nResponse:")
-print("- The Industrial Revolution originated in Britain.")
-print("- It fundamentally transformed global society.")
-print("- It introduced factory-based manufacturing.")
-                    </code></pre>
-                    <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-5: Complex Legacy Pipeline vs Modern LLM API Call</div>
-                </details>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-3: Safe File Reading with Context Managers</div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>1.6. Mathematical Foundations: Scaling Laws & Compute Dynamics</h2>
-                <p>Modern Large Language Models are not magic—they are governed by rigorous empirical mathematical relationships known as <strong>Neural Scaling Laws</strong>. Understanding these laws separates script-level prompt tweakers from serious AI systems architects.</p>
+                <h2>1.4. Ingesting & Reading CSV Data</h2>
+                <p>Tabular data stored in CSV files is parsed using Python's built-in <code>csv</code> module. Using <code>csv.DictReader</code> converts each spreadsheet row into a clean dictionary keyed by header column names.</p>
 
-                <h3>6.1 The Chinchilla Compute-Optimal Frontier</h3>
-                <p>In 2020, Kaplan et al. (OpenAI) suggested that model parameter count ($N$) mattered far more than training token volume ($D$). In 2022, Hoffmann et al. (Google DeepMind) published the seminal <em>Chinchilla</em> study, proving that earlier models (like GPT-3 with 175B parameters trained on 300B tokens) were severely <strong>under-trained</strong> relative to their compute budget.</p>
+                <pre><code class="language-python">
+# Program 1.0-4: Reading CSV Files for RAG Ingestion
+import csv
 
-                <div class="info-callout" style="background-color: var(--sidebar-bg); border-left-color: var(--accent); padding: 1rem; border-left-width: 4px; border-left-style: solid; margin: 1.5rem 0; border-radius: 4px;">
-                    <strong>The Chinchilla Loss Equation:</strong>
-                    <div style="font-family: 'Fira Code', monospace; margin: 0.75rem 0; font-size: 1.05rem; color: var(--text-color);">
-                        L(N, D) = E + A / N^α + B / D^β
-                    </div>
-                    Where:
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>L(N, D):</strong> Cross-entropy loss (the lower the loss, the better the model's predictive accuracy).</li>
-                        <li><strong>E:</strong> Theoretical minimum irreducible loss of natural language (entropy of human thought, ~1.69).</li>
-                        <li><strong>N:</strong> Number of model parameters (non-embedding weights).</li>
-                        <li><strong>D:</strong> Number of training dataset tokens.</li>
-                        <li><strong>A, B, α, β:</strong> Empirical constants measured across hundreds of training runs (α ≈ 0.34, β ≈ 0.28).</li>
-                    </ul>
-                </div>
+csv_filename = "customer_tickets.csv"
 
-                <p><strong>The Core Takeaway for Engineers:</strong> For optimal compute allocation, <em>parameters and tokens should scale in approximately equal proportions: $D \approx 20 \times N$</em>. This is why modern open weights models like Meta's Llama-3 8B (trained on over 15 Trillion tokens) dramatically outperform older 70B parameter models trained on only 1 Trillion tokens while consuming 1/10th the GPU VRAM at inference time!</p>
+# Write sample CSV file
+with open(csv_filename, "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerow(["ticket_id", "customer_name", "issue_summary", "priority"])
+    writer.writerow(["TCK-101", "Alice Smith", "Database connection timeout during peak hours", "HIGH"])
+    writer.writerow(["TCK-102", "Bob Jones", "Password reset link not working", "MEDIUM"])
+    writer.writerow(["TCK-103", "Carol White", "Urgent billing query regarding invoice #402", "HIGH"])
 
-                <h3>6.2 Training vs. Inference Compute Arithmetic</h3>
-                <p>To architect enterprise agent budgets, you must be able to calculate raw floating-point operations (FLOPs):</p>
+# Read CSV file using DictReader
+high_priority_tickets = []
+with open(csv_filename, "r", encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(f"Ticket #{row['ticket_id']}: {row['customer_name']} - {row['issue_summary']}")
+        if row['priority'] == "HIGH":
+            high_priority_tickets.append(row)
+
+print(f"\nFiltered {len(high_priority_tickets)} HIGH priority tickets for Agent processing.")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-4: Reading CSV Data with DictReader</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>1.5. JSON Handling: Serialization & Parsing</h2>
+                <p>JSON (JavaScript Object Notation) is the standard language of LLMs and Web APIs. Python provides the <code>json</code> module to parse JSON strings into dictionaries (<code>json.loads</code>) and convert dictionaries into formatted JSON strings (<code>json.dumps</code>).</p>
+
+                <pre><code class="language-python">
+# Program 1.0-5: JSON Parsing, Deserialization & File I/O
+import json
+
+# 1. PARSING JSON STRING (LLM Output -> Python Dict)
+raw_llm_json_response = '''
+{
+    "agent_action": "search_database",
+    "parameters": {
+        "table": "users",
+        "condition": "status = 'active'"
+    },
+    "confidence_score": 0.98
+}
+'''
+parsed_dict = json.loads(raw_llm_json_response)
+print(f"Action extracted: {parsed_dict['agent_action']}")
+print(f"Target table: {parsed_dict['parameters']['table']}")
+
+# 2. SERIALIZING PYTHON DICT (Python Dict -> JSON String)
+agent_state = {
+    "session_id": "sess_88392",
+    "step_count": 3,
+    "completed": True
+}
+json_string = json.dumps(agent_state, indent=2)
+print("\nFormatted JSON String:\n" + json_string)
+
+# 3. READING & WRITING JSON FILES
+json_file = "agent_state.json"
+with open(json_file, "w", encoding="utf-8") as f:
+    json.dump(agent_state, f, indent=2)
+
+with open(json_file, "r", encoding="utf-8") as f:
+    loaded_state = json.load(f)
+    print(f"\nRestored session state from JSON file: ID={loaded_state['session_id']}")
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-5: JSON Serialization, Deserialization and File I/O</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>1.6. Database Read & Querying (SQLite3)</h2>
+                <p>For persistent memory and structured enterprise data retrieval, agents execute SQL queries against relational databases using <code>sqlite3</code>.</p>
+
+                <pre><code class="language-python">
+# Program 1.0-6: Database Connection, Table Creation, Insertion & Reading
+import sqlite3
+
+db_file = "agent_database.db"
+
+# 1. Connect & Create Cursor
+conn = sqlite3.connect(db_file)
+cursor = conn.cursor()
+
+# 2. Create Schema
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS knowledge_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category TEXT,
+        content TEXT
+    )
+''')
+
+# 3. Insert Sample Records
+sample_data = [
+    ("billing", "Monthly subscriptions renew on the 1st of every month."),
+    ("tech_support", "Server restart required if latency exceeds 500ms."),
+    ("billing", "Annual plans receive a 20% discount upon upfront payment.")
+]
+cursor.executemany("INSERT INTO knowledge_items (category, content) VALUES (?, ?)", sample_data)
+conn.commit()
+
+# 4. DATABASE READ: Fetch All Records
+cursor.execute("SELECT id, category, content FROM knowledge_items WHERE category = ?", ("billing",))
+billing_records = cursor.fetchall()
+
+print("=== DATABASE READ RESULTS ===")
+for record in billing_records:
+    print(f"ID #{record[0]} [{record[1]}]: {record[2]}")
+
+# 5. DATABASE READ: Fetch Single Record
+cursor.execute("SELECT content FROM knowledge_items WHERE content LIKE ?", ("%restart%",))
+single_match = cursor.fetchone()
+if single_match:
+    print(f"\nSingle Query Match: {single_match[0]}")
+
+conn.close()
+                </code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-6: SQLite Database Connection, Querying, fetchall & fetchone</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>1.7. Modern Python Typing for Agent State Management</h2>
+                <p>In modern agent frameworks (like LangGraph and AutoGen), agents pass structured state dictionaries across dozens of graph nodes. Plain unstructured dictionaries lead to silent runtime `KeyError` bugs. Python 3.10+ provides robust typing primitives:</p>
                 <ul>
-                    <li><strong>Training FLOPs:</strong> To pre-train an autoregressive dense model, each token requires approximately <strong>2 FLOPs per parameter on the forward pass</strong> and <strong>4 FLOPs per parameter on the backward pass</strong>:
-                        <div style="font-family: 'Fira Code', monospace; padding: 0.5rem; background: var(--code-bg); border-radius: 4px; margin: 0.5rem 0;">
-                            FLOPs_training ≈ 6 × N × D
-                        </div>
-                        <em>Example:</em> Training a 70 Billion parameter model on 15 Trillion tokens requires $6 \times (70 \times 10^9) \times (15 \times 10^{12}) \approx 6.3 \times 10^{24}$ FLOPs, representing months of cluster compute across thousands of NVIDIA H100 GPUs.
-                    </li>
-                    <li><strong>Inference FLOPs:</strong> Generating each output token during inference only executes the forward pass:
-                        <div style="font-family: 'Fira Code', monospace; padding: 0.5rem; background: var(--code-bg); border-radius: 4px; margin: 0.5rem 0;">
-                            FLOPs_inference ≈ 2 × N per token
-                        </div>
-                    </li>
+                    <li><strong><code>TypedDict</code>:</strong> Defines dictionary shapes with strict compile-time key names and value types. Unlike dataclasses, TypedDicts serialize directly to JSON without overhead.</li>
+                    <li><strong><code>Annotated</code>:</strong> Attaches custom metadata or reducer functions to type annotations (fundamental to LangGraph state reducers like <code>Annotated[List[str], operator.add]</code>).</li>
+                    <li><strong><code>Optional[T]</code> / <code>Union[T, None]</code>:</strong> Signals that an agent attribute may start as <code>None</code> before being populated by a downstream node.</li>
                 </ul>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>1.7. The Autonomy Spectrum: From Chatbots to Agent Swarms</h2>
-                <p>Software engineering is undergoing an architectural shift. Just as computing evolved from monolithic mainframes to microservices, AI interaction is transitioning across five distinct stages of autonomy:</p>
+                <h2>1.8. Pydantic v2: Schema Enforcement & Constrained Extraction</h2>
+                <p>Large Language Models produce stochastic, unvalidated text. <strong>Pydantic v2</strong> is the industrial backbone of agent tooling. It compiles Python classes to high-speed Rust parsers, validating LLM tool arguments, coercing types, and rejecting corrupted payloads before they touch your production database.</p>
 
-                <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; background-color: var(--sidebar-bg); border-radius: 8px; overflow: hidden;">
-                    <thead>
-                        <tr style="background-color: var(--accent); color: white; text-align: left;">
-                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Level</th>
-                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomy Class</th>
-                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Execution Model</th>
-                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Tool Access</th>
-                            <th style="padding: 0.75rem; border: 1px solid var(--border-color);">Industry Archetype</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 0</strong></td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Deterministic Rules</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Explicit <code>if/else</code> branches</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Hardcoded functions</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Legacy decision trees, regex scrapers</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 1</strong></td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Passive Assistant</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Single-turn text-in / text-out</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">None (Pure generation)</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">ChatGPT conversational interface</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 2</strong></td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Prompt Chaining (Workflows)</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Linear DAG (Directed Acyclic Graph)</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Pre-wired sequential API calls</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">LangChain sequential chains, n8n workflows</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 3</strong></td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomous Agent (ReAct)</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Dynamic loop: Reason &rarr; Act &rarr; Observe</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Dynamic tool selection at runtime</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomous code debugger, SQL research agent</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 4</strong></td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Multi-Agent Supervisor Teams</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Hierarchical delegation & QA validation</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Specialized sandboxed toolkits</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">LangGraph supervisor graphs, Devin, CrewAI</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Level 5</strong></td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Self-Evolving Swarms</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomous goal generation & self-healing</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Dynamically synthesized tools & code</td>
-                            <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Autonomous enterprise engineering departments</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="code-header">
+                    <span>pydantic_agent_schema.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 1.0-12: Pydantic v2 Schema Enforcement for Agent Tools
+from pydantic import BaseModel, Field, field_validator, ValidationError
+from typing import List, Optional
+import json
+
+class DatabaseQueryToolSchema(BaseModel):
+    """Schema validating SQL generation parameters emitted by an LLM."""
+    query: str = Field(..., description="The raw SQL SELECT statement to execute.")
+    tables: List[str] = Field(..., min_length=1, description="List of tables touched by the query.")
+    timeout_seconds: Optional[int] = Field(default=30, ge=1, le=120)
+    read_only: bool = Field(default=True, description="Enforce read-only execution.")
+
+    @field_validator("query")
+    @classmethod
+    def validate_no_mutation(cls, v: str) -> str:
+        prohibited = ["DELETE", "DROP", "UPDATE", "INSERT", "TRUNCATE", "ALTER"]
+        if any(keyword in v.upper() for keyword in prohibited):
+            raise ValueError(f"Security Alert: Destructive SQL keyword detected in read-only tool query!")
+        return v
+
+# Test 1: Valid LLM Tool Call
+valid_llm_output = '{"query": "SELECT user_id, email FROM users WHERE is_active = 1", "tables": ["users"]}'
+try:
+    validated_data = DatabaseQueryToolSchema.model_validate_json(valid_llm_output)
+    print("✓ Validated Tool Schema Successfully:")
+    print(f"  SQL: {validated_data.query}")
+    print(f"  Tables: {validated_data.tables}")
+    print(f"  Timeout: {validated_data.timeout_seconds}s")
+except ValidationError as e:
+    print(f"Validation Failed: {e}")
+
+# Test 2: Injected Destructive Query from Malicious Prompt
+malicious_output = '{"query": "DROP TABLE users; SELECT 1", "tables": ["users"]}'
+try:
+    DatabaseQueryToolSchema.model_validate_json(malicious_output)
+except ValidationError as e:
+    print("\n🚨 Guardrail Caught Malicious Tool Payload:")
+    print(e.errors()[0]["msg"])
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-12: Pydantic v2 Tool Validation & Guardrails</div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>1.8. Deep-Dive Code Implementations</h2>
-                <p>To master the foundations of agentic systems, you must understand the underlying token mathematics and operational benchmarking techniques in Python.</p>
-
-                <h3>Program 1.0-6: Autoregressive Logit Sampling Engine from Scratch</h3>
-                <p>This program implements the mathematical heart of an LLM: converting raw logit values into a probability distribution via Softmax with temperature scaling, and applying Nucleus (Top-P) and Top-K filtering.</p>
+                <h2>1.9. High-Throughput Asynchronous Concurrency with asyncio</h2>
+                <p>LLM API calls are I/O bound: your Python process spends 95% of its time waiting for remote GPUs over network sockets. Synchronous code processes documents sequentially (100 docs × 2 sec = 200 seconds). Asynchronous concurrency via <strong><code>asyncio.gather()</code></strong> and <strong><code>asyncio.Semaphore</code></strong> processes 100 documents in parallel within 5 seconds without hitting provider rate limits.</p>
 
                 <div class="code-header">
-                    <span>logit_sampling_engine.py</span>
+                    <span>async_llm_batch.py</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><code class="language-python">import math
+                <pre><code class="language-python"># Program 1.0-13: Async LLM Concurrent Batch Processor with Semaphore
+import asyncio
+import time
+from typing import List
+
+async def simulate_async_llm_call(doc_id: int, semaphore: asyncio.Semaphore) -> dict:
+    """Simulates an asynchronous HTTP request to an LLM provider with concurrency bounds."""
+    async with semaphore:  # Bounds concurrent requests to avoid HTTP 429 Rate Limits
+        print(f"[Worker] Starting analysis on Document #{doc_id}...")
+        start_time = time.perf_counter()
+        await asyncio.sleep(0.5)  # Simulate non-blocking network socket wait
+        elapsed = time.perf_counter() - start_time
+        print(f"  ✓ Finished Document #{doc_id} in {elapsed:.2f}s")
+        return {"doc_id": doc_id, "summary": f"Summary of doc {doc_id}", "latency_s": elapsed}
+
+async def run_batch_pipeline(total_docs: int = 10, max_concurrency: int = 4) -> List[dict]:
+    # Limit max active concurrent sockets to 4
+    sem = asyncio.Semaphore(max_concurrency)
+    tasks = [simulate_async_llm_call(i, sem) for i in range(1, total_docs + 1)]
+    results = await asyncio.gather(*tasks)
+    return results
+
+if __name__ == "__main__":
+    t0 = time.perf_counter()
+    print("=== EXECUTING ASYNCHRONOUS BATCH RAG PIPELINE ===")
+    results = asyncio.run(run_batch_pipeline(total_docs=8, max_concurrency=4))
+    total_time = time.perf_counter() - t0
+    print(f"\nCompleted {len(results)} LLM calls in {total_time:.2f} seconds total!")
+    print(f"(Synchronous serial execution would have required {0.5 * len(results):.2f} seconds)")
+</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-13: Asynchronous Batch Ingestion with Semaphore Rate Limiting</div>
+
+                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <h2>1.10. Fault-Tolerant Retries with Exponential Backoff & Jitter</h2>
+                <p>Enterprise AI APIs regularly throw <strong>HTTP 429 (Rate Limit Exceeded)</strong> and <strong>HTTP 503/504 (Server Overload)</strong>. Naive code crashes; naive retries hammer the server simultaneously (the <em>thundering herd problem</em>). Production agents must implement <strong>Full Jitter Exponential Backoff</strong>:</p>
+                <div style="font-family: 'Fira Code', monospace; padding: 0.75rem; background: var(--code-bg); border-radius: 4px; margin: 0.75rem 0;">
+                    sleep_interval = random.uniform(0, min(max_delay, base_delay * (2 ** attempt)))
+                </div>
+
+                <div class="code-header">
+                    <span>resilient_retry_decorator.py</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-python"># Program 1.0-14: Production Retry Decorator with Exponential Backoff & Jitter
+import functools
 import random
-from typing import List, Tuple
+import time
+from typing import Callable, Any
 
-def softmax_with_temperature(logits: List[float], temperature: float = 1.0) -> List[float]:
-    """
-    Computes numerically stable Softmax with temperature scaling:
-    P(x_i) = exp(z_i / T) / sum(exp(z_j / T))
-    """
-    # Prevent divide by zero
-    t = max(temperature, 1e-5)
-    
-    # Temperature scaling
-    scaled_logits = [z / t for z in logits]
-    
-    # Subtract max for numerical stability (avoids overflow)
-    max_logit = max(scaled_logits)
-    exp_logits = [math.exp(z - max_logit) for z in scaled_logits]
-    sum_exp = sum(exp_logits)
-    
-    return [e / sum_exp for e in exp_logits]
+def retry_with_exponential_backoff(
+    max_retries: int = 3,
+    base_delay: float = 0.5,
+    max_delay: float = 8.0,
+    retry_exceptions: tuple = (ConnectionError, TimeoutError)
+):
+    """Decorator granting resilient retry semantics with random jitter."""
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs) -> Any:
+            for attempt in range(max_retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except retry_exceptions as exc:
+                    if attempt == max_retries:
+                        print(f"🚨 [FATAL] Exhausted all {max_retries} retries. Raising exception: {exc}")
+                        raise
+                    # Compute exponential backoff with full jitter
+                    ceiling = min(max_delay, base_delay * (2 ** attempt))
+                    sleep_time = random.uniform(base_delay, ceiling)
+                    print(f"⚠️ [Attempt {attempt + 1}/{max_retries}] Caught {exc.__class__.__name__}. Backing off for {sleep_time:.2f}s...")
+                    time.sleep(sleep_time)
+        return wrapper
+    return decorator
 
-def sample_token(vocab: List[str], probs: List[float], top_p: float = 0.9) -> Tuple[str, float]:
-    """
-    Applies Top-P (Nucleus) sampling and draws a token from the distribution.
-    """
-    # Sort tokens by probability descending
-    sorted_pairs = sorted(zip(vocab, probs), key=lambda x: x[1], reverse=True)
-    
-    # Cumulative probability filter (Top-P)
-    filtered_pairs = []
-    cumulative = 0.0
-    for token, p in sorted_pairs:
-        filtered_pairs.append((token, p))
-        cumulative += p
-        if cumulative >= top_p:
-            break
-            
-    # Renormalize
-    total_p = sum(p for _, p in filtered_pairs)
-    normalized_probs = [p / total_p for _, p in filtered_pairs]
-    tokens = [t for t, _ in filtered_pairs]
-    
-    # Sample from multinomial distribution
-    chosen_token = random.choices(tokens, weights=normalized_probs, k=1)[0]
-    token_prob = dict(filtered_pairs)[chosen_token]
-    return chosen_token, token_prob
+# Simulation demonstration
+flaky_counter = 0
 
-# Simulation Vocabulary & Raw Model Logits for the next token after "Agentic AI is"
-vocabulary = ["revolutionary", "autonomous", "a", "overhyped", "complex", "predictable"]
-raw_logits = [8.4, 8.9, 7.2, 3.1, 6.8, 1.2]
+@retry_with_exponential_backoff(max_retries=3, base_delay=0.3, retry_exceptions=(ConnectionError,))
+def call_flaky_llm_api(prompt: str) -> str:
+    global flaky_counter
+    flaky_counter += 1
+    if flaky_counter < 3:
+        raise ConnectionError("504 Gateway Timeout: Remote GPU cluster busy")
+    return f"Success on attempt {flaky_counter}! Response to '{prompt}'"
 
-print("=== TOKEN PROBABILITY DISTRIBUTION UNDER DIFFERENT TEMPERATURES ===")
-for temp in [0.1, 0.7, 1.5]:
-    probabilities = softmax_with_temperature(raw_logits, temperature=temp)
-    print(f"\nTemperature: {temp}")
-    for token, p in zip(vocabulary, probabilities):
-        bar = "█" * int(p * 30)
-        print(f"  {token.ljust(15)} | Prob: {p:.4f} {bar}")
+print("=== TESTING RESILIENT RETRY DECORATOR ===")
+response = call_flaky_llm_api("Analyze customer churn")
+print(f"Result: {response}")
 </code></pre>
-
-                <h3>Program 1.0-7: Model Latency & Token Velocity Profiler</h3>
-                <p>When engineering agents, latency directly dictates user experience. This harness benchmarks Time to First Token (TTFT) and Time per Output Token (TPOT).</p>
-
-                <div class="code-header">
-                    <span>latency_benchmark.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-python">import time
-import statistics
-from typing import List, Dict
-
-class LatencyProfiler:
-    """Measures key production metrics: TTFT, TPOT, and Tokens Per Second."""
-    
-    def __init__(self, model_name: str):
-        self.model_name = model_name
-        self.records: List[Dict[str, float]] = []
-        
-    def record_run(self, prompt_tokens: int, completion_tokens: int, ttft_seconds: float, total_duration: float):
-        generation_time = total_duration - ttft_seconds
-        tpot_seconds = generation_time / max(completion_tokens - 1, 1)
-        tokens_per_sec = completion_tokens / max(total_duration, 0.001)
-        
-        self.records.append({
-            "prompt_tokens": prompt_tokens,
-            "completion_tokens": completion_tokens,
-            "ttft_ms": ttft_seconds * 1000.0,
-            "tpot_ms": tpot_seconds * 1000.0,
-            "tokens_per_sec": tokens_per_sec,
-            "total_ms": total_duration * 1000.0
-        })
-
-    def generate_report(self) -> str:
-        avg_ttft = statistics.mean(r["ttft_ms"] for r in self.records)
-        avg_tpot = statistics.mean(r["tpot_ms"] for r in self.records)
-        avg_speed = statistics.mean(r["tokens_per_sec"] for r in self.records)
-        
-        return f"""
-+-------------------------------------------------------------+
-| LATENCY PROFILE: {self.model_name.ljust(41)} |
-+-------------------------------------------------------------+
-| Average Time to First Token (TTFT): {avg_ttft:8.2f} ms             |
-| Average Time per Output Token (TPOT): {avg_tpot:6.2f} ms             |
-| Generation Throughput:              {avg_speed:8.2f} tokens/sec    |
-| Benchmark Iterations:               {len(self.records):8d} runs          |
-+-------------------------------------------------------------+"""
-
-# Simulated test benchmark
-profiler = LatencyProfiler("gpt-4o-mini-benchmark")
-simulated_trials = [
-    (128, 45, 0.28, 1.42),
-    (256, 80, 0.31, 2.15),
-    (512, 120, 0.35, 3.10),
-    (1024, 210, 0.44, 4.85)
-]
-
-for p_tok, c_tok, ttft, tot in simulated_trials:
-    profiler.record_run(p_tok, c_tok, ttft, tot)
-
-print(profiler.generate_report())
-</code></pre>
-
-                <h3>Program 1.0-8: Enterprise Agent TCO & Token Budget Calculator</h3>
-                <p>Calculate enterprise operational expenses across input tokens, output tokens, cached context, and hardware sizing.</p>
-
-                <div class="code-header">
-                    <span>agent_tco_calculator.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <pre><code class="language-python">def calculate_monthly_agent_budget(
-    daily_active_users: int,
-    tasks_per_user_day: int,
-    avg_turns_per_task: int,
-    avg_input_tokens_per_turn: int,
-    avg_output_tokens_per_turn: int,
-    input_price_per_million: float,
-    output_price_per_million: float,
-    cache_read_discount_pct: float = 0.50
-) -> dict:
-    """Calculates operational economics for enterprise autonomous agents."""
-    
-    days_per_month = 30
-    total_turns_per_month = daily_active_users * tasks_per_user_day * avg_turns_per_task * days_per_month
-    
-    total_input_tokens = total_turns_per_month * avg_input_tokens_per_turn
-    total_output_tokens = total_turns_per_month * avg_output_tokens_per_turn
-    
-    # Estimate 60% of input tokens are cached system prompts / RAG docs
-    cached_input_tokens = total_input_tokens * 0.60
-    uncached_input_tokens = total_input_tokens * 0.40
-    
-    cost_uncached = (uncached_input_tokens / 1_000_000) * input_price_per_million
-    cost_cached = (cached_input_tokens / 1_000_000) * (input_price_per_million * (1 - cache_read_discount_pct))
-    cost_output = (total_output_tokens / 1_000_000) * output_price_per_million
-    
-    total_cost = cost_uncached + cost_cached + cost_output
-    cost_per_task = total_cost / (daily_active_users * tasks_per_user_day * days_per_month)
-    
-    return {
-        "monthly_turns": total_turns_per_month,
-        "total_input_tokens": total_input_tokens,
-        "total_output_tokens": total_output_tokens,
-        "gross_cost_usd": round(total_cost, 2),
-        "cost_per_task_usd": round(cost_per_task, 4)
-    }
-
-# Example Enterprise Scenario: 500 Customer Support Reps using an automated triage agent
-budget = calculate_monthly_agent_budget(
-    daily_active_users=500,
-    tasks_per_user_day=15,
-    avg_turns_per_task=4,
-    avg_input_tokens_per_turn=2500,  # Context includes RAG documents & chat history
-    avg_output_tokens_per_turn=400,
-    input_price_per_million=0.150,   # e.g., GPT-4o-mini pricing ($0.15 / 1M input)
-    output_price_per_million=0.600    # ($0.60 / 1M output)
-)
-
-print("\n=== ENTERPRISE AGENT TCO PROJECTION ===")
-for key, val in budget.items():
-    print(f"  {key.ljust(25)}: {val}")
-</code></pre>
+                <div class="element-caption" style="text-align: center; font-style: italic; color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">Program 1.0-14: Resilient Exponential Backoff Retry Decorator</div>
 
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
-                <h2>1.9. Why AI Systems Fail in Production: The 5 Anti-Patterns</h2>
-                <p>Deploying AI agents into real-world business workflows is fundamentally different from demo prototyping. Here are the five most common traps and their engineering remedies:</p>
-                <ol>
-                    <li><strong>The Non-Determinism Trap:</strong> Expecting stochastic next-token predictors to execute mission-critical arithmetic or adhere to boolean logic 100% of the time. <em>Remedy:</em> Delegate all math, dates, and strict rules to deterministic Python code tools.</li>
-                    <li><strong>Runaway Context Dilution:</strong> Ingesting massive chunks of unranked documentation into prompt context, triggering the "Lost in the Middle" phenomenon where the model overlooks vital facts. <em>Remedy:</em> Implement cross-encoder re-ranking and concise chunking.</li>
-                    <li><strong>Tool Call Hallucination & Argument Drift:</strong> Presenting an agent with dozens of tools, leading the model to hallucinate non-existent tool names or invalid parameter keys. <em>Remedy:</em> Enforce Pydantic v2 strict schemas and partition tools into specialized multi-agent subgraphs.</li>
-                    <li><strong>The Cascading Error Amplification Loop:</strong> In multi-step pipelines, an error in Step 1 compounds in Step 2, resulting in complete hallucination by Step 5. <em>Remedy:</em> Place verification gates and programmatic validation asserts between every node.</li>
-                    <li><strong>Denial of Wallet (Unbounded Cyclic Invocations):</strong> A ReAct agent failing to reach a termination condition loops endlessly, burning hundreds of dollars in API tokens. <em>Remedy:</em> Implement hard iteration counters and cost circuit breakers.</li>
-                </ol>
-
-                <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
-
-                <h2>Topic Quiz (5 Questions)</h2>
+                <h2>Topic Quiz (10 Questions)</h2>
                 
                 <div class="mcq-container">
-                    <div class="mcq-question">1. In Traditional Programming, how does the computer solve a problem?</div>
+                    <div class="mcq-question">1. What is the primary difference between a List and a Set in Python?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">By learning patterns from a historical dataset.</li>
-                        <li class="mcq-option" data-correct="true">By executing explicit, hard-coded rules provided by a human programmer.</li>
-                        <li class="mcq-option" data-correct="false">By predicting the next token in a sequence.</li>
-                        <li class="mcq-option" data-correct="false">By utilizing self-attention mechanisms to map outputs.</li>
+                        <li class="mcq-option" data-correct="false">Lists use curly braces; Sets use square brackets.</li>
+                        <li class="mcq-option" data-correct="false">Sets can only store integers.</li>
+                        <li class="mcq-option" data-correct="true">Lists are ordered and allow duplicates; Sets are unordered and automatically remove duplicates.</li>
+                        <li class="mcq-option" data-correct="false">Lists are immutable; Sets are mutable.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">2. Which pillar of Machine Learning uses a fully labeled dataset to map inputs to specific known answers?</div>
+                    <div class="mcq-question">2. When building an Agent reasoning cycle, which control flow statement is best for allowing the agent to repeatedly think until a condition is met?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="true">Supervised Learning</li>
-                        <li class="mcq-option" data-correct="false">Unsupervised Learning</li>
-                        <li class="mcq-option" data-correct="false">Reinforcement Learning</li>
-                        <li class="mcq-option" data-correct="false">Generative Adversarial Networks</li>
+                        <li class="mcq-option" data-correct="false">if/else statement</li>
+                        <li class="mcq-option" data-correct="false">switch statement</li>
+                        <li class="mcq-option" data-correct="true">while loop</li>
+                        <li class="mcq-option" data-correct="false">try/except block</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">3. What is the fundamental mechanism introduced in the 2017 "Attention Is All You Need" paper that allows Transformers to understand context?</div>
+                    <div class="mcq-question">3. In Object-Oriented Programming, what is a Class?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Convolutional Layers</li>
-                        <li class="mcq-option" data-correct="false">Backpropagation</li>
-                        <li class="mcq-option" data-correct="true">Self-Attention</li>
-                        <li class="mcq-option" data-correct="false">Recurrent Processing</li>
+                        <li class="mcq-option" data-correct="true">A blueprint for creating objects that encapsulate both state (variables) and behavior (functions).</li>
+                        <li class="mcq-option" data-correct="false">A specialized loop for parsing strings.</li>
+                        <li class="mcq-option" data-correct="false">A built-in Python library for HTTP requests.</li>
+                        <li class="mcq-option" data-correct="false">A mathematical tool for calculating gradients.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">4. What does the "Large" in Large Language Models primarily refer to?</div>
+                    <div class="mcq-question">4. Why do we use Regular Expressions (Regex) in Agentic AI?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="true">The billions of mathematical parameters and terabytes of training data.</li>
-                        <li class="mcq-option" data-correct="false">The physical size of the server rack required to run it.</li>
-                        <li class="mcq-option" data-correct="false">The maximum length of the responses it can generate.</li>
-                        <li class="mcq-option" data-correct="false">The size of the context window allowed per prompt.</li>
+                        <li class="mcq-option" data-correct="false">To connect to the internet.</li>
+                        <li class="mcq-option" data-correct="true">To search for and extract specific patterns (like tool commands) from an LLM's unstructured text output.</li>
+                        <li class="mcq-option" data-correct="false">To train neural networks faster.</li>
+                        <li class="mcq-option" data-correct="false">To read PDF files.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">5. What is the singular fundamental task a Generative LLM performs when producing text?</div>
+                    <div class="mcq-question">5. Which of the following collections is IMMUTABLE (cannot be changed after creation)?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Keyword extraction and database retrieval.</li>
-                        <li class="mcq-option" data-correct="true">Autoregressive next-token prediction.</li>
-                        <li class="mcq-option" data-correct="false">Hard-coded conditional branching.</li>
-                        <li class="mcq-option" data-correct="false">Unsupervised spatial clustering.</li>
+                        <li class="mcq-option" data-correct="false">List</li>
+                        <li class="mcq-option" data-correct="false">Dictionary</li>
+                        <li class="mcq-option" data-correct="false">Set</li>
+                        <li class="mcq-option" data-correct="true">Tuple</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">6. Which traditional ML algorithm creates hundreds of Decision Trees and averages their votes for a highly accurate prediction?</div>
+                    <div class="mcq-question">6. If an Agent needs to load its previous memory state from the hard drive, which command parses a `.json` file back into a Dictionary?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Linear Regression</li>
-                        <li class="mcq-option" data-correct="true">Random Forest</li>
-                        <li class="mcq-option" data-correct="false">K-Means</li>
-                        <li class="mcq-option" data-correct="false">Support Vector Machine (SVM)</li>
+                        <li class="mcq-option" data-correct="true">json.load(file)</li>
+                        <li class="mcq-option" data-correct="false">json.dump(memory, file)</li>
+                        <li class="mcq-option" data-correct="false">requests.get()</li>
+                        <li class="mcq-option" data-correct="false">file.read()</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">7. What is the defining characteristic of a Convolutional Neural Network (CNN)?</div>
+                    <div class="mcq-question">7. What is the fundamental difference between a JSON payload and a Python Dictionary?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="true">It uses sliding mathematical filters (kernels) to extract spatial features like edges and shapes.</li>
-                        <li class="mcq-option" data-correct="false">It uses a memory loop to process data sequentially over time.</li>
-                        <li class="mcq-option" data-correct="false">It relies entirely on self-attention to process information simultaneously.</li>
-                        <li class="mcq-option" data-correct="false">It groups unlabeled data into distinct clusters without a target variable.</li>
+                        <li class="mcq-option" data-correct="true">JSON is a raw string of text used for transport; a Dictionary is a parsed, active object in memory.</li>
+                        <li class="mcq-option" data-correct="false">JSON uses square brackets, while Dictionaries use curly braces.</li>
+                        <li class="mcq-option" data-correct="false">Python cannot read JSON without external plugins.</li>
+                        <li class="mcq-option" data-correct="false">They are identical in every way.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">8. Why did the AI industry transition away from RNNs to Transformers for processing text?</div>
+                    <div class="mcq-question">8. When building a Retrieval Augmented Generation (RAG) system, why do we use libraries like `PyPDF2`?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">RNNs required too much GPU memory to run efficiently.</li>
-                        <li class="mcq-option" data-correct="true">RNNs process data sequentially and forget early context, while Transformers use Self-Attention to process simultaneously.</li>
-                        <li class="mcq-option" data-correct="false">RNNs were unable to perform classification tasks.</li>
-                        <li class="mcq-option" data-correct="false">Transformers rely on Support Vector Machines which are mathematically faster.</li>
+                        <li class="mcq-option" data-correct="false">To connect to the OpenAI API.</li>
+                        <li class="mcq-option" data-correct="false">To draw flat-design diagrams.</li>
+                        <li class="mcq-option" data-correct="true">To extract raw text from binary document files so the LLM can read the context.</li>
+                        <li class="mcq-option" data-correct="false">To format text into bold and italics.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">9. If you want to group your customers based on spending habits without having predefined labels, which algorithm is best?</div>
+                    <div class="mcq-question">9. What does the "C" in CRUD operations stand for when an Agent interacts with a Database?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">Linear Regression</li>
-                        <li class="mcq-option" data-correct="false">Random Forest</li>
-                        <li class="mcq-option" data-correct="true">K-Means Clustering</li>
-                        <li class="mcq-option" data-correct="false">Convolutional Neural Network</li>
+                        <li class="mcq-option" data-correct="false">Calculate</li>
+                        <li class="mcq-option" data-correct="false">Compute</li>
+                        <li class="mcq-option" data-correct="false">Configure</li>
+                        <li class="mcq-option" data-correct="true">Create</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
                 </div>
 
                 <div class="mcq-container">
-                    <div class="mcq-question">10. What does the "Q-Table" or "Policy" in Reinforcement Learning represent?</div>
+                    <div class="mcq-question">10. Why would a developer choose to connect an Agent to a `sqlite3` database instead of just saving memory to a JSON file?</div>
                     <ul class="mcq-options">
-                        <li class="mcq-option" data-correct="false">A table of all raw input features provided to the model.</li>
-                        <li class="mcq-option" data-correct="false">The dataset of human-provided correct answers.</li>
-                        <li class="mcq-option" data-correct="true">The Agent's "brain" mapping states to actions based on past rewards.</li>
-                        <li class="mcq-option" data-correct="false">The convolutional filters used to detect shapes.</li>
+                        <li class="mcq-option" data-correct="false">Because JSON files cannot store strings.</li>
+                        <li class="mcq-option" data-correct="false">Because sqlite3 is built directly by OpenAI.</li>
+                        <li class="mcq-option" data-correct="true">Because SQL databases provide robust, long-term memory management capable of handling massive amounts of structured data efficiently.</li>
+                        <li class="mcq-option" data-correct="false">Because databases automatically connect to the internet.</li>
                     </ul>
                     <button class="mcq-submit" disabled>Submit</button>
                     <div class="mcq-feedback"></div>
@@ -991,31 +671,31 @@ for key, val in budget.items():
                 <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
                 <h2>Hands-On Assignments</h2>
-                <p>To solidify your understanding of the AI landscape, complete the following 5 conceptual assignments.</p>
+                <p>To solidify your Python foundation, try coding these 5 assignments using the concepts covered today.</p>
                 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Model Classification</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Given these 5 scenarios, categorize them as Supervised, Unsupervised, or Reinforcement Learning: 1) Grouping similar news articles, 2) Teaching a drone to fly through hoops, 3) Predicting stock prices based on historical data, 4) Identifying tumors in X-rays, 5) Generating user segments based on browsing behavior.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 1: Agent State Config</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Create a Python Dictionary named <code>agent_profile</code>. It must contain the keys: 'name' (string), 'version' (float), 'is_online' (boolean), and 'tools' (a list containing 'search' and 'calculator'). Print the dictionary.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: Tabular vs Unstructured Data Hunt</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Search your local computer files or the web. Identify 3 examples of Tabular Data (which standard ANNs handle well) and 3 examples of Unstructured Data (which CNNs and RNNs handle well).</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 2: ReAct Reasoning Loop</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a <code>while</code> loop that simulates an Agent thinking. Start with <code>steps = 0</code>. Loop while steps < 3. Inside the loop, print "Agent is thinking..." and increment steps by 1. Once the loop ends, print "Action complete."</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Algorithm Matchmaker</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Based on the ML Models reference table, match these algorithms (K-Means, Linear Regression, Random Forest) to these use cases: 1) Predicting a highly accurate credit risk score, 2) Estimating next month's sales revenue, 3) Automatically grouping a company's customer base into 3 demographic buckets.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 3: Regex Tool Extractor</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> You receive this raw string from an LLM: <code>"I will check the weather. [Tool: Weather(Chicago)]"</code>. Use the <code>re</code> module to extract the word 'Chicago'. (Hint: you can use a pattern like <code>r"Weather\((.*?)\)"</code>).</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: The Context Window Constraint</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> LLMs use a "Context Window" measuring tokens. Copy the text from the last 3 emails you received and paste them into a free online token counter (like OpenAI's Tokenizer). Write down the token count. Would all 3 emails fit into a legacy 4,000 token context window?</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 4: Agent Class Design</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Write a Python Class named <code>MemoryAgent</code>. Its <code>__init__</code> method should take a 'name' and create an empty list called 'memory'. Create a method called <code>remember(text)</code> that appends the text to the memory list.</p>
                 </div>
 
                 <div style="background-color: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent);">
-                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: Generative Prompting Variations</h3>
-                    <p style="margin-bottom: 0;"><strong>Task:</strong> Use a free LLM (like ChatGPT). Write a prompt asking: "Explain Machine Learning." Then, write a new prompt: "Explain Machine Learning to a 5-year-old using an analogy about toys." Observe how forcing a persona completely changes the probability of the "next-token prediction" engine.</p>
+                    <h3 style="margin-top: 0; color: var(--accent);">Assignment 5: JSON Parsing Challenge</h3>
+                    <p style="margin-bottom: 0;"><strong>Task:</strong> Use <code>json.loads()</code> to parse this exact string: <code>'{"user": "Alex", "address": {"city": "Seattle", "zip": "98101"}}'</code>. After parsing it into a dictionary, write the code to extract and print only the zip code.</p>
                 </div>
 
             
@@ -1031,39 +711,39 @@ for key, val in budget.items():
 
                         <div class="reference-card">
                             <div class="reference-header">
-                                <span class="ref-tag">arXiv:2203.15556</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted);">DeepMind</span>
+                                <span class="ref-tag">Python Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Python 3.12</span>
                             </div>
-                            <h4>Training Compute-Optimal Large Language Models (Chinchilla)</h4>
-                            <p>Hoffmann et al. establish the foundational empirical scaling law proving parameters and tokens must scale in equal proportion.</p>
-                            <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                            <h4>PEP 589 & Typing Specification</h4>
+                            <p>Formal Python standard for TypedDict, structural type checking, and generic type annotations in modern codebases.</p>
+                            <a href="https://docs.python.org/3/library/typing.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
                         </div>
                         <div class="reference-card">
                             <div class="reference-header">
-                                <span class="ref-tag">arXiv:2001.08361</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI</span>
+                                <span class="ref-tag">Pydantic Org</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Pydantic v2</span>
                             </div>
-                            <h4>Scaling Laws for Neural Language Models</h4>
-                            <p>Kaplan et al.'s original power-law formulation relating model performance to compute budget, dataset size, and parameter count.</p>
-                            <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                            <h4>Pydantic v2 Core Architecture & Performance</h4>
+                            <p>Official technical documentation covering schema generation, BaseModel field constraints, and Rust-based deserialization.</p>
+                            <a href="https://docs.pydantic.dev/latest/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
                         </div>
                         <div class="reference-card">
                             <div class="reference-header">
-                                <span class="ref-tag">arXiv:1706.03762</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted);">Google Research</span>
+                                <span class="ref-tag">AWS Architecture</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Amazon Builders' Library</span>
                             </div>
-                            <h4>Attention Is All You Need</h4>
-                            <p>Vaswani et al. introduce the Transformer architecture, multi-head self-attention mechanisms, and feed-forward token routing.</p>
-                            <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                            <h4>Exponential Backoff And Jitter</h4>
+                            <p>Marc Brooker's seminal analysis of network retry storms and the mathematical superiority of Decorrelated/Full Jitter.</p>
+                            <a href="https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
                         </div>
                         <div class="reference-card">
                             <div class="reference-header">
-                                <span class="ref-tag">Official Docs</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted);">OpenAI API</span>
+                                <span class="ref-tag">Python Docs</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Asyncio</span>
                             </div>
-                            <h4>Tokenization & Rate Limits Architecture Guide</h4>
-                            <p>Official developer guidance on token budgeting, TPM/RPM limits, and latency optimization for production endpoints.</p>
-                            <a href="https://platform.openai.com/docs/guides/rate-limits" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
+                            <h4>Asyncio Coroutines, Tasks & Semaphores</h4>
+                            <p>Official documentation for non-blocking I/O, event loops, and concurrency synchronization primitives in Python.</p>
+                            <a href="https://docs.python.org/3/library/asyncio.html" target="_blank" rel="noopener noreferrer" class="ref-link">View Official Resource &rarr;</a>
                         </div>
                     </div>
                 </div>
@@ -1077,10 +757,10 @@ for key, val in budget.items():
                 </a>
                 <a href="day_02.html" class="nav-button next">
                     <span class="nav-label">Next</span>
-                    <span class="nav-title">Day 2: Python Fundamentals</span>
+                    <span class="nav-title">Day 2: The AI Landscape</span>
                 </a>
             </footer>
-            
+
             <div style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
                 Prepared by <a href="https://www.aptcomputinglabs.com/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Apt Computing Labs</a><br>
                 <span style="font-size: 0.8rem; opacity: 0.7;">&copy; 2026 Apt Computing Labs. This material may be distributed freely provided that credit is given to Apt Computing Labs.</span>
@@ -1088,52 +768,9 @@ for key, val in budget.items():
         </main>
     </div>
 
+    <!-- Scripts for interactivity (Theme toggle is in head, Prism is included via CDN, Ace Editor logic would be initialized by course's main script.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="script.js"></script>
-    
-    <script>
-        // MCQ Interactivity
-        document.querySelectorAll('.mcq-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const container = this.closest('.mcq-container');
-                container.querySelectorAll('.mcq-option').forEach(opt => opt.style.background = '');
-                this.style.background = 'var(--bg-color)';
-                container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                container.querySelector('.mcq-submit').disabled = false;
-            });
-        });
-        
-        document.querySelectorAll('.mcq-submit').forEach(button => {
-            button.addEventListener('click', function() {
-                const container = this.closest('.mcq-container');
-                const selected = container.querySelector('.mcq-option.selected');
-                const feedback = container.querySelector('.mcq-feedback');
-                
-                if (selected) {
-                    if (selected.getAttribute('data-correct') === 'true') {
-                        feedback.textContent = 'Correct answer! Great job!';
-                        feedback.style.color = '#10b981'; // green
-                    } else {
-                        feedback.textContent = 'Incorrect. Please review the material.';
-                        feedback.style.color = '#ef4444'; // red
-                    }
-                    feedback.style.display = 'block';
-                }
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            renderMathInElement(document.body, {
-                delimiters: [
-                    {left: "$$", right: "$$", display: true},
-                    {left: "\\[", right: "\\]", display: true},
-                    {left: "$", right: "$", display: false},
-                    {left: "\\(", right: "\\)", display: false}
-                ],
-                throwOnError: false
-            });
-        });
-    </script>
 </body>
 </html>

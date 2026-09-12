@@ -1,20 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Setup Python Playground using Ace Editor & Pyodide
     function setupPythonPlayground() {
-        // Add custom styles for the editor and terminal
+        // Add custom styles for the editor, toolbar actions, and terminal
         if (!document.getElementById('python-playground-style')) {
             const style = document.createElement('style');
             style.id = 'python-playground-style';
             style.textContent = `
                 .code-wrapper { position: relative; margin: 2rem 0; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border: 1px solid var(--border-color); }
                 .ace_editor { font-family: 'Fira Code', monospace !important; font-size: 0.95em !important; line-height: 1.5 !important; }
-                .play-btn {
+                .code-actions {
                     position: absolute; top: 0.5rem; right: 0.5rem; z-index: 10;
-                    background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-                    color: #4caf50; padding: 0.4rem 1rem; border-radius: 4px;
-                    font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+                    display: flex; gap: 0.4rem; align-items: center; background: rgba(20, 20, 20, 0.85);
+                    padding: 0.3rem 0.5rem; border-radius: 6px; backdrop-filter: blur(4px);
+                    border: 1px solid rgba(255, 255, 255, 0.15);
                 }
-                .play-btn:hover { background: rgba(76, 175, 80, 0.2); color: #fff; border-color: #4caf50; }
+                .code-btn {
+                    background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+                    color: #d4d4d4; padding: 0.35rem 0.75rem; border-radius: 4px;
+                    font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+                    display: inline-flex; align-items: center; gap: 0.3rem;
+                }
+                .code-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+                .play-btn { color: #4caf50; border-color: rgba(76, 175, 80, 0.4); }
+                .play-btn:hover { background: rgba(76, 175, 80, 0.25); color: #fff; border-color: #4caf50; }
+                .save-btn { color: #60a5fa; border-color: rgba(96, 165, 250, 0.4); }
+                .save-btn:hover { background: rgba(96, 165, 250, 0.25); color: #fff; border-color: #60a5fa; }
+                .reset-btn { color: #9ca3af; border-color: rgba(156, 163, 175, 0.3); }
+                .reset-btn:hover { background: rgba(156, 163, 175, 0.2); color: #fff; }
                 .terminal-window { margin: 0; padding: 1.5rem; border: none; border-radius: 0; border-top: 1px solid #333; background: #1e1e1e; color: #d4d4d4; font-family: 'Fira Code', monospace; white-space: pre-wrap; font-size: 0.9rem; max-height: 300px; overflow-y: auto; }
             `;
             document.head.appendChild(style);
@@ -44,18 +56,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Build the editor UI
-        function buildEditorWrapper(codeText) {
+        function buildEditorWrapper(originalCodeText, storageKey) {
             const wrapper = document.createElement('div');
             wrapper.className = 'code-wrapper';
             
+            // Load saved code from Local Storage if user previously modified/saved it
+            const savedCode = storageKey ? localStorage.getItem(storageKey) : null;
+            const codeToLoad = savedCode !== null ? savedCode : originalCodeText;
+
             // Calculate height based on lines of code
-            const lines = codeText.split('\n').length;
+            const lines = codeToLoad.split('\n').length;
             const editorHeight = Math.max(120, lines * 21 + 30);
             
             const editorDiv = document.createElement('div');
             editorDiv.style.width = '100%';
             editorDiv.style.height = editorHeight + 'px';
-            editorDiv.textContent = codeText;
+            editorDiv.textContent = codeToLoad;
             
             wrapper.appendChild(editorDiv);
             
@@ -71,10 +87,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 highlightActiveLine: true,
                 tabSize: 4
             });
+
+            // Bind Ctrl+/ and Cmd+/ for Jupyter Notebook style line commenting/uncommenting
+            editor.commands.addCommand({
+                name: 'toggleCommentCustom',
+                bindKey: { win: 'Ctrl-/', mac: 'Cmd-/|Ctrl-/' },
+                exec: function(ed) {
+                    ed.toggleCommentLines();
+                },
+                readOnly: false
+            });
             
+            // Controls toolbar
+            const actionsBar = document.createElement('div');
+            actionsBar.className = 'code-actions';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'code-btn save-btn';
+            saveBtn.title = 'Save your custom code locally';
+            saveBtn.innerHTML = savedCode !== null ? 'Saved 💾' : 'Save 💾';
+
+            const resetBtn = document.createElement('button');
+            resetBtn.className = 'code-btn reset-btn';
+            resetBtn.title = 'Reset code to default template';
+            resetBtn.innerHTML = 'Reset 🔄';
+
             const playBtn = document.createElement('button');
-            playBtn.className = 'play-btn';
+            playBtn.className = 'code-btn play-btn';
+            playBtn.title = 'Run code in Pyodide environment';
             playBtn.innerHTML = 'Run ▶';
+
+            actionsBar.appendChild(saveBtn);
+            actionsBar.appendChild(resetBtn);
+            actionsBar.appendChild(playBtn);
+            wrapper.appendChild(actionsBar);
+
+            // Save Functionality
+            saveBtn.addEventListener('click', () => {
+                if (!storageKey) return;
+                const currentCode = editor.getValue();
+                localStorage.setItem(storageKey, currentCode);
+                saveBtn.innerHTML = 'Saved ✓';
+                saveBtn.style.color = '#3fb950';
+                saveBtn.style.borderColor = '#3fb950';
+                setTimeout(() => {
+                    saveBtn.innerHTML = 'Save 💾';
+                    saveBtn.style.color = '';
+                    saveBtn.style.borderColor = '';
+                }, 2000);
+            });
+
+            // Reset Functionality
+            resetBtn.addEventListener('click', () => {
+                if (storageKey) {
+                    localStorage.removeItem(storageKey);
+                }
+                editor.setValue(originalCodeText, -1);
+                resetBtn.innerHTML = 'Reset ✓';
+                setTimeout(() => {
+                    resetBtn.innerHTML = 'Reset 🔄';
+                }, 1500);
+            });
+
+            // Debounced Auto-Save on edit
+            let autoSaveTimer = null;
+            editor.session.on('change', () => {
+                if (!storageKey) return;
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(() => {
+                    localStorage.setItem(storageKey, editor.getValue());
+                }, 1000);
+            });
             
             const outputDiv = document.createElement('div');
             outputDiv.className = 'terminal-window';
@@ -86,8 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const code = editor.getValue();
                 
                 // --- Mock Execution for Heavy Models ---
-                // Browsers cannot run a multi-gigabyte LLM directly via Pyodide easily, 
-                // so we simulate the output for those specific blocks.
                 if (code.includes("from transformers import pipeline") || code.includes("openai")) {
                     outputDiv.innerHTML = '<span style="color: #a5d6ff;">[Simulated Execution] Sending prompt to Large Language Model...</span>\n\n';
                     setTimeout(() => {
@@ -107,17 +188,55 @@ document.addEventListener('DOMContentLoaded', () => {
                     const pyodide = await getPyodide();
                     outputDiv.innerHTML = '<span style="color: #3fb950;">Python Ready! Executing code...</span>\n\n';
                     
-                    // Capture standard output (print statements)
+                    // Capture standard output (print statements) & standard input (input() calls)
                     let outputBuffer = "";
-                    pyodide.setStdout({ batched: (msg) => { outputBuffer += msg + "\n"; } });
-                    pyodide.setStderr({ batched: (msg) => { outputBuffer += '<span style="color: #ff5f56;">' + msg + '</span>\n'; } });
+                    let lastStdoutMsg = "";
+
+                    pyodide.setStdout({
+                        batched: (msg) => {
+                            outputBuffer += msg + "\n";
+                            lastStdoutMsg = msg;
+                            outputDiv.innerHTML = outputBuffer;
+                            outputDiv.scrollTop = outputDiv.scrollHeight;
+                        }
+                    });
+                    
+                    pyodide.setStderr({
+                        batched: (msg) => {
+                            outputBuffer += '<span style="color: #ff5f56;">' + msg + '</span>\n';
+                            outputDiv.innerHTML = outputBuffer;
+                            outputDiv.scrollTop = outputDiv.scrollHeight;
+                        }
+                    });
+
+                    pyodide.setStdin({
+                        stdin: () => {
+                            outputDiv.innerHTML = outputBuffer + '<span style="color: #ffbd2e;">[Waiting for user input...]</span>\n';
+                            outputDiv.scrollTop = outputDiv.scrollHeight;
+
+                            const promptText = lastStdoutMsg.trim()
+                                ? `Python input requested:\n"${lastStdoutMsg.trim()}"`
+                                : "Python program requires user input:";
+
+                            let userInput = window.prompt(promptText);
+                            if (userInput === null) {
+                                userInput = "";
+                            }
+
+                            outputBuffer += `<span style="color: #4caf50;">${userInput}</span>\n`;
+                            outputDiv.innerHTML = outputBuffer;
+                            outputDiv.scrollTop = outputDiv.scrollHeight;
+
+                            return userInput + "\n";
+                        }
+                    });
                     
                     await pyodide.runPythonAsync(code);
                     
                     if (outputBuffer.trim() === "") {
                         outputDiv.innerHTML += "<em>(Program finished with no output)</em>";
                     } else {
-                        outputDiv.innerHTML += outputBuffer;
+                        outputDiv.innerHTML = outputBuffer;
                     }
                     
                 } catch (err) {
@@ -125,7 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             
-            wrapper.appendChild(playBtn);
+            outputDiv.className = 'terminal-window';
+            outputDiv.style.display = 'none';
             wrapper.appendChild(outputDiv);
             return wrapper;
         }
@@ -133,16 +253,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Find all Prism python blocks and convert them to Ace
         function initAceEditors() {
             const codeBlocks = document.querySelectorAll('pre code.language-python');
-            codeBlocks.forEach((codeBlock) => {
+            const pagePath = window.location.pathname.split('/').pop() || 'index.html';
+            codeBlocks.forEach((codeBlock, idx) => {
                 const pre = codeBlock.parentElement;
                 
-                // Don't convert blocks inside <details> drop-downs that are just for viewing
-                if(pre.closest('details') && codeBlock.textContent.includes("Legacy NLP Code")) {
-                    // Let's actually allow them to be runnable too!
-                }
-                
-                const codeText = codeBlock.textContent.trim();
-                const wrapper = buildEditorWrapper(codeText);
+                const originalCodeText = codeBlock.textContent.trim();
+                const storageKey = `saved_code_${pagePath}_block_${idx}`;
+                const wrapper = buildEditorWrapper(originalCodeText, storageKey);
                 pre.parentNode.insertBefore(wrapper, pre);
                 pre.remove();
             });
@@ -166,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initGitHubButton();
     initMobileMenu();
     initSubtopicNavigation();
+    initDisabledLinks();
     initMathRendering();
     initSidebarResize();
 });
@@ -221,8 +339,8 @@ function initSearchModal() {
     // Course Search Index data covering all 24 days + core topics
     const courseIndex = [
         { day: 0, title: "Course Overview & Architecture", url: "index.html", tags: "intro roadmap syllabus 20 projects methodology prerequisites", desc: "Curriculum roadmap, 20 industrial projects, prerequisites, and learning methodology." },
-        { day: 1, title: "Day 1: The AI Landscape: From Basic ML to LLMs", url: "day_01.html", tags: "machine learning deep learning transformers chinchilla scaling logit sampling ttft tpot", desc: "Chinchilla compute-optimal scaling, 5 levels of autonomy, logit sampling profiler." },
-        { day: 2, title: "Day 2: Python Fundamentals for Agentic Workflows", url: "day_02.html", tags: "type hints pydantic v2 schemas async await concurrency exponential backoff jitter semaphore", desc: "Pydantic v2 schema enforcement, typed state, async semaphore execution, jittered backoff." },
+        { day: 1, title: "Day 1: Python Fundamentals for Agentic Workflows", url: "day_01.html", tags: "type hints pydantic v2 schemas async await concurrency exponential backoff jitter semaphore", desc: "Pydantic v2 schema enforcement, typed state, async semaphore execution, jittered backoff." },
+        { day: 2, title: "Day 2: The AI Landscape: From Basic ML to LLMs", url: "day_02.html", tags: "machine learning deep learning transformers chinchilla scaling logit sampling ttft tpot", desc: "Chinchilla compute-optimal scaling, 5 levels of autonomy, logit sampling profiler." },
         { day: 3, title: "Day 3: How LLMs Work — And How to Prompt Them Well", url: "day_03.html", tags: "tokenization embeddings context window attention prompt engineering rctno zero shot few shot", desc: "Tokens, embeddings, and self-attention, plus structured prompting basics: RCTNO, clear instructions, zero-shot and few-shot prompting." },
         { day: 4, title: "Day 4: Advanced Prompting, Grounding & How LLMs Are Trained", url: "day_04.html", tags: "temperature logits softmax training inference backpropagation loss hallucination grounding chain of thought prompt iteration agents", desc: "How an LLM is trained (loss, backpropagation, weight updates), hallucination and grounding, reasoning-oriented prompting, prompt iteration, and prompts as an agent control layer." },
         { day: 5, title: "Day 5: Turning LLMs into Specialists", url: "day_05.html", tags: "constrained decoding dfa logit masking structured outputs pydantic router grammar", desc: "Constrained decoding, deterministic DFA logit masking, multi-specialist Pydantic schema router." },
@@ -289,15 +407,18 @@ function initSearchModal() {
             return;
         }
 
-        resultsContainer.innerHTML = results.map((item, idx) => `
-            <a href="${item.url}" class="search-result-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}">
+        resultsContainer.innerHTML = results.map((item, idx) => {
+            const isDayDisabled = item.day > 4;
+            return `
+            <a href="${item.url}" class="search-result-item ${idx === 0 ? 'selected' : ''} ${isDayDisabled ? 'disabled' : ''}" data-index="${idx}" data-disabled="${isDayDisabled}">
                 <div class="search-result-header">
                     <span class="search-result-title">${item.title}</span>
-                    <span class="search-badge">${item.day === 0 ? 'OVERVIEW' : 'DAY ' + item.day}</span>
+                    <span class="search-badge">${item.day === 0 ? 'OVERVIEW' : (isDayDisabled ? 'COMING SOON' : 'DAY ' + item.day)}</span>
                 </div>
                 <div class="search-result-desc">${item.desc}</div>
             </a>
-        `).join('');
+        `;
+        }).join('');
 
         // Attach click handlers
         resultsContainer.querySelectorAll('.search-result-item').forEach(el => {
@@ -305,6 +426,14 @@ function initSearchModal() {
                 resultsContainer.querySelectorAll('.search-result-item').forEach(r => r.classList.remove('selected'));
                 el.classList.add('selected');
                 selectedIndex = parseInt(el.getAttribute('data-index'), 10);
+            });
+            el.addEventListener('click', (e) => {
+                if (el.getAttribute('data-disabled') === 'true') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeModal();
+                    showToast('Content is getting created.');
+                }
             });
         });
     }
@@ -360,7 +489,12 @@ function initSearchModal() {
         } else if (e.key === 'Enter') {
             e.preventDefault();
             if (currentResults[selectedIndex]) {
-                window.location.href = currentResults[selectedIndex].url;
+                if (currentResults[selectedIndex].day > 4) {
+                    closeModal();
+                    showToast('Content is getting created.');
+                } else {
+                    window.location.href = currentResults[selectedIndex].url;
+                }
             }
         } else if (e.key === 'Escape') {
             closeModal();
@@ -506,10 +640,43 @@ function initSubtopicNavigation() {
     dayLinks.forEach((dayLink) => {
         const dayItem = dayLink.parentElement;
         const dayMatch = dayLink.getAttribute('href').match(/day_(\d+)/);
-        if (!dayMatch || dayItem.querySelector('details')) return;
+        if (!dayMatch) return;
 
         const dayNumber = Number.parseInt(dayMatch[1], 10);
         const dayPage = dayLink.getAttribute('href');
+
+        // Enable Day 01, 02, 03, and 04 ONLY
+        const isEnabled = dayNumber >= 1 && dayNumber <= 4;
+
+        if (!isEnabled) {
+            dayItem.classList.add('disabled');
+            dayLink.classList.add('disabled');
+            dayLink.setAttribute('aria-disabled', 'true');
+            dayLink.setAttribute('title', 'Content is getting created.');
+            dayLink.setAttribute('tabindex', '-1');
+
+            // Add subtle "Coming soon" pill badge if not present
+            if (!dayLink.querySelector('.toc-status-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'toc-status-badge';
+                badge.textContent = 'Coming soon';
+                dayLink.appendChild(badge);
+            }
+
+            // Clicking disabled vertical tab item prevents navigation & prevents opening details
+            const handleDisabledClick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showToast('Content is getting created.');
+            };
+
+            dayLink.addEventListener('click', handleDisabledClick);
+            dayItem.addEventListener('click', handleDisabledClick);
+            return;
+        }
+
+        if (dayItem.querySelector('details')) return;
+
         const details = document.createElement('details');
         details.className = 'day-toc-group';
         details.open = dayPage === currentPage;
@@ -637,3 +804,76 @@ function copyCode(button) {
         });
     }
 }
+
+// =========================================================
+// Toast Notification for Unreleased Modules
+// =========================================================
+let toastTimeout = null;
+function showToast(message = 'Content is getting created.') {
+    let toast = document.getElementById('course-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'course-toast';
+        toast.className = 'course-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        toast.innerHTML = `
+            <div class="toast-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <div class="toast-message">${message}</div>
+        `;
+        document.body.appendChild(toast);
+    } else {
+        const msgEl = toast.querySelector('.toast-message');
+        if (msgEl) msgEl.textContent = message;
+    }
+
+    toast.classList.remove('visible');
+    void toast.offsetWidth; // Force DOM reflow to re-trigger transition animation
+    toast.classList.add('visible');
+
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+    }
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('visible');
+    }, 3200);
+}
+
+// =========================================================
+// Intercept Other Lesson Links pointing to Day 05-24
+// =========================================================
+function initDisabledLinks() {
+    document.querySelectorAll('a[href^="day_"]').forEach(link => {
+        // Skip sidebar TOC links (already handled by initSubtopicNavigation)
+        if (link.closest('.toc')) return;
+
+        const m = link.getAttribute('href').match(/day_(\d+)/);
+        if (!m) return;
+        const dayNumber = Number.parseInt(m[1], 10);
+
+        if (dayNumber > 4) {
+            link.classList.add('disabled-nav');
+            link.setAttribute('title', 'Content is getting created.');
+            link.setAttribute('aria-disabled', 'true');
+
+            // Handle reference cards on index.html
+            const refCard = link.closest('.reference-card');
+            if (refCard) {
+                refCard.style.opacity = '0.55';
+            }
+
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showToast('Content is getting created.');
+            });
+        }
+    });
+}
+
