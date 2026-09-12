@@ -6,28 +6,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const style = document.createElement('style');
             style.id = 'python-playground-style';
             style.textContent = `
-                .code-wrapper { position: relative; margin: 2rem 0; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border: 1px solid var(--border-color); }
-                .ace_editor { font-family: 'Fira Code', monospace !important; font-size: 0.95em !important; line-height: 1.5 !important; }
-                .code-actions {
-                    position: absolute; top: 0.5rem; right: 0.5rem; z-index: 10;
-                    display: flex; gap: 0.4rem; align-items: center; background: rgba(20, 20, 20, 0.85);
-                    padding: 0.3rem 0.5rem; border-radius: 6px; backdrop-filter: blur(4px);
-                    border: 1px solid rgba(255, 255, 255, 0.15);
-                }
+                .code-wrapper { position: relative; margin: 2.25rem 0; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2); border: 1px solid rgba(226, 232, 240, 0.15); background: #0d1117; }
+                .code-window-header { display: flex; align-items: center; justify-content: space-between; background: #161b26; padding: 0.65rem 1.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+                .mac-controls { display: flex; align-items: center; gap: 7px; }
+                .mac-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+                .mac-dot.red { background-color: #ff5f56; }
+                .mac-dot.yellow { background-color: #ffbd2e; }
+                .mac-dot.green { background-color: #27c93f; }
+                .code-title-tag { font-family: 'Fira Code', monospace; font-size: 0.82rem; font-weight: 600; color: #94a3b8; display: flex; align-items: center; gap: 0.4rem; }
+                .code-actions-bar { display: flex; align-items: center; gap: 0.45rem; }
+                .ace_editor { font-family: 'Fira Code', monospace !important; font-size: 0.95em !important; line-height: 1.6 !important; }
                 .code-btn {
-                    background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-                    color: #d4d4d4; padding: 0.35rem 0.75rem; border-radius: 4px;
-                    font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+                    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+                    color: #f8fafc; padding: 0.35rem 0.85rem; border-radius: 6px;
+                    font-size: 0.78rem; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s ease;
                     display: inline-flex; align-items: center; gap: 0.3rem;
                 }
-                .code-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
-                .play-btn { color: #4caf50; border-color: rgba(76, 175, 80, 0.4); }
-                .play-btn:hover { background: rgba(76, 175, 80, 0.25); color: #fff; border-color: #4caf50; }
+                .code-btn:hover { background: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.3); }
+                .play-btn { background: linear-gradient(135deg, #f97316, #ea580c) !important; border-color: #ea580c !important; color: #ffffff !important; box-shadow: 0 2px 8px rgba(234, 88, 12, 0.4); }
+                .play-btn:hover { background: linear-gradient(135deg, #fb923c, #f97316) !important; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.6); transform: translateY(-1px); }
                 .save-btn { color: #60a5fa; border-color: rgba(96, 165, 250, 0.4); }
                 .save-btn:hover { background: rgba(96, 165, 250, 0.25); color: #fff; border-color: #60a5fa; }
                 .reset-btn { color: #9ca3af; border-color: rgba(156, 163, 175, 0.3); }
                 .reset-btn:hover { background: rgba(156, 163, 175, 0.2); color: #fff; }
-                .terminal-window { margin: 0; padding: 1.5rem; border: none; border-radius: 0; border-top: 1px solid #333; background: #1e1e1e; color: #d4d4d4; font-family: 'Fira Code', monospace; white-space: pre-wrap; font-size: 0.9rem; max-height: 300px; overflow-y: auto; }
+                .terminal-window { margin: 0; padding: 1.25rem 1.5rem; border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); background: #06090e; color: #4ade80; font-family: 'Fira Code', monospace; white-space: pre-wrap; font-size: 0.88rem; max-height: 320px; overflow-y: auto; }
             `;
             document.head.appendChild(style);
         }
@@ -64,9 +66,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedCode = storageKey ? localStorage.getItem(storageKey) : null;
             const codeToLoad = savedCode !== null ? savedCode : originalCodeText;
 
+            // Extract title if available from first comment line
+            let titleText = 'main.py';
+            const firstLine = codeToLoad.trim().split('\n')[0];
+            if (firstLine && firstLine.startsWith('# Program')) {
+                titleText = firstLine.replace('#', '').trim().split(':')[0];
+                if (!titleText.endsWith('.py')) titleText += '.py';
+            }
+
+            // Create macOS Window Title Header
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'code-window-header';
+            headerDiv.innerHTML = `
+                <div class="mac-controls">
+                    <span class="mac-dot red"></span>
+                    <span class="mac-dot yellow"></span>
+                    <span class="mac-dot green"></span>
+                </div>
+                <div class="code-title-tag">🐍 <span>${titleText}</span></div>
+                <div class="code-actions-bar"></div>
+            `;
+            wrapper.appendChild(headerDiv);
+
             // Calculate height based on lines of code
             const lines = codeToLoad.split('\n').length;
-            const editorHeight = Math.max(120, lines * 21 + 30);
+            const editorHeight = Math.max(130, lines * 22 + 30);
             
             const editorDiv = document.createElement('div');
             editorDiv.style.width = '100%';
@@ -98,9 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 readOnly: false
             });
             
-            // Controls toolbar
-            const actionsBar = document.createElement('div');
-            actionsBar.className = 'code-actions';
+            // Controls toolbar inside title header
+            const actionsBar = headerDiv.querySelector('.code-actions-bar');
 
             const saveBtn = document.createElement('button');
             saveBtn.className = 'code-btn save-btn';
@@ -120,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
             actionsBar.appendChild(saveBtn);
             actionsBar.appendChild(resetBtn);
             actionsBar.appendChild(playBtn);
-            wrapper.appendChild(actionsBar);
 
             // Save Functionality
             saveBtn.addEventListener('click', () => {
