@@ -1,0 +1,233 @@
+[761455.671355]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761455.672001]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761455.672564]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761455.673099]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761455.673614]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761455.674116]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761455.674595]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761455.681953]: memorystatus: killing_idle_process pid 70386 [mapssyncd] jetsam_reason->osr_code: 9
+[761455.931669]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761456.686504]: memorystatus: killing_idle_process pid 70361 [proactiveeventtrackerd] jetsam_reason->osr_code: 9
+[761456.690175]: PMRD: power event 14 args 0 0x0
+[761457.459431]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.461172]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.462087]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.463170]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.464442]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.465015]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.466465]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.467197]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.467843]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.469178]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.470229]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.471325]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761457.689800]: memorystatus: killing_idle_process pid 70308 [routined] jetsam_reason->osr_code: 9
+[761457.935967]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761458.697824]: memorystatus: killing_idle_process pid 69147 [amsaccountsd] jetsam_reason->osr_code: 9
+[761458.700045]: "AppleSEPKeyStore":12614:317: operation failed (sel: 35 ret: e00002f0, -1)
+[761458.700151]: "AppleSEPKeyStore":12614:317: operation failed (sel: 35 ret: e00002f0, -1)
+[761458.705157]: PMRD: power event 14 args 0 0x0
+[761459.703946]: memorystatus: killing_idle_process pid 70321 [cloudphotod] jetsam_reason->osr_code: 9
+[761459.941968]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761460.707504]: memorystatus: killing_idle_process pid 70177 [AssetCacheLocatorService] jetsam_reason->osr_code: 9
+[761460.917917]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761461.711532]: memorystatus: killing_idle_process pid 69196 [pkd] jetsam_reason->osr_code: 9
+[761461.755289]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761461.947348]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761462.715236]: memorystatus: killing_idle_process pid 69198 [pkd] jetsam_reason->osr_code: 9
+[761463.718662]: memorystatus: killing_idle_process pid 69279 [securityd_system] jetsam_reason->osr_code: 9
+[761463.719542]: "AppleSEPKeyStore":12614:317: operation failed (sel: 35 ret: e00002f0, -1)
+[761463.719618]: "AppleSEPKeyStore":12614:317: operation failed (sel: 35 ret: e00002f0, -1)
+[761463.953257]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761464.722963]: memorystatus: killing_idle_process pid 70323 [sirittsd] jetsam_reason->osr_code: 9
+[761464.813566]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761465.956421]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761466.471442]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.473833]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.475637]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.477143]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.478917]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.480108]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.481099]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.483261]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.484526]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.485468]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.486211]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.486831]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.487556]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.488237]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.488886]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.489569]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.490211]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.490802]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.491427]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.492219]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.493330]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.494438]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.495216]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.495916]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.496635]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.497569]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.498258]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.499705]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.500568]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.501327]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.502077]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.502814]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.503634]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.504448]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.505281]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.505966]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.506597]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.507171]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.507717]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.508276]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.508949]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.509895]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.510562]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.511184]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.511756]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.512333]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.512875]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.513423]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.514005]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.514556]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.515170]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.515982]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.516570]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761466.517162]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761467.960376]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761469.961895]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761471.183608]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761471.966124]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761473.967713]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761474.815095]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761475.973354]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761477.978252]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761479.981509]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761481.184984]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761481.421517]: tx_flush:1349: disk3 xid 40422411 tx stats: # 260360 owait 27912 8231us finish 256489 bar2 254933 f 44777 enter 482 fq 205 456 4248us close 0us prep 502us flush 985us
+[761481.987294]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761483.418541]: Sandbox apply: biomesyncd[70589] <bytes>Sandbox: biomesyncd(70589) deny(1) iokit-open-user-client RootDomainUserClientIOUC RootDomainUserClient failed MACF in process pid 70589, biomesyncd
+[761483.993364]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761484.559044]: Using IOSkywalkLegacyEthernet as no other controller was found for en0
+[761484.559071]: Using IOSkywalkLegacyEthernet as no other controller was found for en5
+[761484.560745]: [System Event] [18275629457879] [INFO] [Subsystem: nvram] [Event: write] battery-health as data with size 0x17b
+[761484.810393]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761485.995899]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761488.001826]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761488.354437]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761488.356789]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761488.358055]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761488.359996]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761488.361253]: RTBuddy(MTP): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761488.362420]: RTBuddy(DCPEXT): OSLog segment methods. uuid 00000000-0000-0000-0000-000000000000. method 0
+
+[761490.007439]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761491.183040]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761491.508671]: PMRD: power event 14 args 0 0x0
+[761492.009103]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761494.015547]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761494.800083]: PMRD: power event 14 args 0 0x0
+[761494.805237]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761496.018694]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761496.870714]: process_is_plugin_host: running binary "login" in keys-off mode due to entitlement: com.apple.private.security.clear-library-validationprocess_is_plugin_host: running binary "bash" in keys-off mode due to identity: com.apple.bashprocess_is_plugin_host: running binary "zsh" in keys-off mode due to identity: com.apple.zshprocess_is_plugin_host: running binary "bash" in keys-off mode due to identity: com.apple.bashprocess_is_plugin_host: running binary "bash" in keys-off mode due to identity: com.apple.bash[IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761499.264342]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761500.031391]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761502.033204]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761504.039653]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761504.512935]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761506.045742]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761506.957640]: PMRD: power event 14 args 0 0x0
+[761508.051764]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761508.921139]: process_is_plugin_host: running binary "sudo" in keys-off mode due to entitlement: com.apple.private.security.clear-library-validationSandbox apply: ctkd[70651] <bytes>Sandbox: ctkd(70651) deny(1) mach-lookup com.apple.CoreServices.coreservicesdSandbox: ctkd(70651) deny(1) mach-lookup com.apple.DiskArbitration.diskarbitrationd"AppleSEPKeyStore":12614:317: operation failed (sel: 35 ret: e00002f0, -1)
+[761509.080332]: IOConsoleUsers: time(0) 0->0, lin 1, llk 0, 
+[761509.080353]: IOConsoleUsers: gIOScreenLockState 1, hs 0, bs 0, now 0, sm 0x0
+[761509.081622]: Couldn't alloc class "AFKResource"
+[761509.750345]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761510.056577]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761512.061696]: [IOC DEBUG] EXTERNAL: Get type=<APPLE80211_IOC_POWER> Int=<Infrastructure> isDriverAvailable=<0> res=<GOOD:0:0x0> handler=1
+[761513.323017]: IOConsoleUsers: time(0) 0->0, lin 1, llk 0, 
+[761513.323036]: IOConsoleUsers: gIOScreenLockState 1, hs 0, bs 0, now 0, sm 0x0
+[761513.323953]: Couldn't alloc class "AFKResource"
+[761513.345287]: "AppleSEPKeyStore":828:0: notification for handle: 0, state: 9, value: 0, flags: 0x0
+(base) kamalmukiri@Kamals-MacBook-Air AgenticAIBook % 
+

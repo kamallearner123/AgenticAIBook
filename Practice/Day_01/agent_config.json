@@ -1,0 +1,11 @@
+{
+ "agent_name": "ResearchBot",
+ "temperature": 0.2,
+ "tools": [
+  "WebSearch",
+  "PythonREPL"
+ ],
+ "max_steps": 1001
+        
+	
+}
